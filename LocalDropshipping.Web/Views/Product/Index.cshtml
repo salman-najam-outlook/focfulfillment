@@ -1,0 +1,33 @@
+﻿@using LocalDropshipping.Web.Data.Entities;
+@model List<Product>;
+@{
+    ViewData["Title"] = "Product Listing";
+}
+
+<table class="table table-bordered table-stripped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>ImageLink</th>
+            <th>Stock</th>
+            <th>IsFeatured</th>
+            <th>CategoryId</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <th>@product.Name</th>
+                <th>@product.Description</th>
+                <th>@product.Price/- Rs</th>
+                <th>@product.ImageLink</th>
+                <th>@product.Stock</th>
+                <th>@product.IsFeatured</th>
+                <th>@product.Category!.Name</th>
+            </tr>
+        }
+    </tbody>
+</table>
