@@ -11,5 +11,6 @@ namespace LocalDropshipping.Web.Services
         Product? GetById(int productId);
         Product Delete(int productId);
         Product Update(int productId, ProductDto productDto);
+        List<Product> GetProductsByPriceRange(decimal minPrice, decimal maxPrice);
     }
 }
