@@ -1,7 +1,6 @@
 ﻿using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace LocalDropshipping.Web.Services
@@ -35,21 +34,13 @@ namespace LocalDropshipping.Web.Services
 
         public Product? Delete(int productId)
         {
-            try
+            var product = context.Products.FirstOrDefault(x => x.ProductId == productId);
+            if (product != null)
             {
-                var products = context.Products.Find(productId);
-                if (products != null)
-                {
-                    products.IsDeleted = true;
-                    context.SaveChanges();
-                    return products;
-                }
+                product.IsDeleted = true;
+                context.SaveChanges();
             }
-            catch (Exception ex)
-            {
-            }
-            return null;
-
+            return product;
         }
 
         public Product? Update(int productId, ProductDto productDto)
