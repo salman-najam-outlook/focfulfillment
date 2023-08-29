@@ -14,7 +14,6 @@ namespace LocalDropshipping.Web.Data.Entities
         public int CategoryId { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
-
         public virtual Category? Category { get; set; }
     }
 }
