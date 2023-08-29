@@ -10,16 +10,9 @@ namespace LocalDropshipping.Web.Dtos
         public decimal Price { get; set; }
         public string? ImageLink { get; set; }
         public int Stock { get; set; }
+        public bool IsDeleted { get; set; }
         public bool IsFeatured { get; set; }
         public int CategoryId { get; set; }
-
-
-
-
-
-
-
-
 
         internal Product ToEntity()
         {

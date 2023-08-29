@@ -10,6 +10,7 @@ namespace LocalDropshipping.Web.Data.Entities
         public string? ImageLink { get; set; }
         public int Stock { get; set; }
         public bool IsFeatured { get; set; }
+        public bool IsDeleted { get; set; }
         public int CategoryId { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }

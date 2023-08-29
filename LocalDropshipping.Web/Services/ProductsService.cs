@@ -1,5 +1,7 @@
 ﻿using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
+using LocalDropshipping.Web.Dtos;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace LocalDropshipping.Web.Services
@@ -16,7 +18,7 @@ namespace LocalDropshipping.Web.Services
 
         public List<Product> GetAll()
         {
-            return context.Products.Include(x => x.Category).ToList();
+            return context.Products.Include(x => x.Category).Where(x => x.IsDeleted == false).ToList();
         }
 
         public Product Add(Product product)
@@ -30,5 +32,40 @@ namespace LocalDropshipping.Web.Services
         {
             return context.Products.FirstOrDefault(p => p.ProductId == productId);
         }
+
+        public Product? Delete(int productId)
+        {
+            try
+            {
+                var products = context.Products.Find(productId);
+                if (products != null)
+                {
+                    products.IsDeleted = true;
+                    context.SaveChanges();
+                    return products;
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return null;
+
+        }
+
+        public Product? Update(int productId, ProductDto productDto)
+        {
+            var exProduct = context.Products.FirstOrDefault(x => x.ProductId == productId);
+            if (exProduct != null)
+            {
+                exProduct.Price = productDto.Price;
+                exProduct.Name = productDto.Name;
+                exProduct.Description = productDto.Description;
+                exProduct.ImageLink = productDto.ImageLink;
+                exProduct.Stock = productDto.Stock;
+                context.SaveChanges();
+            }
+            return exProduct;
+        }
     }
+
 }

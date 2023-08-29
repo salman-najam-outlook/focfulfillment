@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LocalDropshipping.Web.Controllers.API
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
@@ -19,7 +19,7 @@ namespace LocalDropshipping.Web.Controllers.API
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult GetAll()
         {
             return Ok(productService.GetAll());
         }
@@ -37,5 +37,20 @@ namespace LocalDropshipping.Web.Controllers.API
             productService.Add(product);
             return Ok();
         }
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            productService.Delete(id);
+            return Ok();
+        }
+        [HttpPost("{id}")]
+        public IActionResult Update(int id, ProductDto productDto)
+        {
+            Product product = productDto.ToEntity();
+            productService.Update(id, productDto);
+            return Ok();
+        }
+
+
     }
 }
