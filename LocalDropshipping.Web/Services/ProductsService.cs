@@ -57,6 +57,11 @@ namespace LocalDropshipping.Web.Services
             }
             return exProduct;
         }
+
+        public List<Product> GetProductsByPriceRange(decimal minPrice, decimal maxPrice)
+        {
+            return context.Products.Where(x => x.IsDeleted == false && x.Price >= minPrice && x.Price <= maxPrice).ToList();
+        }
     }
 
 }

@@ -50,7 +50,15 @@ namespace LocalDropshipping.Web.Controllers.API
             productService.Update(id, productDto);
             return Ok();
         }
-
-
+        [HttpGet]
+        public IActionResult GetProductbyPriceRange(decimal minPrice, decimal maxPrice)
+        {
+            var products = productService.GetProductsByPriceRange(minPrice, maxPrice);
+            if (products.Count == 0)
+            {
+                return NotFound("No Products Available");
+            }
+            return Ok(products);
+        }
     }
 }
