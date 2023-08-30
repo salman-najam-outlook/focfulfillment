@@ -17,6 +17,7 @@ builder.Services.AddDbContext<LocalDropshippingContext>(options =>
 builder.Services.AddScoped<IProductsService, ProductsService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IWishListService, WishListService>();
+builder.Services.AddScoped<IWithdrawlsService, WithdrawlsService>();
 
 var app = builder.Build();
 
