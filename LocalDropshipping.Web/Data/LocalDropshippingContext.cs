@@ -12,5 +12,6 @@ namespace LocalDropshipping.Web.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Order { get; set; }
         public DbSet<OrderItem> OrderItem { get; set; }
+        public DbSet<WishList> WishList { get; set; }
     }
 }
