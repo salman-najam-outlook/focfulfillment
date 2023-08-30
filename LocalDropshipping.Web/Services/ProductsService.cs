@@ -14,7 +14,6 @@ namespace LocalDropshipping.Web.Services
             this.context = context;
         }
 
-
         public List<Product> GetAll()
         {
             return context.Products.Include(x => x.Category).Where(x => x.IsDeleted == false).ToList();

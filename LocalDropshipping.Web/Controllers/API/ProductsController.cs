@@ -37,12 +37,14 @@ namespace LocalDropshipping.Web.Controllers.API
             productService.Add(product);
             return Ok();
         }
+
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
             productService.Delete(id);
             return Ok();
         }
+
         [HttpPost("{id}")]
         public IActionResult Update(int id, ProductDto productDto)
         {
