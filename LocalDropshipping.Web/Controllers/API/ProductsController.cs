@@ -50,7 +50,5 @@ namespace LocalDropshipping.Web.Controllers.API
             productService.Update(id, productDto);
             return Ok();
         }
-
-
     }
 }
