@@ -20,6 +20,11 @@ namespace LocalDropshipping.Web.Controllers
         {
             return View(productsService.GetAll());
         }
+        public IActionResult Wishlist() 
+        { 
+            return View();
+        }
+
 
         public IActionResult Post()
         {
