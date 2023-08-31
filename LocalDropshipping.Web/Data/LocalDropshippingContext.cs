@@ -1,12 +1,14 @@
 ﻿using LocalDropshipping.Web.Data.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace LocalDropshipping.Web.Data
 {
-    public class LocalDropshippingContext : DbContext
+    public class LocalDropshippingContext : IdentityDbContext<User>
     {
         public LocalDropshippingContext(DbContextOptions<LocalDropshippingContext> options) : base(options)
         { }
+
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Order { get; set; }
@@ -14,5 +16,6 @@ namespace LocalDropshipping.Web.Data
         public DbSet<WishList> WishList { get; set; }
         public DbSet<Withdrawals> Withdrawals { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
