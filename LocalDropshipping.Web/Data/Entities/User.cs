@@ -1,13 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace LocalDropshipping.Web.Data.Entities
 {
-    public class User
+    public class User : IdentityUser
     {
-        public int Id { get; set; }
         public string Fullname { get; set; }
-        public string ContactNumber { get; set; }
-        public string Email { get; set; }
-        public string password { get; set; }
+        public bool IsSeller { get; set; }
+        public bool IsAdmin { get; set; }
+        public bool IsSuperAdmin { get; set; }
+        public bool IsActive { get; set; }
+        public bool IsDeleted { get; set; }
+        public bool IsSubscribed { get; set; }
     }
 }
