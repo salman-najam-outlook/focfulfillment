@@ -61,6 +61,11 @@ namespace LocalDropshipping.Web.Services
         {
             return context.Products.Where(x => x.IsDeleted == false && x.Price >= minPrice && x.Price <= maxPrice).ToList();
         }
+        
+        public List<Product> GetProductBySearchFilter(string searchString)
+        {
+            return context.Products.Where(x => x.IsDeleted == false && (x.Name.Contains(searchString) || x.Description.Contains(searchString) || x.Category.Name.Contains(searchString))).ToList();
+        }
     }
 
 }
