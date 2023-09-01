@@ -1,0 +1,10 @@
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace LocalDropshipping.Web.Services
+{
+    public interface IAdminService
+    {
+		Task<SignInResult> AdminLoginUser(string email, string password);
+		Task<bool> IsUserAdminAsync(string email);
+	}
+}
