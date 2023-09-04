@@ -2,9 +2,9 @@
 
 namespace LocalDropshipping.Web.Controllers
 {
-    public class ShopPageController : Controller
+    public class ShopController : Controller
     {
-        public IActionResult ShopPage()
+        public IActionResult Shop()
         {
             return View();
         }

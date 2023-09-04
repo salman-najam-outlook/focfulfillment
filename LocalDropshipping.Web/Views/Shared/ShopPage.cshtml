@@ -9,7 +9,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="Fastkart">
 	<meta name="keywords" content="Fastkart">
-	<meta name="author" content="Fastkart">
+	<meta name="author" content="Fastkart">	
 	<link rel="icon" href="../assets/images/favicon/6.png" type="image/x-icon">
 	<title>On-demand last-mile delivery</title>
 
@@ -28,6 +28,7 @@
 
 	<!-- wow css -->
 	<link rel="stylesheet" href="../assets/css/animate.min.css" />
+	<link href="~/css/site.css" rel="stylesheet" />
 
 	<!-- font-awesome css -->
 	<link rel="stylesheet" type="text/css" href="../assets/css/vendors/font-awesome.css">
@@ -73,35 +74,23 @@
 								</span>
 							</button>
 
-						@*	<div class="middle-box">
-								<div class="location-box">
-									<button class="btn location-button" data-bs-toggle="modal"
-											data-bs-target="#locationModal">
-										<span class="location-arrow">
-											<i data-feather="map-pin"></i>
-										</span>
-										<span class="locat-name">Your Location</span>
-										<i class="fa-solid fa-angle-down"></i>
-									</button>
-								</div>*@
 
-								<div class="middle-box">
+								<div class="middle-box col-lg-12">
 
-									<div class="location-box">
+								<div class="location-box col-lg-9">
 										<button class="btn location-button">
-										
-											<span class="locat-name">All Categories</span>
+
+										<a asp-action="Abc" asp-controller="xyz" id="Colour">DashBoard</a>
+
 
 										</button>
 								</div>
 
-
-
+						
 							
 
 
-
-								<div class="rightside-box">
+								<div class="rightside-box col-lg-6">
 									<div class="search-full">
 										<div class="input-group">
 											<span class="input-group-text">
@@ -289,7 +278,7 @@
 				<div class="sidebar-col">
 					<div class="category-menu">
 						<a href="index.html" class="web-logo nav-logo">
-							<img src="../assets/images/logo/5.png" class="img-fluid blur-up lazyload" alt="">
+							<img src="../assets/images/logo/1.png" class="img-fluid blur-up lazyload" alt="">
 						</a>
 						<ul>
 							<li>
@@ -380,12 +369,12 @@
 					<div class="section-b-space">
 						<div class="row g-md-4 g-3">
 							<div class="col-xxl-8 col-xl-12 col-md-7">
-								<div class="banner-contain hover-effect">
+								<div class="banner-contain hover-effect"  >
 									<img src="../assets/images/grocery/banner/11.jpg" class="bg-img blur-up lazyload"
 										 alt="">
 									<div class="banner-details p-center-left p-sm-5 p-4">
 										<div>
-											<h2 class="text-kaushan fw-normal orange-color">Get Ready To</h2>
+											<h2 class="text-kaushan fw-normal orange-color"  >Get Ready To</h2>
 											<h3 class="mt-2 mb-3 text-white">TAKE ON THE DAY!</h3>
 											<p class="text-content banner-text text-white opacity-75 d-md-block d-none">
 												In publishing and graphic design, Lorem ipsum is a placeholder text
@@ -661,7 +650,7 @@
 	</div>
 	<!-- Location Modal End -->
 	<!-- Cookie Bar Box Start -->
-	<div class="cookie-bar-box">
+	@*<div class="cookie-bar-box">
 		<div class="cookie-box">
 			<div class="cookie-image">
 				<img src="../assets/images/cookie-bar.png" class="blur-up lazyload" alt="">
@@ -677,7 +666,7 @@
 			<button class="btn privacy-button">Privacy Policy</button>
 			<button class="btn ok-button">OK</button>
 		</div>
-	</div>
+	</div>*@
 	<!-- Cookie Bar Box End -->
 	<!-- Deal Box Modal Start -->
 	<div class="modal fade theme-modal deal-modal" id="deal-box" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -759,7 +748,7 @@
 	</div>
 	<!-- Deal Box Modal End -->
 	<!-- Tap to top start -->
-	<div class="theme-option">
+	@*<div class="theme-option">
 		<div class="setting-box">
 			<button class="btn setting-button">
 				<i class="fa-solid fa-gear"></i>
@@ -810,7 +799,7 @@
 				<i class="fas fa-chevron-up"></i>
 			</a>
 		</div>
-	</div>
+	</div>*@
 	<!-- Tap to top end -->
 	<!-- Bg overlay Start -->
 	<div class="bg-overlay"></div>

@@ -6,9 +6,12 @@ namespace LocalDropshipping.Web.Services
     public class AccountService : IAccountService
     {
         private readonly UserManager<User> _userManager;
-        public AccountService(UserManager<User> userManager)
+        private readonly SignInManager<User> _signInManager;
+
+        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         public async Task<IdentityResult> RegisterUser(User user, string password)
@@ -21,5 +24,24 @@ namespace LocalDropshipping.Web.Services
             return result;
         }
 
-    }
+
+
+        public async Task<SignInResult> LoginUser(string email, string password)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            //var user = await _userManager.FindByEmailAsync(email);
+
+            if (user != null && user.IsActive && !user.IsAdmin && !user.IsSuperAdmin)
+            {
+                var result = await _signInManager.PasswordSignInAsync(user, password, false, lockoutOnFailure: false);
+
+                return result;
+            }
+
+            return SignInResult.Failed; // User not found
+        }
+
+		
+	}
 }

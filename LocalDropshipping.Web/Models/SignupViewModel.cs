@@ -16,7 +16,7 @@ namespace LocalDropshipping.Web.Models
         public string Email { get; set; }
 
         [Required]
-        [Display(Name = "Password")]
+        [Display(Name = "Password")]  
         //[DataType(DataType.Password)]
         public string Password { get; set; }
 
