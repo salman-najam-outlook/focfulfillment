@@ -17,5 +17,6 @@ namespace LocalDropshipping.Web.Data
         public DbSet<Withdrawals> Withdrawals { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Profiles> Profiles { get; set; }
     }
 }

@@ -49,9 +49,8 @@ builder.Services.AddScoped<IWithdrawlsService, WithdrawlsService>();
 builder.Services.AddScoped<ISubscriptionsService, SubscriptionsService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
-
 builder.Services.AddScoped<IAdminService, AdminService>();
-
+builder.Services.AddScoped<IProfilesService, ProfilesService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

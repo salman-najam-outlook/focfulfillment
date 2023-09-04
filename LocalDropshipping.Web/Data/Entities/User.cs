@@ -12,5 +12,6 @@ namespace LocalDropshipping.Web.Data.Entities
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public bool IsSubscribed { get; set; }
+        public bool IsProfileCompleted { get; set; }
     }
 }
