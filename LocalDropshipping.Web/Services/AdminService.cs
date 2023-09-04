@@ -20,6 +20,16 @@ namespace LocalDropshipping.Web.Services
 
 			return result;
 		}
+		public async Task<bool> IsUserSuperAdminAsync(string email)
+		{
+			var user = await userManager.FindByEmailAsync(email);
+			return user != null && user.IsSuperAdmin;
+		}
+		public async Task<bool> IsUserActiveAsync(string email)
+		{
+			var user = await userManager.FindByEmailAsync(email);
+			return user != null && user.IsActive;
+		}
 
 
 		public async Task<bool> IsUserAdminAsync(string email)
@@ -28,4 +38,6 @@ namespace LocalDropshipping.Web.Services
 			return user != null && user.IsAdmin;
 		}
 	}
-}
+
+	
+	}
