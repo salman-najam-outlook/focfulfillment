@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LocalDropshipping.Web.Controllers
 {
@@ -18,6 +19,31 @@ namespace LocalDropshipping.Web.Controllers
         public IActionResult Register()
         {
             return View();
+        }
+        
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await service.LoginUser(model.Email, model.Password);
+
+                if (result.Succeeded)
+                {
+                    // Redirect to the desired page after successful login
+                    return RedirectToAction("ShopPage", "ShopPage");
+                }
+
+                ModelState.AddModelError("", "Invalid username or password.");
+            }
+
+            return View(model);
         }
 
         [HttpPost]
@@ -45,7 +71,7 @@ namespace LocalDropshipping.Web.Controllers
                 }
 
                 ModelState.Clear();
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Account", "Login");
             }
 
             return View(model);
