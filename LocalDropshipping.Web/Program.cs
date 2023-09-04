@@ -41,6 +41,8 @@ builder.Services.AddScoped<IWishListService, WishListService>();
 builder.Services.AddScoped<IWithdrawlsService, WithdrawlsService>();
 builder.Services.AddScoped<ISubscriptionsService, SubscriptionsService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+
 
 var app = builder.Build();
 
