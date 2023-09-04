@@ -1,8 +1,175 @@
-﻿@{
-    Layout = "_LayoutSeller";
-}
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Fastkart">
+    <meta name="keywords" content="Fastkart">
+    <meta name="author" content="Fastkart">
+    <link rel="icon" href="~/assets/images/favicon/1.png" type="image/x-icon">
+    <title>Become Seller</title>
+
+    <!-- Google font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com/">
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&amp;display=swap"
+          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+          rel="stylesheet">
+
+    <!-- bootstrap css -->
+    <link id="rtl-link" rel="stylesheet" type="text/css" href="~/assets/css/vendors/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css" />
+    <link href="~/assets/css/vendors/style.css" rel="stylesheet" />
+    <!-- font-awesome css -->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/font-awesome.css">
+
+    <!-- feather icon css -->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/feather-icon.css">
+
+    <!-- slick css -->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/slick/slick.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/slick/slick-theme.css">
+
+    <!-- Iconly css -->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/bulk-style.css">
+
+    <!-- Template css -->
+    @*<link id="color-link" rel="stylesheet" type="text/css" href="~/assets/css/style.css">*@
+    <link href="~/assets/css/style.css" rel="stylesheet" type="text/css" />
+</head>
+
 <body>
 
+    <!-- Loader Start -->
+    <div class="fullpage-loader">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <!-- Loader End -->
+    <!-- Header Start -->
+    <header class="pb-md-4 pb-0">
+        <div class="header-top">
+            <div class="container-fluid-lg">
+                <div class="row">
+                    <div class="col-xxl-3 d-xxl-block d-none">
+                        <div class="top-left-header">
+                            <i class="iconly-Location icli text-white"></i>
+                            <span class="text-white">1418 Riverwood Drive, CA 96052, US</span>
+                        </div>
+                    </div>
+
+                    <div class="col-xxl-6 col-lg-9 d-lg-block d-none">
+                        <div class="header-offer">
+                            <div class="notification-slider">
+                                <div>
+                                    <div class="timer-notification">
+                                        <h6>
+                                            <strong class="me-1">Welcome to Fastkart!</strong>Wrap new offers/gift
+                                            every signle day on Weekends.<strong class="ms-1">
+                                                New Coupon Code: Fast024
+                                            </strong>
+
+                                        </h6>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="timer-notification">
+                                        <h6>
+                                            Something you love is now on sale!
+                                            <a href="shop-left-sidebar.html" class="text-white">
+                                                Buy Now
+                                                !
+                                            </a>
+                                        </h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3">
+                        <ul class="about-list right-nav-about">
+                            <li class="right-nav-list">
+                                <div class="dropdown theme-form-select">
+                                    <button class="btn dropdown-toggle" type="button" id="select-language"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                        <img src="~/assets/images/country/united-states.png"
+                                             class="img-fluid blur-up lazyload" alt="">
+                                        <span>English</span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="select-language">
+                                        <li>
+                                            <a class="dropdown-item" id="english">
+                                                <img src="~/assets/images/country/united-kingdom.png"
+                                                     class="img-fluid blur-up lazyload" alt="">
+                                                <span>English</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" id="france">
+                                                <img src="~/assets/images/country/germany.png"
+                                                     class="img-fluid blur-up lazyload" alt="">
+                                                <span>Germany</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" id="chinese">
+                                                <img src="~/assets/images/country/turkish.png"
+                                                     class="img-fluid blur-up lazyload" alt="">
+                                                <span>Turki</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="right-nav-list">
+                                <div class="dropdown theme-form-select">
+                                    <button class="btn dropdown-toggle" type="button" id="select-dollar"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span>USD</span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end sm-dropdown-menu"
+                                        aria-labelledby="select-dollar">
+                                        <li>
+                                            <a class="dropdown-item" id="aud">AUD</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" id="eur">EUR</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" id="cny">CNY</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="top-nav top-header sticky-header">
+            <div class="container-fluid-lg">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="navbar-top">
+                            <a href="index.html" class="web-logo nav-logo">
+                                <img src="~/assets/images/logo/1.png" class="img-fluid blur-up lazyload" alt="">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Header End -->
     <!-- About Section Start -->
     <section class="saller-poster-section">
         <div class="container-fluid-lg">
@@ -132,6 +299,284 @@
     </section>
     <!-- log in section end -->
 
+
+    <!-- Footer Section Start -->
+    <footer class="section-t-space">
+        <div class="container-fluid-lg">
+            <div class="service-section">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="service-contain">
+                            <div class="service-box">
+                                <div class="service-image">
+                                    <img src="https://themes.pixelstrap.com/fastkart/assets/svg/product.svg" class="blur-up lazyload" alt="">
+                                </div>
+
+                                <div class="service-detail">
+                                    <h5>Every Fresh Products</h5>
+                                </div>
+                            </div>
+
+                            <div class="service-box">
+                                <div class="service-image">
+                                    <img src="https://themes.pixelstrap.com/fastkart/assets/svg/delivery.svg" class="blur-up lazyload" alt="">
+                                </div>
+
+                                <div class="service-detail">
+                                    <h5>Free Delivery For Order Over $50</h5>
+                                </div>
+                            </div>
+
+                            <div class="service-box">
+                                <div class="service-image">
+                                    <img src="https://themes.pixelstrap.com/fastkart/assets/svg/discount.svg" class="blur-up lazyload" alt="">
+                                </div>
+
+                                <div class="service-detail">
+                                    <h5>Daily Mega Discounts</h5>
+                                </div>
+                            </div>
+
+                            <div class="service-box">
+                                <div class="service-image">
+                                    <img src="https://themes.pixelstrap.com/fastkart/assets/svg/market.svg" class="blur-up lazyload" alt="">
+                                </div>
+
+                                <div class="service-detail">
+                                    <h5>Best Price On The Market</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-footer section-b-space section-t-space">
+                <div class="row g-md-4 g-3">
+                    <div class="col-xl-3 col-lg-4 col-sm-6">
+                        <div class="footer-logo">
+                            <div class="theme-logo">
+                                <a>
+                                    <img src="~/assets/images/logo/1.png" class="blur-up lazyload" alt="">
+                                </a>
+                            </div>
+
+                            <div class="footer-logo-contain">
+                                <p>
+                                    We are a friendly bar serving a variety of cocktails, wines and beers. Our bar is a
+                                    perfect place for a couple.
+                                </p>
+
+                                <ul class="address">
+                                    <li>
+                                        <i data-feather="home"></i>
+                                        <a>1418 Riverwood Drive, CA 96052, US</a>
+                                    </li>
+                                    <li>
+                                        <i data-feather="mail"></i>
+                                        <a>support@fastkart.com</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                        <div class="footer-title">
+                            <h4>Categories</h4>
+                        </div>
+
+                        <div class="footer-contain">
+                            <ul>
+                                <li>
+                                    <a class="text-content">Vegetables & Fruit</a>
+                                </li>  
+                                <li>   
+                                    <a class="text-content">Beverages</a>
+                                </li>  
+                                <li>   
+                                    <a class="text-content">Meats & Seafood</a>
+                                </li>  
+                                <li>   
+                                    <a class="text-content">Frozen Foods</a>
+                                </li>  
+                                <li>   
+                                    <a class="text-content">Biscuits & Snacks</a>
+                                </li>  
+                                <li>   
+                                    <a class="text-content">Grocery & Staples</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-xl col-lg-2 col-sm-3">
+                        <div class="footer-title">
+                            <h4>Useful Links</h4>
+                        </div>
+
+                        <div class="footer-contain">
+                            <ul>
+                                <li>
+                                    <a href="index.html" class="text-content">Home</a>
+                                </li>
+                                <li>
+                                    <a href="shop-left-sidebar.html" class="text-content">Shop</a>
+                                </li>
+                                <li>
+                                    <a href="about-us.html" class="text-content">About Us</a>
+                                </li>
+                                <li>
+                                    <a href="blog-list.html" class="text-content">Blog</a>
+                                </li>
+                                <li>
+                                    <a href="contact-us.html" class="text-content">Contact Us</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-2 col-sm-3">
+                        <div class="footer-title">
+                            <h4>Help Center</h4>
+                        </div>
+
+                        <div class="footer-contain">
+                            <ul>
+                                <li>
+                                    <a href="order-success.html" class="text-content">Your Order</a>
+                                </li>
+                                <li>
+                                    <a href="user-dashboard.html" class="text-content">Your Account</a>
+                                </li>
+                                <li>
+                                    <a href="order-tracking.html" class="text-content">Track Order</a>
+                                </li>
+                                <li>
+                                    <a href="wishlist.html" class="text-content">Your Wishlist</a>
+                                </li>
+                                <li>
+                                    <a href="search.html" class="text-content">Search</a>
+                                </li>
+                                <li>
+                                    <a href="faq.html" class="text-content">FAQ</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-lg-4 col-sm-6">
+                        <div class="footer-title">
+                            <h4>Contact Us</h4>
+                        </div>
+
+                        <div class="footer-contact">
+                            <ul>
+                                <li>
+                                    <div class="footer-number">
+                                        <i data-feather="phone"></i>
+                                        <div class="contact-number">
+                                            <h6 class="text-content">Hotline 24/7 :</h6>
+                                            <h5>+91 888 104 2340</h5>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="footer-number">
+                                        <i data-feather="mail"></i>
+                                        <div class="contact-number">
+                                            <h6 class="text-content">Email Address :</h6>
+                                            <h5>focdropshipping@hotmail.com</h5>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-footer section-small-space">
+                <div class="reserve">
+                    <h6 class="text-content">©2022 FOCdropshipping All rights reserved</h6>
+                </div>
+
+                <div class="payment">
+                    <img src="~/assets/images/payment/1.png" class="blur-up lazyload" alt="">
+                </div>
+
+                <div class="social-link">
+                    <h6 class="text-content">Stay connected :</h6>
+                    <ul>
+                        <li>
+                            <a href="https://www.facebook.com/" target="_blank">
+                                <i class="fa-brands fa-facebook-f"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://twitter.com/" target="_blank">
+                                <i class="fa-brands fa-twitter"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.instagram.com/" target="_blank">
+                                <i class="fa-brands fa-instagram"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://in.pinterest.com/" target="_blank">
+                                <i class="fa-brands fa-pinterest-p"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Footer Section End -->
+
+    <!-- Bg overlay Start -->
+    <div class="bg-overlay"></div>
+    <!-- Bg overlay End -->
+
+    <!-- latest jquery-->
+    <script src="~/assets/js/jquery-3.6.0.min.js"></script>
+
+    <!-- jquery ui-->
+    <script src="~/assets/js/jquery-ui.min.js"></script>
+
+    <!-- Bootstrap js-->
+    <script src="~/assets/js/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/js/bootstrap/bootstrap-notify.min.js"></script>
+    <script src="~/assets/js/bootstrap/popper.min.js"></script>
+
+    <!-- feather icon js-->
+    <script src="~/assets/js/feather/feather.min.js"></script>
+    <script src="~/assets/js/feather/feather-icon.js"></script>
+
+    <!-- Lazyload Js -->
+    <script src="~/assets/js/lazysizes.min.js"></script>
+
+    <!-- Slick js-->
+    <script src="~/assets/js/slick/slick.js"></script>
+    <script src="~/assets/js/slick/slick-animation.min.js"></script>
+    <script src="~/assets/js/slick/custom_slick.js"></script>
+
+    <!-- Price Range Js -->
+    <script src="~/assets/js/ion.rangeSlider.min.js"></script>
+
+    <!-- Quantity js -->
+    <script src="~/assets/js/quantity-2.js"></script>
+
+    <!-- sidebar open js -->
+    <script src="~/assets/js/filter-sidebar.js"></script>
+
+    <!-- script js -->
+    <script src="~/assets/js/script.js"></script>
+
+    <!-- thme setting js -->
+    <script src="~/assets/js/theme-setting.js"></script>
+
 </body>
-
-
+</html>
