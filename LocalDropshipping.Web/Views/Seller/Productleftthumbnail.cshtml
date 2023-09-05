@@ -198,8 +198,8 @@
                                                 </div>
 
                                                 <div class="button-group">
-                                                    <a asp-controller="Home" asp-action="Cart" class="btn btn-sm cart-button">View Cart</a>
-                                                    <a asp-controller="Home" asp-action="Checkout" class="btn btn-sm cart-button theme-bg-color
+                                                    <a asp-controller="Seller" asp-action="Cart" class="btn btn-sm cart-button">View Cart</a>
+                                                    <a asp-controller="Seller" asp-action="Checkout" class="btn btn-sm cart-button theme-bg-color
                                                     text-white">Checkout</a>
                                                 </div>
                                             </div>
@@ -253,7 +253,7 @@
                         <nav>
                             <ol class="breadcrumb mb-0">
                                 <li class="breadcrumb-item">
-                                    <a asp-controller="Home" asp-action="Index">
+                                    <a asp-controller="Seller" asp-action="Cart">
                                         <i class="fa-solid fa-house"></i>
                                     </a>
                                 </li>
@@ -499,7 +499,7 @@
 
                                     <button onclick="location.href = 'cart.html';" 
                                             class="btn btn-md bg-dark cart-button text-white w-100">
-                                        <a asp-controller="Home" asp-action="Cart" style="color:white"> Add To Cart </a>
+                                        <a asp-controller="Seller" asp-action="Cart" style="color:white"> Add To Cart </a>
                                         
                                     </button>
                                 </div>
@@ -1969,23 +1969,23 @@
                         <div class="footer-contain">
                             <ul>
                                 <li>
-                                    <a asp-controller="Home" asp-action="AboutUs" class="text-content">About us</a>
+                                    <a asp-controller="Public" asp-action="AboutUs" class="text-content">About us</a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Home" asp-action="ContactUs" class="text-content">Contact Us</a>
+                                    <a asp-controller="Public" asp-action="ContactUs" class="text-content">Contact Us</a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Home" asp-action="TermAndCondition" class="text-content">Terms and Conditions</a>
+                                    <a asp-controller="Public" asp-action="TermAndCondition" class="text-content">Terms and Conditions</a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Home" asp-action="PrivacyPolicy" class="text-content">Privary Policy</a>
+                                    <a asp-controller="Public" asp-action="PrivacyPolicy" class="text-content">Privary Policy</a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Home" asp-action="Faq" class="text-content">FAQ</a>
+                                    <a asp-controller="Public" asp-action="Faq" class="text-content">FAQ</a>
                                 </li>
                             </ul>
                         </div>
@@ -2470,7 +2470,7 @@
                             <a class="btn theme-bg-color text-white wishlist-btn" href="wishlist.html">
                                 <i class="fa fa-bookmark"></i> Wishlist
                             </a>
-                            <a class="btn theme-bg-color text-white" asp-controller="Home" asp-action="Productleftthumbnail">
+                            <a class="btn theme-bg-color text-white" asp-controller="Seller" asp-action="Productleftthumbnail">
                                 <i class="fas fa-shopping-cart"></i> Add To Cart
                             </a>
                         </div>
