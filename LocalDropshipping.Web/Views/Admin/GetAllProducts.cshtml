@@ -1,0 +1,124 @@
+﻿@using LocalDropshipping.Web.Data.Entities;
+@model List<Product>;
+@{
+    ViewData["Title"] = "Product Listing";
+}
+@*Font Awesome *@
+<link href="~/assets/css/vendors/font-awesome.css" rel="stylesheet" />
+<link href="~/assets/css/linearicon.css" rel="stylesheet" />
+<link href="~/assets/css/vendors/themify.css" rel="stylesheet" />
+<link href="~/assets/css/vendors/feather-icon.css" rel="stylesheet" />
+<link href="~/assets/css/remixicon.css" rel="stylesheet" />
+<link href="~/assets/css/datatables.css" rel="stylesheet" />
+@*Plugins css*@
+<link href="~/assets/css/vendors/scrollbar.css" rel="stylesheet" />
+<link href="~/assets/css/vendors/animate.css" rel="stylesheet" />
+@*Bootstrap*@
+<link href="~/assets/css/vendors/bootstrap.css" rel="stylesheet" />
+@*App Css*@
+<link href="~/assets/css/style.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      rel="stylesheet">
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card card-table">
+                    <div class="card-body">
+                        <div class="title-header option-title d-sm-flex d-block">
+                            <h5>Products List</h5>
+                            <div class="right-options">
+                                <ul>
+                                    <li>
+                                        @*<a href="javascript:void(0)">import</a>*@
+                                    </li>
+                                    <li>
+                                        @*<a href="javascript:void(0)">Export</a>*@
+                                    </li>
+                                    <li>
+
+                                        <a class="btn btn-solid" href="Post">Add Product</a>
+                                    </li>
+                                    @*<a href="h:\tetrasol\projects\localdropshipping\localdropshipping\localdropshipping.web\views\product\post.cshtml">h:\tetrasol\projects\localdropshipping\localdropshipping\localdropshipping.web\views\product\post.cshtml</a>*@
+                                </ul>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="table-responsive">
+                                <table class="table all-package theme-table table-product" id="table_id">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <th>Price</th>
+                                            <th>ImageLink</th>
+                                            <th>Stock</th>
+                                            <th>IsFeatured</th>
+                                            <th>CategoryId</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        @foreach (var product in Model)
+                                        {
+                                            <tr>
+                                                <td>@product.Name</td>
+                                                <td>>@product.Description</td>
+                                                <td>@product.Price/- Rs</td>
+                                                <td>@product.ImageLink</td>
+                                                <td>@product.Stock</td>
+                                                <td>@product.IsFeatured</td>
+                                                <td>@product.Category!.Name</td>
+
+                                                <td class="status-danger">
+                                                    <span>Pending</span>
+                                                </td>
+
+                                                <td>
+                                                    <ul>
+                                                        <li>
+                                                            <a href="order-detail.html">
+                                                                <i class="ri-eye-line"></i>
+                                                            </a>
+                                                        </li>
+
+                                                        <li>
+                                                            <a href="javascript:void(0)">
+                                                                <i class="ri-pencil-line"></i>
+                                                            </a>
+                                                        </li>
+
+                                                        <li>
+                                                            <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                               data-bs-target="#exampleModalToggle">
+                                                                <i class="ri-delete-bin-line"></i>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+
+    <div class="container-fluid">
+        <!-- footer start-->
+        <footer class="footer">
+            <div class="row">
+                <div class="col-md-12 footer-copyright text-center">
+                    <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
