@@ -30,9 +30,9 @@ namespace LocalDropshipping.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await service.LoginUser(model.Email, model.Password);
+                var isLoggedin = await service.LoginAsync(model.Email, model.Password);
 
-                if (result.Succeeded)
+                if (isLoggedin)
                 {
                     // Redirect to the desired page after successful login
                     return RedirectToAction("ShopPage", "ShopPage");
@@ -49,22 +49,10 @@ namespace LocalDropshipping.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = new User()
+                var isSucceeded = await service.RegisterAsync(model.Email, model.Password, string.Join(" ", model.FirstName, model.LastName));
+                if (!isSucceeded)
                 {
-                    Fullname = string.Join(" ", model.FirstName, model.LastName),
-                    Email = model.Email,
-                    UserName = model.Email,
-                    IsSeller = true,
-                };
-
-                var result = await service.RegisterUser(user, model.Password);
-                if (!result.Succeeded)
-                {
-                    foreach (var errorMessage in result.Errors)
-                    {
-                        ModelState.AddModelError("", errorMessage.Description);
-                    }
-
+                    ModelState.AddModelError("", "Unknow error occured");
                     return View(model);
                 }
 
