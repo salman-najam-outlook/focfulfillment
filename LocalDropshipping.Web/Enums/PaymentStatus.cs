@@ -2,7 +2,8 @@
 {
     public enum PaymentStatus
     {
-        Pending,
-        Prosessed
+        Paid,
+        UnPaid
     }
+
 }

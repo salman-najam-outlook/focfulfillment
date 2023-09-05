@@ -32,7 +32,7 @@ namespace LocalDropshipping.Web.Services
             {
                 withdrawal.TransactionId = processDto.TransactionId;
                 withdrawal.ProcessedBy = processDto.ProcessedBy;
-                withdrawal.paymentStatus = PaymentStatus.Prosessed;
+                withdrawal.paymentStatus = PaymentStatus.UnPaid;
                 withdrawal.UpdatedDate = DateTime.Now;
 
                 context.SaveChanges();
@@ -49,7 +49,7 @@ namespace LocalDropshipping.Web.Services
                     AmountInPkr = withdrawal.AmountInPkr,
                     AccountTitle = withdrawal.AccountTitle,
                     AccountNumber = withdrawal.AccountNumber,
-                    paymentStatus = withdrawal.paymentStatus = PaymentStatus.Pending,
+                    paymentStatus = withdrawal.paymentStatus = PaymentStatus.Paid,
 
                     CreatedDate = DateTime.Now,
                     CreatedBy = 1,

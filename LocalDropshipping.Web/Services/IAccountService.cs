@@ -1,15 +1,13 @@
-﻿using LocalDropshipping.Web.Data.Entities;
-using Microsoft.AspNetCore.Identity;
+﻿using LocalDropshipping.Web.Enums;
 
 namespace LocalDropshipping.Web.Services
 {
     public interface IAccountService
     {
-        Task<IdentityResult> RegisterUser(User user, string password);
-        Task<SignInResult> LoginUser(string email, string password);
-
-
-
-
-	}
+        Task<bool> ConfirmEmailAsync(string userId, string base64Token);
+        Task<bool> IsEmailExist(string email);
+        Task<bool> IsInRole(string email, Roles role);
+        Task<bool> LoginAsync(string email, string password);
+        Task<bool> RegisterAsync(string email, string password, string? fullname = "", string? username = "");
+    }
 }

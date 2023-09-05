@@ -18,20 +18,18 @@ builder.Services.AddDbContext<LocalDropshippingContext>(options =>
 });
 
 // Identity
-builder.Services.AddIdentity<User, IdentityRole>()
-    .AddEntityFrameworkStores<LocalDropshippingContext>();
+builder.Services.AddIdentityCore<User>()
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<LocalDropshippingContext>()
+    .AddSignInManager()
+    .AddDefaultTokenProviders();
 
-builder.Services.Configure<IdentityOptions>(options =>
+builder.Services.AddAuthentication(o =>
 {
-    options.Password.RequiredLength = 5;
-    options.Password.RequiredUniqueChars = 0;
-    options.Password.RequireDigit = false;
-    options.Password.RequireLowercase = false;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
-
-    options.SignIn.RequireConfirmedEmail = false;
-});
+    o.DefaultScheme = IdentityConstants.ApplicationScheme;
+    o.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+})
+.AddIdentityCookies(o => { });
 
 // Swagger 
 builder.Services.AddSwaggerGen(c =>
@@ -78,6 +76,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Register}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
