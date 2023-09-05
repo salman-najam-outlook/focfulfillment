@@ -1,8 +1,11 @@
-﻿using LocalDropshipping.Web.Data.Entities;
+﻿
+using LocalDropshipping.Web.Data.Entities;
+using LocalDropshipping.Web.Dtos;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace LocalDropshipping.Web.Controllers
 {
@@ -10,10 +13,12 @@ namespace LocalDropshipping.Web.Controllers
 	{
 
 		private readonly IAdminService service;
+        private readonly IProductsService productsService;
 
-		public AdminController(IAdminService service)
+        public AdminController(IAdminService service, IProductsService productsService)
 		{
 			this.service = service;
+		    this.productsService = productsService;
 		}
 
 
@@ -99,13 +104,84 @@ namespace LocalDropshipping.Web.Controllers
 		}
 
 
-		public ActionResult us7yhs6tdgv()
+		//public ActionResult us7yhs6tdgv()
+		//{
+		//	return View();
+		//}
+		
+
+
+        [HttpGet]
+        public IActionResult Dashboard()
 		{
-			return View();
-		}
-		public ActionResult Index()
+            return View();
+        }
+
+		[HttpGet]
+		public IActionResult ProductsLists()
 		{
+			var data = this.productsService.GetAll();
+            return View(data);
+        }
+
+        [HttpGet]
+        public IActionResult GetById(int id)
+        {
+            return View(this.productsService.GetById(id));
+        }
+
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public IActionResult Create(Product product)
+        {
+            if (ModelState.IsValid)
+            {
+                this.productsService.Add(product);
+                return RedirectToAction("Dashboard");
+
+            }
 			return View();
-		}
-	}
+        }
+
+    public IActionResult Edit(int id)
+    {
+        var product = this.productsService.GetById(id);
+        if (product == null)
+        {
+            return NotFound();
+        }
+        return View(product);
+    }
+
+
+    [HttpPost]
+    public IActionResult Edit(int id, ProductDto product)
+    {
+    
+        if (ModelState.IsValid)
+        {
+		    this.productsService.Update(id,product);
+            return RedirectToAction("Dashboard");
+        }
+        return View(product);
+    }
+
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+			var product = this.productsService.Delete(id);
+            return RedirectToAction("Dashboard");
+        }
+    }
+
+
+
 }
+
