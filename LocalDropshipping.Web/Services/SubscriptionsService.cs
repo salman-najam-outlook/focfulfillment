@@ -1,11 +1,11 @@
 ﻿using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
-using LocalDropshipping.Web.Enum;
+using LocalDropshipping.Web.Enums;
 
 namespace LocalDropshipping.Web.Services
 {
-	public class SubscriptionsService : ISubscriptionsService
+    public class SubscriptionsService : ISubscriptionsService
 	{
 		private readonly LocalDropshippingContext context;
 

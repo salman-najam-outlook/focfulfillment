@@ -1,8 +1,8 @@
-﻿using LocalDropshipping.Web.Enum;
+﻿using LocalDropshipping.Web.Enums;
 
 namespace LocalDropshipping.Web.Data.Entities
 {
-	public class Subscription
+    public class Subscription
 	{
 		public int SubscriptionId { get; set; }
 		public int UserId { get; set; }
