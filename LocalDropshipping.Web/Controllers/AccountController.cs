@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Models;
@@ -9,12 +9,31 @@ namespace LocalDropshipping.Web.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IAccountService service;
 
-        public AccountController(IAccountService service)
+
+        private readonly IAccountService service;
+		private readonly IEmailService emailService;
+
+		public AccountController(IAccountService service, IEmailService emailService)
         {
             this.service = service;
-        }
+			this.emailService = emailService;
+		}
+
+        public async Task<ViewResult> Index() 
+        {
+            UserEmailOptions options = new UserEmailOptions
+            {
+                ToEmail = "usamahaseeb777@gmail.com",
+                Placeholders = new List<KeyValuePair<string,string> >() 
+                {
+                    new KeyValuePair<string,string>("{{UserName}}","Usama")
+                }
+            };
+            await emailService.SendTestEmail(options);
+			return View();
+
+		}
 
         public IActionResult Register()
         {
