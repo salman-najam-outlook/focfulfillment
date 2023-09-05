@@ -52,6 +52,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.Configure<SMTPConfigModel>(builder.Configuration.GetSection("SMTPConfig"));
 
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 var app = builder.Build();
 
