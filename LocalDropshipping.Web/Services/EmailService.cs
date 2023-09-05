@@ -13,7 +13,7 @@ namespace LocalDropshipping.Web.Services
 {
 	public class EmailService : IEmailService
 	{
-		private const string templatepath = @"EmailTemplate/{0}.html";
+		private const string _templateBasePath = @"EmailTemplate/{0}.html";
 		private readonly SMTPConfigModel _smtpconfig;
 
 		public EmailService(IOptions<SMTPConfigModel> smtpconfig)
@@ -21,42 +21,37 @@ namespace LocalDropshipping.Web.Services
 			_smtpconfig = smtpconfig.Value;
 		}
 
-		public async Task SendTestEmail(UserEmailOptions userEmailOptions)
+		public async Task SendEmail(EmailMessage userEmailOptions)
 		{
-			userEmailOptions.Subject = UpdatePlaceHolders( "Hello {{UserName}},This is test email",userEmailOptions.Placeholders);
-			userEmailOptions.TemplatePath = UpdatePlaceHolders( GetTemplate("TestEmail"),userEmailOptions.Placeholders);
-			await SendEmail(userEmailOptions);
-		}
+			var mailMessage = new MimeMessage();
+			mailMessage.From.Add(MailboxAddress.Parse(_smtpconfig.From));
+			
+			mailMessage.To.Add(MailboxAddress.Parse(userEmailOptions.ToEmail));
+			mailMessage.Subject =  userEmailOptions.Subject;
 
-		public async Task SendEmail(UserEmailOptions userEmailOptions)
-		{
-			var email = new MimeMessage();
-			email.From.Add(MailboxAddress.Parse(_smtpconfig.From));
-			email.To.Add(MailboxAddress.Parse(userEmailOptions.ToEmail));
-			email.Subject = userEmailOptions.Subject;
+			var template = GetTemplate(userEmailOptions.TemplatePath);
+			mailMessage.Body = new TextPart(TextFormat.Html) { Text = UpdatePlaceHolders(template, userEmailOptions.Placeholders) };
 
-
-			email.Body = new TextPart(TextFormat.Html) { Text = userEmailOptions.TemplatePath };
 
 			using var smtp = new SmtpClient();
 			smtp.Connect(_smtpconfig.SmtpServer, _smtpconfig.Port, SecureSocketOptions.StartTls);
 			
 			smtp.Authenticate(_smtpconfig.From, _smtpconfig.Password);
-			await smtp.SendAsync(email)
+			await smtp.SendAsync(mailMessage)
 ;
 			smtp.Disconnect(true);
 		}
-		// GetTemplate
 
+		// GetTemplate
 		private string GetTemplate(string templateName)
 		
 		{
-			var template = File.ReadAllText(string.Format(templatepath, templateName));
+			var template = File.ReadAllText(string.Format(_templateBasePath, templateName));
 			return template;
 		}
-		// UpdatePlaceHolder
 
-		private string UpdatePlaceHolders(string template ,List<KeyValuePair<String,String>> keyValuePairs)
+		// UpdatePlaceHolder
+		private string UpdatePlaceHolders(string template, List<KeyValuePair<String,String>> keyValuePairs)
 		{
 			if (!string.IsNullOrEmpty(template) && keyValuePairs != null)
 			{

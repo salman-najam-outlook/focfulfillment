@@ -22,7 +22,7 @@ namespace LocalDropshipping.Web.Controllers
 
         public async Task<ViewResult> Index() 
         {
-            UserEmailOptions options = new UserEmailOptions
+            EmailMessage options = new EmailMessage
             {
                 ToEmail = "usamahaseeb777@gmail.com",
                 Placeholders = new List<KeyValuePair<string,string> >() 
@@ -30,7 +30,7 @@ namespace LocalDropshipping.Web.Controllers
                     new KeyValuePair<string,string>("{{UserName}}","Usama")
                 }
             };
-            await emailService.SendTestEmail(options);
+            await emailService.SendEmail(options);
 			return View();
 
 		}

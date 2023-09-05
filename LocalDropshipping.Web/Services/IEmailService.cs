@@ -4,6 +4,6 @@ namespace LocalDropshipping.Web.Services
 {
 	public interface IEmailService
 	{
-		Task SendTestEmail(UserEmailOptions userEmailOptions);
+		Task SendEmail(EmailMessage userEmailOptions);
 	}
 }
