@@ -195,8 +195,8 @@
                                                 </div>
 
                                                 <div class="button-group">
-                                                    <a asp-controller="Home" asp-action="Cart" class="btn btn-sm cart-button">View Cart</a>
-                                                    <a asp-controller="Home" asp-action="Checkout" class="btn btn-sm cart-button theme-bg-color
+                                                    <a asp-controller="Seller" asp-action="Cart" class="btn btn-sm cart-button">View Cart</a>
+                                                    <a asp-controller="Seller" asp-action="Checkout" class="btn btn-sm cart-button theme-bg-color
                                                     text-white">Checkout</a>
                                                 </div>
                                             </div>
@@ -249,7 +249,7 @@
                         <nav>
                             <ol class="breadcrumb mb-0">
                                 <li class="breadcrumb-item">
-                                    <a asp-controller="Home" asp-action="Index">
+                                    <a asp-controller="Seller" asp-action="Cart">
                                         <i class="fa-solid fa-house"></i>
                                     </a>
                                 </li>
@@ -622,14 +622,14 @@
                                 <li>
                                     <button onclick="location.href = 'checkout.html';"
                                             class="btn btn-animation proceed-btn fw-bold">
-                                        <a asp-controller="Home" asp-action="Checkout" style="color:white">Process To Checkout</a>
+                                        <a asp-controller="Seller" asp-action="Checkout" style="color:white">Process To Checkout</a>
                                     </button>
                                 </li>
 
                                 <li>
-                                    <button onclick="location.href = 'index.html';"
+                                    <button onclick="location.href = 'shop.html';"
                                             class="btn btn-light shopping-button text-dark">
-                                        <i class="fa-solid fa-arrow-left-long"></i>Return To Shopping
+                                        <i class="fa-solid fa-arrow-left-long"></i><a asp-controller="Seller" asp-action="Shop">Return To Shopping</a>
                                     </button>
                                 </li>
                             </ul>
@@ -685,23 +685,23 @@
                         <div class="footer-contain">
                             <ul>
                                 <li>
-                                    <a asp-controller="Home" asp-action="AboutUs" class="text-content">About us</a>
+                                    <a asp-controller="Public" asp-action="AboutUs" class="text-content">About us</a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Home" asp-action="ContactUs" class="text-content">Contact Us</a>
+                                    <a asp-controller="Public" asp-action="ContactUs" class="text-content">Contact Us</a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Home" asp-action="TermAndCondition" class="text-content">Terms and Conditions</a>
+                                    <a asp-controller="Public" asp-action="TermAndCondition" class="text-content">Terms and Conditions</a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Home" asp-action="PrivacyPolicy" class="text-content">Privary Policy</a>
+                                    <a asp-controller="Public" asp-action="PrivacyPolicy" class="text-content">Privary Policy</a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Home" asp-action="Faq" class="text-content">FAQ</a>
+                                    <a asp-controller="Public" asp-action="Faq" class="text-content">FAQ</a>
                                 </li>
                             </ul>
                         </div>
