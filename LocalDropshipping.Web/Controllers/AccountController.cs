@@ -37,7 +37,7 @@ namespace LocalDropshipping.Web.Controllers
                 if (isLoggedIn)
                 {
                     // Redirect to the desired page after successful login
-                    return RedirectToAction("ShopPage", "ShopPage");
+                    return RedirectToAction("Shop", "Shop");
                 }
 
                 ModelState.AddModelError("", "Invalid username or password.");
