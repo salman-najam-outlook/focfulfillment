@@ -1,0 +1,99 @@
+﻿@using LocalDropshipping.Web.Data.Entities;
+@model List<Product>;
+@{
+    Layout = "_LayoutDashboard";
+}
+
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card card-table">
+                    <div class="card-body">
+                        <div class="title-header option-title d-sm-flex d-block">
+                            <h5>Products List</h5>
+                            <div class="right-options">
+                                <ul>
+                                    <li>
+                                        <a href="javascript:void(0)">import</a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)">Export</a>
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-solid" asp-controller="Admin" asp-action="AddProduct">Add Product</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="table-responsive">
+                                <div id="table_id_wrapper" class="dataTables_wrapper no-footer">
+                                    <div id="table_id_filter" class="dataTables_filter"><label>Search:<input type="search" class="" placeholder="" aria-controls="table_id"></label></div><table class="table all-package theme-table table-product dataTable no-footer" id="table_id">
+                                        <thead>
+                                            <tr>
+                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Product Image</th>
+                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Product Name</th>
+                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Category</th>
+                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Current Qty</th>
+                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Price</th>
+                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Action</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+
+                                            @foreach (var product in Model)
+                                            {
+                                                <tr>
+                                                    <td>@product.ImageContent</td>
+                                                    <td>@product.Name</td>
+                                                    <td>@product.Category!.Name</td>
+                                                    <td>@product.Quantity</td>
+                                                    <td>@product.Price</td>
+                                             
+                                                    <td>
+                                                        <ul>
+                                                            <li>
+                                                                <a asp-controller="Admin" asp-action="Edit" asp-route-id="@product.ProductId">
+                                                                    <i class="ri-pencil-line"></i> 
+                                                                </a>
+                                                            </li>
+
+
+
+                                                            <li>
+                                                                @*    <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                            data-bs-target="#exampleModalToggle">
+                                                            <i class="ri-delete-bin-line"></i>
+                                                            </a>*@
+
+                                                              @*  <a asp-controller="Admin" asp-action="Deleted" asp-route-id="@product.ProductId">
+                                                                    <i class="ri-delete-bin-line"></i>
+                                                                </a>*@
+                                                               
+                                                                <form method="post" asp-controller="Admin" asp-action="Deleted" asp-route-id="@product.ProductId">
+                                                                    <button type="submit" class="btn btn-link">
+                                                                        <i class="ri-delete-bin-line"></i>
+                                                                    </button>
+                                                                </form>
+
+
+                                                            
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
