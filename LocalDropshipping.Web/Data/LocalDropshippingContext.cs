@@ -18,5 +18,6 @@ namespace LocalDropshipping.Web.Data
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Image> Images { get; set; }
+        public DbSet<Profiles> Profiles { get; set; }
     }
 }
