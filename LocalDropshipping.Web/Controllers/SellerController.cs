@@ -39,7 +39,7 @@ namespace LocalDropshipping.Web.Controllers
         {
             return View();
         }
-        public IActionResult UserPasswordMassege()
+        public IActionResult UserPasswordMessage()
         {
             return View();
         }
@@ -148,7 +148,7 @@ namespace LocalDropshipping.Web.Controllers
             {
                 TempData["RegistrationConfirmation"] = "Registration was successful. You can now log in.";
 
-                return RedirectToAction("UserPasswordMassege");
+                return RedirectToAction("UserPasswordMessage");
             }
             else
             {
