@@ -1,11 +1,11 @@
-﻿using System.Text;
-using LocalDropshipping.Web.Data.Entities;
+﻿using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using System.Text;
 
 namespace LocalDropshipping.Web.Controllers
 {
@@ -15,29 +15,32 @@ namespace LocalDropshipping.Web.Controllers
         private readonly UserManager<User> _userManager;
         private readonly IAccountService accountService;
 
-        public SellerController(IAccountService service, UserManager<User> userManager,IAccountService accountService)
+        public SellerController(IAccountService service, UserManager<User> userManager, IAccountService accountService)
         {
             this.service = service;
             _userManager = userManager;
             this.accountService = accountService;
         }
+
+
+
         #region Seller Register and Login
+
         public IActionResult Register()
-        
-        
-        
         {
             return View();
         }
-        //Seller Account login
+
         public IActionResult Login()
         {
             return View();
         }
+
         public IActionResult Index1()
         {
             return View();
         }
+
         public IActionResult Index2()
         {
             return View();
@@ -45,47 +48,67 @@ namespace LocalDropshipping.Web.Controllers
 
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var isLoggedin = await service.LoginAsync(model.Email, model.Password);
-
-                if (isLoggedin)
+                if (ModelState.IsValid)
                 {
-                    // Redirect to the desired page after successful login
-                    return RedirectToAction("ShopPage", "ShopPage");
+                    var user = await service.LoginAsync(model.Email, model.Password);
+                    if (!user.IsProfileCompleted)
+                    {
+                        return RedirectToAction("ProfileVerification", "Seller");
+                    }
+                    else if (!user.IsSubscribed)
+                    {
+                        return RedirectToAction("Subscribe", "Seller");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Shop", "Seller");
+                    }
                 }
-
-                ModelState.AddModelError("", "Invalid username or password.");
             }
-
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("Login Failed", ex.Message);
+            }
             return View(model);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Register(SignupViewModel model)
         {
-	
-			if (ModelState.IsValid)
-			{
-				var isSucceeded = await service.RegisterAsync(model.Email, model.Password, string.Join(" ", model.FirstName, model.LastName));
-				if (isSucceeded)
-				{
-					TempData["RegistrationConfirmation"] = "Registration was successful. You can now log in.";
-					return RedirectToAction("Index1");
-				}
-				else
-				{
-					ModelState.AddModelError("", "Unknown error occurred");
-				}
-			}
 
-			return View(model);
+            if (ModelState.IsValid)
+            {
+                User user = new User
+                {
+                    Email = model.Email,
+                    UserName = model.Email,
+                    Fullname = string.Join(" ", model.FirstName, model.LastName),
+                    IsSeller = true
+                };
+
+                var result = await service.RegisterAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    TempData["RegistrationConfirmation"] = "Registration was successful. You can now log in.";
+                    return RedirectToAction("Index1");
+                }
+                else
+                {
+                    // TODO: Error messages of identity must not be shown to any user
+                    // Currently doing because its a development dependency
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("CustomErrorMessage", string.Join(": ", error.Code, error.Description));
+                    }
+                }
+            }
+            return View(model);
         }
-
-
 
 
         [HttpGet]
@@ -129,6 +152,7 @@ namespace LocalDropshipping.Web.Controllers
         #endregion
 
         #region Shop
+        [Authorize]
         public IActionResult Shop()
         {
             return View();
