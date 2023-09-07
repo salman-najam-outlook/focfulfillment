@@ -20,7 +20,7 @@ namespace LocalDropshipping.Web.Services
 
             context.Users.Add(user);
 
-            context.SaveChanges();
+            //  context.SaveChanges();
             return user;
         }
 
@@ -42,9 +42,29 @@ namespace LocalDropshipping.Web.Services
             }
             return null;
         }
+
+        public User DisableUser(string userId)
+        {
+            try
+            {
+                var user = context.Users.Find(userId);
+                if (user != null)
+                {
+                    user.IsActive = false;
+
+                    context.SaveChanges();
+                    return user;
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return null;
+        }
+
         public List<User> GetAllStaffMember()
         {
-            return context.Users.Where(x => x.IsActive == true && x.IsDeleted == false && x.IsAdmin == true).ToList();
+            return context.Users.Where(x => x.IsAdmin == true && x.IsDeleted == false).ToList();
         }
         public List<User> GetAll()
         {

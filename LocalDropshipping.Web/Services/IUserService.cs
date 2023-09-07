@@ -13,6 +13,7 @@ namespace LocalDropshipping.Web.Services
         User? GetById(string userId);
 
         User? Delete(string userId);
+        User? DisableUser(string userId);
         User? Update(string userId, UserDto userDto);
     }
 }

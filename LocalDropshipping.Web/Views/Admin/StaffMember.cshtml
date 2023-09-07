@@ -4,15 +4,16 @@
 @using LocalDropshipping.Web.Data.Entities;
 @model List<User>;
 @{
-    Layout = "_LayoutDashboard";
+   Layout = "_LayoutDashboard";
 }
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-12">
             <div class="card card-table">
                 <div class="card-body">
                     <div class="title-header option-title">
-                        <h5>All Users</h5>
+                        <h5>All Staff Members</h5>
                         <form class="d-inline-flex">
                             <a href="AddNewUser" class="align-items-center btn btn-theme d-flex">
                                 <i data-feather="plus"></i>Add New
@@ -42,6 +43,11 @@
                                         <form asp-controller="Admin" asp-action="DeleteUser" method="post">
                                             <input type="hidden" name="userId" value="@user.Id" />
                                             <ul>
+                                                <li>
+                                                    <button type="submit" asp-action="DisableUser" asp-controller="Admin">
+                                                        Disable Account
+                                                    </button>
+                                                </li>
                                                 <li>
                                                     <button type="submit">
                                                         <i class="ri-delete-bin-line"></i>

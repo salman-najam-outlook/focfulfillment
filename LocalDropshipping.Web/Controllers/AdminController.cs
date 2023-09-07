@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 
 namespace LocalDropshipping.Web.Controllers
@@ -38,36 +39,6 @@ namespace LocalDropshipping.Web.Controllers
         {
             return View();
         }
-        //[HttpPost]
-        //public async Task<IActionResult> AdminLogin(AdminLoginViewModel model)
-        //{
-        //	if (ModelState.IsValid)
-        //	{
-        //		var result = await service.AdminLoginUser(model.Email, model.Password);
-
-        //		if (result.Succeeded)
-        //		{
-        //			// Check if the user is an admin
-        //			var isAdmin = await service.IsUserAdminAsync(model.Email);
-
-        //			if (isAdmin)
-        //			{
-        //				// Redirect to the admin dashboard if the user is an admin
-        //				return RedirectToAction("us7yhs6tdgv", "Admin");
-        //			}
-        //			else
-        //			{
-        //				// Handle non-admin user here, e.g., redirect to a different page
-        //				ModelState.AddModelError("", "OOPs. its seem like you're not an admin");
-        //				//	return RedirectToAction("NonAdminPage");
-        //			}
-        //		}
-
-        //		ModelState.AddModelError("", "Invalid username or password.");
-        //	}
-
-        //	return View(model);
-        //}
 
         [HttpPost]
         public async Task<IActionResult> AdminLogin(AdminLoginViewModel model)
@@ -134,76 +105,97 @@ namespace LocalDropshipping.Web.Controllers
         [HttpPost]
         public IActionResult DeleteUser(string userId)
         {
-            //userService.Delete(userId);
+            userService.Delete(userId);
             return View("GetAllSellers", userService.GetAll());
         }
 
         [HttpPost]
-        //TODO: need to fix it @Zubair Bhai
-       // [Authorize(Roles = "SuperAdmin,Admin")]
-        public async Task<IActionResult> AddNewUser(UserViewModel userViewModel)
+        public IActionResult DisableUser(string userId)
         {
-            //var admin = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
-
-            //var isSuperAdmin = true;// User.IsInRole("SuperAdmin");
-            var isAdmin = true;//User.IsInRole("Admin");
-           
-            var isSeller = userViewModel.IsSeller = true;
-
-            var isStaffMember = userViewModel.IsAdmin =true;
-
-            var roles = new List<string>();
-
-            if (isSeller)
+            if (!string.IsNullOrEmpty(userId))
             {
-                roles.Add("Seller");
+                userService.DisableUser(userId);
             }
 
-            if (isStaffMember)
-            {
-                roles.Add("StaffMember");
-            }
+            var sellers = userService.GetAll();
 
-            var newUser = new User
-            {
-                Fullname =  "Toheed Ahmed Naveed",
-                UserName = userViewModel.UserName,
-                Email = userViewModel.Email,
-                PhoneNumber = userViewModel.PhoneNumber,
-                IsAdmin=userViewModel.IsAdmin,
-                IsSeller=userViewModel.IsSeller
-            };
-
-            var result = await _userManager.CreateAsync(newUser, userViewModel.Password);
-
-            if (result.Succeeded)
-            {
-                await _userManager.AddToRolesAsync(newUser, roles);
-
-                // Redirect or return a success view
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-
-                return View(userViewModel);
-            }
+            return View("StaffMember", sellers);
         }
-
-
 
         public IActionResult AddNewUser()
         {
             return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> AddNewUser(UserViewModel model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    // Check Line 137 To 144 : In this line i am getting FullName Using Email & UserName 
+                    string[] emailParts = model.Email.Split('@');
+                    string emailUsername = emailParts.Length > 0 ? emailParts[0] : string.Empty;
+
+                    string[] usernameWords = model.UserName.Split(' ');
+                    emailUsername = string.Join(" ", emailUsername.Split(' ').Except(usernameWords));
+
+                    emailUsername = emailUsername.Trim();
+
+                    var user = new User
+                    {
+                        Fullname = emailUsername,
+                        //Fullname = "Zeeshan",
+                        UserName = model.UserName,
+                        Email = model.Email,
+                        PhoneNumber = model.PhoneNumber,
+                        IsAdmin = model.IsAdmin,
+                        IsSeller = model.IsSeller,
+
+                        IsActive = true
+                        //DeletedBy = User.Identity.Name 
+                    };
+
+                    var result = await _userManager.CreateAsync(user, model.Password);
+
+                    if (result.Succeeded)
+                    {
+                        userService.Add(user);
+                       
+                        return RedirectToAction("StaffMember", "Admin");
+                    }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                    }
+                }
+               
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                return View();               
+            }
+           
+        }
+
         public IActionResult GetAllSellers()
         {
-            return View(userService.GetAll());
+            try
+            {
+                return View(userService.GetAll());
+            }
+            catch (Exception ex)
+            {
+
+                return View();
+            }
+           
         }
 
 
