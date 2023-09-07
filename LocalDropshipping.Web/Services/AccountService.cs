@@ -105,7 +105,67 @@ namespace LocalDropshipping.Web.Services
 
         // TODO: Forget Password(usama)
 
+        public async Task<bool> ForgotPasswordAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                var base64Token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
+                // TODO: Send the password reset link with the token to the user's email
+                var verificationLink = $"https://localhost:7153/Seller/UpdatePassword?userId={user.Id}&token={base64Token}";
+
+                var emailMessage = new EmailMessage
+                {
+                    ToEmail = email,
+                    Subject = "ForgotPassword",
+                    TemplatePath = "ForgotPasswordTemplate",
+                    Placeholders = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("{{Link}}", verificationLink),
+            }
+                };
+                await _emailService.SendEmail(emailMessage);
+
+                return true; 
+            }
+
+            return false; // Email not found in the database
+        }
+
+
         // TODO: Reset Password(usama)
+
+        public async Task<bool> UpdatePasswordAsync(string userId, string token, string newPassword)
+        {
+            var isUpdated = false;
+
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token) || string.IsNullOrEmpty(newPassword))
+            {
+                // Handle invalid or missing parameters
+                return isUpdated;
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                // Handle user not found
+                return isUpdated;
+            }
+            // Decode the token
+            var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+
+            // Confirm the email and update the password
+            var result = await _userManager.ResetPasswordAsync(user, decodedToken, newPassword);
+            if (result.Succeeded)
+            {
+                // Password is updated successfully
+                isUpdated = true;
+            }
+            return isUpdated;
+        }
 
         // TODO: External Login Google(zubair)
 

@@ -23,14 +23,23 @@ namespace LocalDropshipping.Web.Controllers
         }
         #region Seller Register and Login
         public IActionResult Register()
-        
-        
-        
         {
             return View();
         }
         //Seller Account login
         public IActionResult Login()
+        {
+            return View();
+        }
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+        public IActionResult UpdatePassword()
+        {
+            return View();
+        }
+        public IActionResult UserPasswordMassege()
         {
             return View();
         }
@@ -42,8 +51,6 @@ namespace LocalDropshipping.Web.Controllers
         {
             return View();
         }
-
-
         [HttpPost]
         //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -63,11 +70,9 @@ namespace LocalDropshipping.Web.Controllers
 
             return View(model);
         }
-
         [HttpPost]
         public async Task<IActionResult> Register(SignupViewModel model)
         {
-	
 			if (ModelState.IsValid)
 			{
 				var isSucceeded = await service.RegisterAsync(model.Email, model.Password, string.Join(" ", model.FirstName, model.LastName));
@@ -84,28 +89,38 @@ namespace LocalDropshipping.Web.Controllers
 
 			return View(model);
         }
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdatePassword(string userId, string token, string newPassword)
+        {
+            var isUpdated = await service.UpdatePasswordAsync(userId, token, newPassword);
 
-
-
-
+            if (isUpdated)
+            {
+                return RedirectToAction("PasswordUpdated");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Password update failed.");
+                return View("UpdatePassword");
+            }
+        }
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> VerifyEmail(string userId, string token)
         {
-
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
             {
                 // Handle invalid or missing parameters
                 return RedirectToAction("InvalidVerificationLinkk");
             }
-
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
                 // Handle user not found
                 return RedirectToAction("InvalidVerificationLinke");
             }
-
             // Decode the token
             var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
 
@@ -116,14 +131,29 @@ namespace LocalDropshipping.Web.Controllers
                 // Email is confirmed; set EmailConfirmed to true and update the user in the database
                 user.EmailConfirmed = true;
                 await _userManager.UpdateAsync(user);
-
-                // Redirect to a success page
                 return RedirectToAction("Index2");
             }
             else
             {
                 // Handle verification failure
                 return RedirectToAction("InvalidVerificationLink");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            var isPasswordResetLinkSent = await service.ForgotPasswordAsync(email);
+
+            if (isPasswordResetLinkSent)
+            {
+                TempData["RegistrationConfirmation"] = "Registration was successful. You can now log in.";
+
+                return RedirectToAction("UserPasswordMassege");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Email not found.");
+                return View("ForgotPassword"); 
             }
         }
         #endregion
