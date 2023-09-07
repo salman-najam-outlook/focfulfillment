@@ -13,6 +13,7 @@ using System;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Hosting;
 using static System.Net.WebRequestMethods;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace LocalDropshipping.Web.Services
 {
@@ -20,16 +21,16 @@ namespace LocalDropshipping.Web.Services
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-		private readonly IEmailService _emailService;
-		
+        private readonly IEmailService _emailService;
 
-		public AccountService(UserManager<User> userManager, SignInManager<User> signInManager,IEmailService emailService)
+
+        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager, IEmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-			_emailService = emailService;
-			
-		}
+            _emailService = emailService;
+
+        }
 
         public async Task<bool> RegisterAsync(string email, string password, string? fullname = "", string? username = "", string scheme = "http", string host = "example.com")
         {
@@ -51,25 +52,25 @@ namespace LocalDropshipping.Web.Services
 
                 // TODO: Send Confirmation Email(usama) 
 
-				var verificationLink = $"https://localhost:7153/Seller/VerifyEmail?userId={user.Id}&token={base64Token}";
+                var verificationLink = $"https://localhost:7153/Seller/VerifyEmail?userId={user.Id}&token={base64Token}";
 
 
-				// Create an EmailMessage with the verification link and other necessary information
-				var emailMessage = new EmailMessage
-				{
-					ToEmail = email,
-					Subject = "Verify your account",
-					TemplatePath = "VerificationEmailTemplate",
-					Placeholders = new List<KeyValuePair<string, string>>
-			{
-				new KeyValuePair<string, string>("{{Link}}", verificationLink),
+                // Create an EmailMessage with the verification link and other necessary information
+                var emailMessage = new EmailMessage
+                {
+                    ToEmail = email,
+                    Subject = "Verify your account",
+                    TemplatePath = "VerificationEmailTemplate",
+                    Placeholders = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("{{Link}}", verificationLink),
             }
-				};
+                };
 
-				// Send the verification email
-				await _emailService.SendEmail(emailMessage);
+                // Send the verification email
+                await _emailService.SendEmail(emailMessage);
 
-				isCreated = true;
+                isCreated = true;
             }
             return isCreated;
         }
@@ -103,6 +104,26 @@ namespace LocalDropshipping.Web.Services
             }
         }
 
+        public async Task<bool> SendContactEmailAsync(ContactUsViewModel contactUsViewModel)
+        {
+
+            var emailMessage = new EmailMessage
+            {
+                ToEmail = contactUsViewModel.EmailAddress,
+                Subject = "Contact Us Form Query",
+                TemplatePath = "ContactUsTemplate",
+                Placeholders = new List<KeyValuePair<string, string>>
+                {
+
+                    new KeyValuePair<string, string>("{{Name}}", contactUsViewModel.FullName),
+                    new KeyValuePair<string, string>("{{EmailAddress}}", contactUsViewModel.EmailAddress),
+                    new KeyValuePair<string, string>("{{PhoneNumber}}", contactUsViewModel.PhoneNumber),
+                    new KeyValuePair<string, string>("{{Message}}", contactUsViewModel.Message)
+                 }
+            };
+            await _emailService.SendEmail(emailMessage);
+            return true;
+        }
         // TODO: Forget Password(usama)
 
         // TODO: Reset Password(usama)
