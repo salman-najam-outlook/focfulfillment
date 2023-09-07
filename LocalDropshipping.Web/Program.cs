@@ -22,7 +22,6 @@ builder.Services.AddDbContext<LocalDropshippingContext>(options =>
 
 // Identity
 builder.Services.AddIdentityCore<User>()
-    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<LocalDropshippingContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
@@ -33,6 +32,11 @@ builder.Services.AddAuthentication(o =>
     o.DefaultSignInScheme = IdentityConstants.ExternalScheme;
 })
 .AddIdentityCookies(o => { });
+
+builder.Services.ConfigureApplicationCookie(configs =>
+{
+    configs.LoginPath = "/Seller/Login";
+});
 
 // Swagger 
 builder.Services.AddSwaggerGen(c =>
@@ -54,8 +58,9 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.Configure<SMTPConfigModel>(builder.Configuration.GetSection("SMTPConfig"));
-
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IProfilesService, ProfilesService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 
 var app = builder.Build();
@@ -84,6 +89,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Seller}/{action=Shop}/{id?}"
+);
 
 app.Run();
