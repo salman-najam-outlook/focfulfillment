@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
 <html lang="en">
 
 
@@ -11,7 +14,7 @@
     <meta name="keywords" content="Fastkart">
     <meta name="author" content="Fastkart">
     <link rel="icon" href="../assets/images/favicon/1.png" type="image/x-icon">
-    <title>User Dashboard</title>
+    <title>Seller Dashboard</title>
 
     <!-- Google font -->
     <link rel="preconnect" href="https://fonts.gstatic.com/">
@@ -119,7 +122,7 @@
 
                             <div class="header-nav col-lg-6">
                                 <div class="header-nav-left">
-                                     <a asp-controller="Home" asp-action="SellerDashboard" class="text-content">
+                                     <a asp-controller="Seller" asp-action="SellerDashboard" class="text-content">
                                     <button class="dropdown-category" style="float: left;">
 
                                         <span>Shop</span>
@@ -1225,23 +1228,23 @@
                         <div class="footer-contain">
                             <ul>
                                 <li>
-                                    <a asp-controller="Home" asp-action="AboutUs" class="text-content">About us</a>
+                                    <a asp-controller="Public" asp-action="AboutUs" class="text-content">About us</a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Home" asp-action="ContactUs" class="text-content">Contact Us</a>
+                                    <a asp-controller="Public" asp-action="ContactUs" class="text-content">Contact Us</a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Home" asp-action="TermAndCondition" class="text-content">Terms and Conditions</a>
+                                    <a asp-controller="Public" asp-action="TermAndCondition" class="text-content">Terms and Conditions</a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Home" asp-action="PrivacyPolicy" class="text-content">Privary Policy</a>
+                                    <a asp-controller="Public" asp-action="PrivacyPolicy" class="text-content">Privary Policy</a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Home" asp-action="Faq" class="text-content">FAQ</a>
+                                    <a asp-controller="Public" asp-action="Faq" class="text-content">FAQ</a>
                                 </li>
                             </ul>
                         </div>

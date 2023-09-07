@@ -9,6 +9,10 @@ using LocalDropshipping.Web.Models;
 using Microsoft.EntityFrameworkCore.Metadata;
 using LocalDropshipping.Web.Enums;
 using System.Data;
+using System;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.Hosting;
+using static System.Net.WebRequestMethods;
 
 namespace LocalDropshipping.Web.Services
 {
@@ -16,20 +20,25 @@ namespace LocalDropshipping.Web.Services
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+		private readonly IEmailService _emailService;
+		
 
-        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager)
+		public AccountService(UserManager<User> userManager, SignInManager<User> signInManager,IEmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-        }
+			_emailService = emailService;
+			
+		}
 
-        public async Task<bool> RegisterAsync(string email, string password, string? fullname = "", string? username = "")
+        public async Task<bool> RegisterAsync(string email, string password, string? fullname = "", string? username = "", string scheme = "http", string host = "example.com")
         {
             var isCreated = false;
 
+            // TODO: Fix username(zubair)
             User user = new User
             {
-                UserName = username,
+                UserName = email.Split("@")[0],
                 Fullname = fullname,
                 Email = email
             };
@@ -39,9 +48,28 @@ namespace LocalDropshipping.Web.Services
             {
                 string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 string base64Token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
                 // TODO: Send Confirmation Email(usama) 
 
-                isCreated = true;
+				var verificationLink = $"https://localhost:7153/Seller/VerifyEmail?userId={user.Id}&token={base64Token}";
+
+
+				// Create an EmailMessage with the verification link and other necessary information
+				var emailMessage = new EmailMessage
+				{
+					ToEmail = email,
+					Subject = "Verify your account",
+					TemplatePath = "VerificationEmailTemplate",
+					Placeholders = new List<KeyValuePair<string, string>>
+			{
+				new KeyValuePair<string, string>("{{Link}}", verificationLink),
+            }
+				};
+
+				// Send the verification email
+				await _emailService.SendEmail(emailMessage);
+
+				isCreated = true;
             }
             return isCreated;
         }

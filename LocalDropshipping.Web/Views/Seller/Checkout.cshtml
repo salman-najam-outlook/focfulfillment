@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
 <html lang="en">
 
 
@@ -194,8 +197,8 @@
                                                 </div>
 
                                                 <div class="button-group">
-                                                    <a asp-controller="Home" asp-action="Cart" class="btn btn-sm cart-button">View Cart</a>
-                                                    <a asp-controller="Home" asp-action="Checkout" class="btn btn-sm cart-button theme-bg-color
+                                                    <a asp-controller="Seller" asp-action="Cart" class="btn btn-sm cart-button">View Cart</a>
+                                                    <a asp-controller="Seller" asp-action="Checkout" class="btn btn-sm cart-button theme-bg-color
                                                     text-white">Checkout</a>
                                                 </div>
                                             </div>
@@ -249,7 +252,7 @@
                         <nav>
                             <ol class="breadcrumb mb-0">
                                 <li class="breadcrumb-item">
-                                    <a asp-controller="Home" asp-action="Index">
+                                    <a asp-controller="Seller" asp-action="Cart">
                                         <i class="fa-solid fa-house"></i>
                                     </a>
                                 </li>
@@ -914,23 +917,23 @@
                         <div class="footer-contain">
                             <ul>
                                 <li>
-                                    <a asp-controller="Home" asp-action="AboutUs" class="text-content">About us</a>
+                                    <a asp-controller="Public" asp-action="AboutUs" class="text-content">About us</a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Home" asp-action="ContactUs" class="text-content">Contact Us</a>
+                                    <a asp-controller="Public" asp-action="ContactUs" class="text-content">Contact Us</a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Home" asp-action="TermAndCondition" class="text-content">Terms and Conditions</a>
+                                    <a asp-controller="Public" asp-action="TermAndCondition" class="text-content">Terms and Conditions</a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Home" asp-action="PrivacyPolicy" class="text-content">Privary Policy</a>
+                                    <a asp-controller="Public" asp-action="PrivacyPolicy" class="text-content">Privary Policy</a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Home" asp-action="Faq" class="text-content">FAQ</a>
+                                    <a asp-controller="Public" asp-action="Faq" class="text-content">FAQ</a>
                                 </li>
                             </ul>
                         </div>

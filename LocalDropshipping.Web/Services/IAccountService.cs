@@ -8,6 +8,6 @@ namespace LocalDropshipping.Web.Services
         Task<bool> IsEmailExist(string email);
         Task<bool> IsInRole(string email, Roles role);
         Task<bool> LoginAsync(string email, string password);
-        Task<bool> RegisterAsync(string email, string password, string? fullname = "", string? username = "");
+        Task<bool> RegisterAsync(string email, string password, string? fullname = "", string? username = "", string scheme = "http", string host = "example.com");
     }
 }
