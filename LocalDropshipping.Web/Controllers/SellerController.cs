@@ -11,15 +11,17 @@ namespace LocalDropshipping.Web.Controllers
 {
     public class SellerController : Controller
     {
+        private readonly IProfilesService _profileService;
         private readonly IAccountService service;
         private readonly UserManager<User> _userManager;
         private readonly IAccountService accountService;
 
-        public SellerController(IAccountService service, UserManager<User> userManager, IAccountService accountService)
+        public SellerController(IAccountService service, UserManager<User> userManager, IAccountService accountService, IProfileService profileService)
         {
             this.service = service;
             _userManager = userManager;
             this.accountService = accountService;
+            _profileService = profileService;
         }
 
 
@@ -186,6 +188,28 @@ namespace LocalDropshipping.Web.Controllers
         public IActionResult Checkout()
         {
             return View();
+        }
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult ProfileVerification()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ProfileVerification(ProfileVerificationViewModel profileVerificationViewModel)
+        {
+            if (ModelState.IsValid == false)
+            {
+                //ModelState.AddModelError("", "Please enter a valid data.");
+                return View(profileVerificationViewModel);
+            }
+            Profiles profile = profileVerificationViewModel.ToEntity();
+            _profileService.Add(profile);
+            return RedirectToAction("Shop", "Shop");
         }
         #endregion
 
