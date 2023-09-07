@@ -2,7 +2,6 @@
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Exceptions;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
 
 namespace LocalDropshipping.Web.Services
 {
@@ -25,7 +24,7 @@ namespace LocalDropshipping.Web.Services
             return user;
         }
 
-        public async Task<bool> IsUserSignedIn()
+        public bool IsUserSignedIn()
         {
             return _signInManager.IsSignedIn(_signInManager.Context.User);
         }
@@ -50,7 +49,7 @@ namespace LocalDropshipping.Web.Services
             }
             else
             {
-                throw new UserNotFoundException("User not found");
+                throw new UserNotFoundException();
             }
         }
     }

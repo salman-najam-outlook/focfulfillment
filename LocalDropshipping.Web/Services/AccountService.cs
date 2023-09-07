@@ -12,14 +12,18 @@ namespace LocalDropshipping.Web.Services
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IEmailService _emailService;
+        private readonly IUserService _userService;
 
-
-        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager, IEmailService emailService)
+        public AccountService(
+            UserManager<User> userManager,
+            SignInManager<User> signInManager,
+            IEmailService emailService,
+            IUserService userService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailService = emailService;
-
+            _userService = userService;
         }
 
         public async Task<IdentityResult> RegisterAsync(User user, string password)
@@ -31,7 +35,7 @@ namespace LocalDropshipping.Web.Services
                 string base64Token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
 
                 // TODO: URL Need to be set dynamically
-                var verificationLink = $"https://localhost:7153/Seller/VerifyEmail?userId={user.Id}&token={base64Token}";
+                var verificationLink = $"https://localhost:7153/Seller/EmailVerification?userId={user.Id}&token={base64Token}";
                 var emailMessage = new EmailMessage
                 {
                     ToEmail = user.Email!,
@@ -56,6 +60,8 @@ namespace LocalDropshipping.Web.Services
                 var result = await _userManager.ConfirmEmailAsync(user, token);
                 if (result.Succeeded)
                 {
+                    user.EmailConfirmed = true;
+                    await _userService.UpdateUserAsync(user);    
                     isVerified = true;
                 }
             }
