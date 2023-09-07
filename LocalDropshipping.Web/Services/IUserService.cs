@@ -11,7 +11,7 @@ namespace LocalDropshipping.Web.Services
         List<User?> GetAllStaffMember();
         User? GetById(string userId);
         User? Delete(string userId);
-        User? DisableUser(string userId);
+        bool DisableUser(string userId);
         User? Update(string userId, UserDto userDto);
         Task<User?> GetCurrentUserAsync();
         Task<bool> IsUserSignedIn();

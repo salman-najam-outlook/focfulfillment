@@ -26,13 +26,13 @@ namespace LocalDropshipping.Web.Controllers
 
         public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context)
         {
-            this.service = service;
-            this.productsService = productsService;
-            this.userService = userService;
+            _service = service;
+            _productsService = productsService;
+            _userService = userService;
             _userManager = userManager;
             _signInManager = signInManager;
-            this.context = context;
-            this.categoryService = categoryService;
+            _context = context;
+            _categoryService = categoryService;
         }
 
         #region Admin Login
@@ -102,7 +102,7 @@ namespace LocalDropshipping.Web.Controllers
         {
             if (!string.IsNullOrEmpty(userId))
             {
-                userService.DisableUser(userId);
+                var user = userService.DisableUser(userId);
             }
 
             var sellers = userService.GetAll();

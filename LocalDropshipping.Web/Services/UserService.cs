@@ -59,7 +59,7 @@ namespace LocalDropshipping.Web.Services
         {
             user.IsActive = true;
 
-            context.Users.Add(user);
+            _context.Users.Add(user);
 
             //  context.SaveChanges();
             return user;
@@ -69,12 +69,12 @@ namespace LocalDropshipping.Web.Services
         {
             try
             {
-                var user = context.Users.Find(userId);
+                var user = _context.Users.Find(userId);
                 if (user != null)
                 {
                     user.IsDeleted = true;
 
-                    context.SaveChanges();
+                    _context.SaveChanges();
                     return user;
                 }
             }
@@ -84,48 +84,47 @@ namespace LocalDropshipping.Web.Services
             return null;
         }
 
-        public User DisableUser(string userId)
+        public bool DisableUser(string userId)
         {
             try
             {
-                var user = context.Users.Find(userId);
+                var user = _context.Users.Find(userId);
                 if (user != null)
                 {
                     user.IsActive = false;
-
-                    context.SaveChanges();
-                    return user;
+                    _context.SaveChanges();
                 }
+                return true;
             }
             catch (Exception ex)
             {
+                return false;
             }
-            return null;
         }
 
         public List<User> GetAllStaffMember()
         {
-            return context.Users.Where(x => x.IsAdmin == true && x.IsDeleted == false).ToList();
+            return _context.Users.Where(x => x.IsAdmin == true && x.IsDeleted == false).ToList();
         }
 
         public List<User> GetAll()
         {
-            return context.Users.Where(x => x.IsActive == true && x.IsAdmin == false && x.IsSuperAdmin == false && x.IsDeleted == false).ToList();
+            return _context.Users.Where(x => x.IsActive == true && x.IsAdmin == false && x.IsSuperAdmin == false && x.IsDeleted == false).ToList();
         }
 
         public User? GetById(string userId)
         {
-            return context.Users.FirstOrDefault(c => c.Id == userId);
+            return _context.Users.FirstOrDefault(c => c.Id == userId);
         }
 
         public User? Update(string userId, UserDto userDto)
         {
-            var user = context.Users.FirstOrDefault(x => x.Id == userId);
+            var user = _context.Users.FirstOrDefault(x => x.Id == userId);
             if (user != null)
             {
                 user.UserName = userDto.Name;
                 user.PhoneNumber = userDto.PhoneNumber;
-                context.SaveChanges();
+                _context.SaveChanges();
             }
             return user;
         }
