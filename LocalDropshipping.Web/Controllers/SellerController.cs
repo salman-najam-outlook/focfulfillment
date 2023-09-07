@@ -35,11 +35,15 @@ namespace LocalDropshipping.Web.Controllers
         {
             return View();
         }
-        public IActionResult UpdatePassword()
+        public IActionResult UpdatePassword(string userId ,string token)
         {
             return View();
         }
-        public IActionResult UserPasswordMessage()
+        public IActionResult UpdatePasswordMessage()
+        {
+            return View();
+        }
+        public IActionResult ForgotPasswordMessage()
         {
             return View();
         }
@@ -92,9 +96,9 @@ namespace LocalDropshipping.Web.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdatePassword(string userId, string token, string newPassword)
+        public async Task<IActionResult> UpdatePassword(NewPasswordViewModel model)
         {
-            var isUpdated = await service.UpdatePasswordAsync(userId, token, newPassword);
+            var isUpdated = await service.UpdatePasswordAsync(model);
 
             if (isUpdated)
             {
@@ -146,9 +150,9 @@ namespace LocalDropshipping.Web.Controllers
 
             if (isPasswordResetLinkSent)
             {
-                TempData["RegistrationConfirmation"] = "Registration was successful. You can now log in.";
+                TempData["ForgotPassword"] = "Password Forgot successful. You can now log in.";
 
-                return RedirectToAction("UserPasswordMessage");
+                return RedirectToAction("ForgotPasswordMessage");
             }
             else
             {

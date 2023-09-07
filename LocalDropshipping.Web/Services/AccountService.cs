@@ -138,27 +138,27 @@ namespace LocalDropshipping.Web.Services
 
         // TODO: Reset Password(usama)
 
-        public async Task<bool> UpdatePasswordAsync(string userId, string token, string newPassword)
+        public async Task<bool> UpdatePasswordAsync(NewPasswordViewModel model)
         {
             var isUpdated = false;
 
-            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token) || string.IsNullOrEmpty(newPassword))
+            if (string.IsNullOrEmpty(model.UserId) || string.IsNullOrEmpty(model.Token) || string.IsNullOrEmpty(model.Password))
             {
                 // Handle invalid or missing parameters
                 return isUpdated;
             }
 
-            var user = await _userManager.FindByIdAsync(userId);
+
+            var user = await _userManager.FindByIdAsync(model.UserId);
             if (user == null)
             {
                 // Handle user not found
                 return isUpdated;
             }
             // Decode the token
-            var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+            var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(model.Token));
 
-            // Confirm the email and update the password
-            var result = await _userManager.ResetPasswordAsync(user, decodedToken, newPassword);
+            var result = await _userManager.ResetPasswordAsync(user, decodedToken, model.Password);
             if (result.Succeeded)
             {
                 // Password is updated successfully
