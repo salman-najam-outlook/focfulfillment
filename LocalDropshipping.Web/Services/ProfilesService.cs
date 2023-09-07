@@ -16,14 +16,19 @@ namespace LocalDropshipping.Web.Services
 
         public Profiles Add(Profiles profile)
         {
-            User user = new User();
-            user.IsProfileCompleted = true;
-            context.Profiles.Add(profile);
-            context.SaveChanges();
-            return profile;
+            if (context.Profiles.Any(x => x.UserId == profile.UserId))
+            {
+                throw new Exception("User profile already exist");
+            }
+            else
+            {
+                context.Profiles.Add(profile);
+                context.SaveChanges();
+                return profile;
+            }
         }
 
-        public List<Profiles?> GetAllProfiles()
+        public List<Profiles> GetAllProfiles()
         {
             return context.Profiles.Include(x => x.User).ToList();
         }

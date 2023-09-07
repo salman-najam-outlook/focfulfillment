@@ -7,7 +7,7 @@ namespace LocalDropshipping.Web.Data.Entities
     {
         [Key]
         public int ProfileId { get; set; }
-        public virtual User? User { get; set; }
+        public string UserId { get; set; }
 
         [Required(ErrorMessage = "Store Name is required.")]
         [StringLength(100, ErrorMessage = "Store Name cannot be longer than 100 characters.")]
@@ -33,5 +33,7 @@ namespace LocalDropshipping.Web.Data.Entities
 
         [StringLength(250, ErrorMessage = "Address cannot be longer than 250 characters.")]
         public string Address { get; set; }
+        
+        public virtual User? User { get; set; }
     }
 }

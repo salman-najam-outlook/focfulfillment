@@ -5,6 +5,8 @@ namespace LocalDropshipping.Web.Services
 {
     public interface IUserService
     {
-        Task<User?> GetUserAsync(ClaimsPrincipal userClaimsPrincipal);
+        Task<User?> GetCurrentUserAsync();
+        Task<bool> IsUserSignedIn();
+        Task UpdateUserAsync(User user);
     }
 }
