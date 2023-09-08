@@ -1,27 +1,45 @@
 ﻿
+using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
+using LocalDropshipping.Web.Enums;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
 
 namespace LocalDropshipping.Web.Controllers
 {
     public class AdminController : Controller
     {
-        private readonly IAdminService _service;
-        private readonly IProductsService _productsService;
         public ICategoryService CategoryService { get; }
 
-        public AdminController(IAdminService service, IProductsService productsService, ICategoryService _categoryService)
+        private readonly IAdminService _service;
+        private readonly IProductsService _productsService;
+        private readonly IUserService _userService;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+        private readonly LocalDropshippingContext _context;
+        private readonly ICategoryService _categoryService;
+
+        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService)
         {
             _service = service;
             _productsService = productsService;
+            _userService = userService;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _context = context;
+            _categoryService = categoryService;
             CategoryService = _categoryService;
         }
+
+
 
         #region Admin Login
         public IActionResult AdminLogin()
@@ -32,6 +50,8 @@ namespace LocalDropshipping.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> AdminLogin(AdminLoginViewModel model)
         {
+
+           
             if (ModelState.IsValid)
             {
                 var result = await _service.AdminLoginUser(model.Email, model.Password);
@@ -47,7 +67,7 @@ namespace LocalDropshipping.Web.Controllers
                     // Check if the user is active
                     var isActive = await _service.IsUserActiveAsync(model.Email);
 
-                    if (isAdmin)// || isSuperAdmin
+                    if (isAdmin || isSuperAdmin)
                     {
                         if (isActive)
                         {
@@ -56,13 +76,11 @@ namespace LocalDropshipping.Web.Controllers
                         }
                         else
                         {
-                            // Handle inactive admin/superadmin
                             ModelState.AddModelError("", "Your account is not active.");
                         }
                     }
                     else
                     {
-                        // Handle non-admin user here, e.g., redirect to a different page
                         ModelState.AddModelError("", "Oops, it seems like you're not an admin.");
                     }
                 }
@@ -72,7 +90,136 @@ namespace LocalDropshipping.Web.Controllers
                 }
             }
 
+
             return View(model);
+        }
+
+        public IActionResult StaffMember()
+        {
+            return View(_userService.GetAllStaffMember());
+        }
+        public IActionResult EditUser()
+        {
+            return View();
+        }
+     
+
+        [HttpPost]
+        public IActionResult DeleteUser(string userId)
+        {
+            _userService.Delete(userId);
+            return View("GetAllSellers", _userService.GetAll());
+        }
+        [HttpPost]
+        public IActionResult ActivateUser(string userId)
+        {
+            if (!string.IsNullOrEmpty(userId))
+            {
+                _userService.ActivateUser(userId);
+            }
+
+            var sellers = _userService.GetAll();
+
+            return View("StaffMember", sellers);
+        }
+
+        public IActionResult AddNewUser()
+        {
+            try
+            {
+                string? currentUserID = _userManager.GetUserId(HttpContext.User); 
+                var currentUser = _userService.GetById(currentUserID);
+                bool isAdmin = currentUser.IsAdmin;
+                bool isSuperAdmin = currentUser.IsSuperAdmin;
+
+                var model = new UserViewModel();
+
+                if (isAdmin)
+                {
+                    model.IsSeller = true;
+                }
+
+
+                TempData["IsAdmin"] = isAdmin;
+                TempData["IsSuperAdmin"] = isSuperAdmin;
+
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Something went wrong. Please try again later!!!";
+                return RedirectToAction("AdminLogin", "Admin");
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddNewUser(UserViewModel model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    // Check Line 137 To 144 : In this line i am getting FullName Using Email & UserName 
+                    string[] emailParts = model.Email.Split('@');
+                    string emailUsername = emailParts.Length > 0 ? emailParts[0] : string.Empty;
+                    string[] usernameWords = model.UserName.Split(' ');
+                    emailUsername = string.Join(" ", emailUsername.Split(' ').Except(usernameWords));
+                    emailUsername = emailUsername.Trim();
+                    var user = new User
+                    {
+                        Fullname = emailUsername,
+                        UserName = model.UserName,
+                        Email = model.Email,
+                        PhoneNumber = model.PhoneNumber,
+                        IsAdmin = model.IsAdmin,
+                        IsSeller = model.IsSeller,
+                        IsActive = true,
+                    };
+
+                    var result = await _userManager.CreateAsync(user, model.Password);
+
+
+                    if (result.Succeeded)
+                    {
+                        _userService.Add(user);
+
+                        return RedirectToAction("StaffMember", "Admin");
+                    }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                    }
+                }
+                string? currentUserID = _userManager.GetUserId(HttpContext.User); 
+                var currentUser = _userService.GetById(currentUserID);
+                TempData["IsAdmin"] = currentUser.IsAdmin;
+                TempData["IsSuperAdmin"] = currentUser.IsSuperAdmin;
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                return View();
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+
+            return RedirectToAction("AdminLogin", "Admin");
+        }
+
+
+
+        public IActionResult GetAllSellers()
+        {
+            return View(_userService.GetAll());
         }
 
 
@@ -155,7 +302,14 @@ namespace LocalDropshipping.Web.Controllers
             }
             return View(product);
         }
-
+        
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            var product = _productsService.Delete(id);
+            return RedirectToAction("Dashboard");
+        }
+        
         [HttpPost]
         public IActionResult Deleted(int id)
         {
@@ -171,6 +325,16 @@ namespace LocalDropshipping.Web.Controllers
             }
             return RedirectToAction("ProductsList");
         }
+
+        public IActionResult SubmitForm(Product model)
+        {
+            if (model != null)
+            {
+                _productsService.Add(model);
+                return RedirectToAction("GetAllProducts");
+
+            }
+            return View("Post");
+        }
     }
 }
-

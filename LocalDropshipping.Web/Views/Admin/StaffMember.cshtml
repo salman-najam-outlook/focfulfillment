@@ -1,0 +1,159 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using LocalDropshipping.Web.Data.Entities;
+@model List<User>;
+@{
+    Layout = "_LayoutDashboard";
+}
+<style>
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+    input:checked + .slider {
+        background-color: #0DA487;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #0DA487;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+
+    .slider.round {
+        border-radius: 34px;
+    }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+</style>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table">
+                <div class="card-body">
+                    <div class="title-header option-title">
+                        <h5>All Staff Members</h5>
+                        <form class="d-inline-flex">
+                            <a href="AddNewUser" class="align-items-center btn btn-theme d-flex">
+                                <i data-feather="plus"></i>Add New
+                            </a>
+                        </form>
+                    </div>
+
+                    <table class="table all-package theme-table table-product" id="table_id">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Options</th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var user in Model)
+                            {
+                                <tr>
+                                    <td>@user.Fullname</td>
+                                    <td>@user.PhoneNumber</td>
+                                    <td>@user.Email</td>
+                                    <td>
+                                        <form asp-controller="Admin" asp-action="ActivateUser" method="post">
+                                            <input type="hidden" name="userId" value="@user.Id" />
+                                            <ul>
+
+                                                <li>
+                                                    <!-- Rounded switch -->
+                                                    <label class="switch">
+                                                        <input type="hidden" name="userId" value="@user.Id" />
+                                                        <button type="submit" asp-action="ActivateUser" asp-controller="Admin">
+
+                                                        <input type="checkbox" class="user-toggle" data-user-id="@user.Id" @(user.IsActive ? "checked" : "") />
+                                                        <span class="slider round"></span>
+                                                        </button>
+                                                    </label>
+                                                </li>
+                                                <li>
+                                                    <button type="submit">
+                                                        <i class="ri-delete-bin-line"></i>
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Modal Box Start -->
+<div class="modal fade theme-modal remove-coupon" id="exampleModalToggle" aria-hidden="true" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form asp-controller="Admin" asp-action="DeleteUser" method="post">
+            <div class="modal-content">
+
+                <div class="modal-header d-block text-center">
+                    <h5 class="modal-title w-100" id="exampleModalLabel22">Are You Sure You want to Delete ?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-animation btn-md fw-bold" data-bs-target="#exampleModalToggle2"
+                            data-bs-toggle="modal" data-bs-dismiss="modal">
+                        Yes
+                    </button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<!-- Delete Modal Box End -->

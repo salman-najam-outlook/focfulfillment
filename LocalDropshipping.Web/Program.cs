@@ -55,6 +55,7 @@ builder.Services.AddScoped<ISubscriptionsService, SubscriptionsService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.Configure<SMTPConfigModel>(builder.Configuration.GetSection("SMTPConfig"));
 builder.Services.AddScoped<IUserService, UserService>();
@@ -88,7 +89,8 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Seller}/{action=Shop}/{id?}"
+     //pattern: "{controller=Seller}/{action=Shop}/{id?}"
+     pattern: "{controller=Admin}/{action=AdminLogin}"
 );
 
 app.Run();

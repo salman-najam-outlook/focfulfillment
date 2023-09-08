@@ -3,6 +3,8 @@ using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using LocalDropshipping.Web.Dtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace LocalDropshipping.Web.Services
 {
@@ -18,7 +20,22 @@ namespace LocalDropshipping.Web.Services
             _signInManager = signInManager;
             _context = context;
         }
+        public async Task<bool> IsCurrentUserAdminAsync(ClaimsPrincipal user)
+        {
+            if (user == null)
+            {
+                return false; // User is not logged in
+            }
 
+            var currentUser = await _userManager.GetUserAsync(user);
+
+            if (currentUser == null)
+            {
+                return false; // User not found
+            }
+
+            return currentUser.IsAdmin;
+        }
         public async Task<User?> GetCurrentUserAsync()
         {
             var user = await _userManager.GetUserAsync(_signInManager.Context.User);
@@ -53,5 +70,106 @@ namespace LocalDropshipping.Web.Services
                 throw new UserNotFoundException("User not found");
             }
         }
+
+        public User Add(User user)
+        {
+            user.IsActive = true;
+
+            _context.Users.Add(user);
+
+            return user;
+        }
+
+        public User Delete(string userId)
+        {
+            try
+            {
+                var user = _context.Users.Find(userId);
+                if (user != null)
+                {
+                    user.IsDeleted = true;
+
+                    _context.SaveChanges();
+                    return user;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return null;
+        }
+
+        public bool DisableUser(string userId)
+        {
+            try
+            {
+                var user = _context.Users.Find(userId);
+                if (user != null)
+                {
+                    user.IsActive = false;
+                    _context.SaveChanges();
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        public bool? ActivateUser(string userId)
+        {
+            try
+            {
+                var user = _context.Users.Find(userId);
+                if (user != null && user.IsActive == false)
+                {
+
+                    user.IsActive = true;
+
+                    _context.SaveChanges();
+                }
+                else
+                {
+                    user.IsActive = false;
+                    _context.SaveChanges();
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
+
+        public List<User> GetAllStaffMember()
+        {
+            return _context.Users.Where(x => x.IsAdmin == true && x.IsDeleted == false).ToList();
+        }
+
+        public List<User> GetAll()
+        {
+            return _context.Users.Where(x => x.IsAdmin == false && x.IsSuperAdmin == false && x.IsDeleted == false).ToList();
+        }
+
+        public User? GetById(string userId)
+        {
+            return _context.Users.FirstOrDefault(c => c.Id == userId);
+        }
+
+        public User? Update(string userId, UserDto userDto)
+        {
+            var user = _context.Users.FirstOrDefault(x => x.Id == userId);
+            if (user != null)
+            {
+                user.UserName = userDto.Name;
+                user.PhoneNumber = userDto.PhoneNumber;
+                _context.SaveChanges();
+            }
+            return user;
+        }
+
+
     }
 }
