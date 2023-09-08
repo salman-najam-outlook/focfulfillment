@@ -154,7 +154,7 @@ namespace LocalDropshipping.Web.Controllers
 
             if (isUpdated)
             {
-                return RedirectToAction("PasswordUpdated");
+                return RedirectToAction("UpdatePasswordMessage");
             }
             else
             {
