@@ -1,4 +1,6 @@
-﻿using LocalDropshipping.Web.Data.Entities;
+﻿using LocalDropshipping.Web.Attributes;
+using LocalDropshipping.Web.Data.Entities;
+using LocalDropshipping.Web.Exceptions;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -13,32 +15,25 @@ namespace LocalDropshipping.Web.Controllers
     {
         private readonly IProfilesService _profileService;
         private readonly IUserService _userService;
-        private readonly IAccountService service;
-        private readonly UserManager<User> _userManager;
-        private readonly IAccountService accountService;
+        private readonly IAccountService _accountService;
 
-        public SellerController(IAccountService service, UserManager<User> userManager, IAccountService accountService, IProfilesService profileService, IUserService userService)
+        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService)
         {
-            this.service = service;
-            _userManager = userManager;
-            this.accountService = accountService;
+            _accountService = accountService;
             _profileService = profileService;
-            this._userService = userService;
+            _userService = userService;
         }
 
-        #region Seller Register and Login
         public IActionResult Register()
         {
+            string? isEmailSent = HttpContext.Session.GetString("VerificationEmailSent");
+            if (isEmailSent != null && isEmailSent == "True")
+                return RedirectToAction("VerificationEmailSent", "Seller");
             return View();
         }
 
-        public async Task<IActionResult> LoginAsync()
+        public IActionResult Login()
         {
-            if (await _userService.IsUserSignedIn())
-            {
-                var user = (await _userService.GetCurrentUserAsync())!;
-                return RedirectToCorrespondingPage(user);
-            }
             return View();
         }
         public IActionResult ForgotPassword()
@@ -57,12 +52,13 @@ namespace LocalDropshipping.Web.Controllers
         {
             return View();
         }
-        public IActionResult Index1()
+
+        public IActionResult VerificationEmailSent()
         {
             return View();
         }
 
-        public IActionResult Index2()
+        public IActionResult EmailVerified()
         {
             return View();
         }
@@ -80,7 +76,7 @@ namespace LocalDropshipping.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                bool emailSent = await service.SendContactEmailAsync(contactUsViewModel);
+                bool emailSent = await _accountService.SendContactEmailAsync(contactUsViewModel);
 
                 if (emailSent)
                 {
@@ -102,11 +98,11 @@ namespace LocalDropshipping.Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var user = await service.LoginAsync(model.Email, model.Password);
-                    return RedirectToCorrespondingPage(user);
+                    var user = await _accountService.LoginAsync(model.Email, model.Password);
+                    return RedirectToAction("Shop", "Seller");
                 }
             }
-            catch (Exception ex)
+            catch (IdentityException ex)
             {
                 ModelState.AddModelError("Login Failed", ex.Message);
             }
@@ -115,7 +111,6 @@ namespace LocalDropshipping.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(SignupViewModel model)
         {
-
             if (ModelState.IsValid)
             {
                 User user = new User
@@ -126,17 +121,25 @@ namespace LocalDropshipping.Web.Controllers
                     IsSeller = true
                 };
 
-                var result = await service.RegisterAsync(user, model.Password);
+                var result = await _accountService.RegisterAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     TempData["RegistrationConfirmation"] = "Registration was successful. You can now log in.";
-                    return RedirectToAction("Index1");
+                    HttpContext.Session.SetString("VerificationEmailSent", "True");
+                    return RedirectToAction("VerificationEmailSent");
                 }
                 else
                 {
                     foreach (var error in result.Errors)
                     {
-                        ModelState.AddModelError("CustomErrorMessage", string.Join(": ", error.Code, error.Description));
+                        if (error.Code == "DuplicateUserName")
+                        {
+                            ModelState.AddModelError("CustomErrorMessage", string.Join(": ", "DuplicateEmail", "Email already exist"));
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("CustomErrorMessage", string.Join(": ", error.Code, error.Description));
+                        }
                     }
                 }
             }
@@ -147,7 +150,7 @@ namespace LocalDropshipping.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdatePassword(NewPasswordViewModel model)
         {
-            var isUpdated = await service.UpdatePasswordAsync(model);
+            var isUpdated = await _accountService.UpdatePasswordAsync(model);
 
             if (isUpdated)
             {
@@ -161,41 +164,27 @@ namespace LocalDropshipping.Web.Controllers
         }
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> VerifyEmail(string userId, string token)
+        public async Task<IActionResult> EmailVerification(string userId, string token)
         {
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
             {
-                // Handle invalid or missing parameters
-                return RedirectToAction("InvalidVerificationLinkk");
+                return RedirectToAction("InvalidVerificationLink");
             }
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                // Handle user not found
-                return RedirectToAction("InvalidVerificationLinke");
-            }
-            // Decode the token
-            var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
 
-            // Confirm the email
-            var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
-            if (result.Succeeded)
+            var isVerified = await _accountService.ConfirmEmailAsync(userId, token);
+            if (isVerified)
             {
-                // Email is confirmed; set EmailConfirmed to true and update the user in the database
-                user.EmailConfirmed = true;
-                await _userManager.UpdateAsync(user);
-                return RedirectToAction("Index2");
+                return RedirectToAction("EmailVerified");
             }
             else
             {
-                // Handle verification failure
                 return RedirectToAction("InvalidVerificationLink");
             }
         }
         [HttpPost]
         public async Task<IActionResult> ForgotPassword(string email)
         {
-            var isPasswordResetLinkSent = await service.ForgotPasswordAsync(email);
+            var isPasswordResetLinkSent = await _accountService.ForgotPasswordAsync(email);
 
             if (isPasswordResetLinkSent)
             {
@@ -210,59 +199,46 @@ namespace LocalDropshipping.Web.Controllers
             }
         }
 
-        [Authorize]
-        public async Task<IActionResult> Subscribe()
+        public IActionResult Subscribe()
         {
-            return RedirectToCorrespondingPage((await _userService.GetCurrentUserAsync())!);
+            var user = _userService.GetCurrentUserAsync().GetAwaiter().GetResult();
+            if (user != null && user.IsSubscribed && user.IsActive)
+                return RedirectToAction("Shop", "Seller");
+            return View();
         }
-        #endregion
 
-        #region Shop
         [Authorize]
-        public async Task<IActionResult> Shop()
+        [TypeFilter(typeof(CustomAuthorizationFilter))]
+        public IActionResult Shop()
         {
-            var user = (await _userService.GetCurrentUserAsync())!;
-            if (user.IsSubscribed && user.IsActive)
-            {
-                return View();
-            }
-            else
-            {
-                return RedirectToAction("Login", "Seller");
-            }
-        }
-        #endregion
+            if (!_userService.IsUserSignedIn())
+                return RedirectToAction("Register", "Seller");
 
-        #region SellerDashboard
+            return View();
+        }
+
         public IActionResult SellerDashboard()
         {
             return View();
         }
-        #endregion
 
-        #region Productleftthumbnail
         public IActionResult Productleftthumbnail()
         {
 
             return View();
 
         }
-        #endregion
 
-        #region Cart
         public IActionResult Cart()
         {
             return View();
         }
-        #endregion
 
-        #region Checkout
         public IActionResult Checkout()
         {
             return View();
         }
 
-        [Authorize]
         public IActionResult ProfileVerification()
         {
             return View();
@@ -288,29 +264,5 @@ namespace LocalDropshipping.Web.Controllers
 
             return RedirectToAction("Shop", "Seller");
         }
-        #endregion
-
-
-        private IActionResult RedirectToCorrespondingPage(User user)
-        {
-            if (!user.IsProfileCompleted && user.IsActive)
-            {
-                return RedirectToAction("ProfileVerification", "Seller");
-            }
-
-            if (!user.IsSubscribed && user.IsActive)
-            {
-                return RedirectToAction("Subscribe", "Seller");
-            }
-
-            if (user.IsSubscribed && !user.IsActive)
-            {
-                return RedirectToAction("AccountSuspended", "Seller");
-            }
-
-            return RedirectToAction("Shop", "Seller");
-
-        }
-
     }
 }

@@ -14,7 +14,7 @@ namespace LocalDropshipping.Web.Services
         bool? ActivateUser(string userId);
         User? Update(string userId, UserDto userDto);
         Task<User?> GetCurrentUserAsync();
-        Task<bool> IsUserSignedIn();
+        bool IsUserSignedIn();
         Task UpdateUserAsync(User user);
         
         Task<bool> IsCurrentUserAdminAsync(ClaimsPrincipal user);

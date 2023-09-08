@@ -1,9 +1,11 @@
+using LocalDropshipping.Web.Attributes;
 using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -35,8 +37,10 @@ builder.Services.AddAuthentication(o =>
 
 builder.Services.ConfigureApplicationCookie(configs =>
 {
-    configs.LoginPath = "/Seller/Login";
+    configs.LoginPath = "/Seller/Register";
 });
+builder.Services.AddScoped<IAuthorizationFilter, CustomAuthorizationFilter>();
+
 
 // Swagger 
 builder.Services.AddSwaggerGen(c =>
@@ -62,7 +66,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IProfilesService, ProfilesService>();
 builder.Services.AddScoped<IImageService, ImageService>();
-
+builder.Services.AddSession();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -80,6 +84,7 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Foc Fulfilment");
 });
 
+app.UseSession();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -89,8 +94,8 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-     //pattern: "{controller=Seller}/{action=Shop}/{id?}"
-     pattern: "{controller=Admin}/{action=AdminLogin}"
+     pattern: "{controller=Seller}/{action=Shop}/{id?}"
+//pattern: "{controller=Admin}/{action=AdminLogin}"
 );
 
 app.Run();
