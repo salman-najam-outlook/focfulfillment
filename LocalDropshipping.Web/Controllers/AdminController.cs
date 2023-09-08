@@ -1,4 +1,5 @@
 ﻿
+using LocalDropshipping.Web.Attributes;
 using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
@@ -96,20 +97,23 @@ namespace LocalDropshipping.Web.Controllers
 
         public IActionResult StaffMember()
         {
+            SetRoleByCurrentUser();
             return View(_userService.GetAllStaffMember());
         }
         public IActionResult EditUser()
         {
             return View();
         }
-     
+
 
         [HttpPost]
         public IActionResult DeleteUser(string userId)
         {
             _userService.Delete(userId);
+            SetRoleByCurrentUser();
             return View("GetAllSellers", _userService.GetAll());
         }
+      
         [HttpPost]
         public IActionResult ActivateUser(string userId)
         {
@@ -119,6 +123,12 @@ namespace LocalDropshipping.Web.Controllers
             }
 
             var sellers = _userService.GetAll();
+
+            //string? currentUserID = _userManager.GetUserId(HttpContext.User);
+            //var currentUser = _userService.GetById(currentUserID);
+            //TempData["IsAdmin"] = currentUser.IsAdmin;
+            //TempData["IsSuperAdmin"] = currentUser.IsSuperAdmin;
+            SetRoleByCurrentUser();
 
             return View("StaffMember", sellers);
         }
@@ -153,7 +163,6 @@ namespace LocalDropshipping.Web.Controllers
             return View();
         }
 
-        [HttpPost]
         public async Task<IActionResult> AddNewUser(UserViewModel model)
         {
             try
@@ -194,10 +203,8 @@ namespace LocalDropshipping.Web.Controllers
                         }
                     }
                 }
-                string? currentUserID = _userManager.GetUserId(HttpContext.User); 
-                var currentUser = _userService.GetById(currentUserID);
-                TempData["IsAdmin"] = currentUser.IsAdmin;
-                TempData["IsSuperAdmin"] = currentUser.IsSuperAdmin;
+
+                SetRoleByCurrentUser();
 
                 return View(model);
             }
@@ -216,16 +223,19 @@ namespace LocalDropshipping.Web.Controllers
         }
 
 
-
         public IActionResult GetAllSellers()
         {
+            SetRoleByCurrentUser();
             return View(_userService.GetAll());
         }
 
 
         [HttpGet]
+        [Authorize]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult Dashboard()
         {
+            SetRoleByCurrentUser();
             return View();
         }
         #endregion
@@ -335,6 +345,14 @@ namespace LocalDropshipping.Web.Controllers
 
             }
             return View("Post");
+        }
+       
+      private void SetRoleByCurrentUser()
+        {
+            string? currentUserID = _userManager.GetUserId(HttpContext.User);
+            var currentUser = _userService.GetById(currentUserID);
+            TempData["IsAdmin"] = currentUser.IsAdmin;
+            TempData["IsSuperAdmin"] = currentUser.IsSuperAdmin;
         }
     }
 }

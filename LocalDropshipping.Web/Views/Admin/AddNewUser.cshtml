@@ -73,22 +73,23 @@
 
                                             </div>
 
-                                            @if (isSuperAdmin==true)
+                                     
+                                            @if (isSuperAdmin == true)
                                             {
                                                 <div class="mb-4 row align-items-center">
                                                     <label class="col-lg-2 col-md-3 col-form-label form-label-title">User Role</label>
                                                     <div class="col-md-9">
 
                                                         <div class="form-check">
-                                                            <input class="form-check-input" type="radio" asp-for="IsAdmin" id="isAdminRadio" value="true">
-                                                            <label class="form-check-label" for="isAdminRadio">
+                                                            <input class="form-check-input" type="radio" asp-for="IsAdmin" id="isAdminRadio" name="userType" value="true">
+                                                            <label class="form-check-label" for="IsAdmin">
                                                                 Admin
                                                             </label>
                                                         </div>
 
                                                         <div class="form-check">
-                                                            <input class="form-check-input" type="radio" asp-for="IsSeller" id="isSellerRadio" value="true">
-                                                            <label class="form-check-label" for="isSellerRadio">
+                                                            <input class="form-check-input" type="radio" asp-for="IsSeller" id="isSellerRadio" name="userType" value="true">
+                                                            <label class="form-check-label" for="IsSeller">
                                                                 Seller
                                                             </label>
                                                         </div>
