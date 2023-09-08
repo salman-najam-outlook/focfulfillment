@@ -1,5 +1,7 @@
 ﻿using LocalDropshipping.Web.Enums;
 using LocalDropshipping.Web.Models;
+using LocalDropshipping.Web.Data.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace LocalDropshipping.Web.Services
 {
@@ -12,7 +14,7 @@ namespace LocalDropshipping.Web.Services
         Task<bool> RegisterAsync(string email, string password, string? fullname = "", string? username = "", string scheme = "http", string host = "example.com");
         Task<bool> ForgotPasswordAsync(string email);
         Task<bool> UpdatePasswordAsync(NewPasswordViewModel model);
-
-
+        Task<User> LoginAsync(string email, string password, bool rememberMe = false);
+        Task<IdentityResult> RegisterAsync(User user, string password);
     }
 }
