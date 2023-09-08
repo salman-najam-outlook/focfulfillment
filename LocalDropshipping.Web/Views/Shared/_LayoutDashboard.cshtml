@@ -242,7 +242,7 @@
                                         </li>
 
                                         <li>
-                                            <a asp-controller="Admin" asp-action="AddProduct">Add A New Product</a>
+                                            <a asp-controller="Admin" asp-action="AddUpdateProduct">Add A New Product</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -329,11 +329,7 @@
                                         <i class="ri-settings-line"></i>
                                         <span>Profile</span>
                                     </a>
-                                @*    <ul class="sidebar-submenu">
-                                        <li>
-                                            <a href="profile-setting.html">Profile Setting</a>
-                                        </li>
-                                    </ul>*@
+                                
                                 </li>
 
                                 <li class="sidebar-list">
@@ -413,8 +409,11 @@
 
     <!-- Plugins JS -->
     <script src="~/backend-assets/js/sidebar-menu.js"></script>
+
+
     <script src="~/backend-assets/js/notify/bootstrap-notify.min.js"></script>
-    <script src="~/backend-assets/js/notify/index.js"></script>
+    @*<script src="~/backend-assets/js/notify/index.js"></script>*@
+
 
     <!-- Apexchar js -->
     <script src="~/backend-assets/js/chart/apex-chart/apex-chart1.js"></script>
@@ -439,8 +438,107 @@
 
     <!-- Theme js -->
     <script src="~/backend-assets/js/script.js"></script>
+    <script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function ShowMessage(message){
+            var notify = $.notify('', {
+                type: 'theme',
+                allow_dismiss: true,
+                delay: 3000,
+                showProgressbar: true,
+                timer: 300,
+                // timer: 555555500,
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+
+            setTimeout(function () {
+                notify.update('message', '<i class="fas fa-bell"></i></i>'+message+'');
+            }, 1000);
+        }
+        function ShowWarning(message) {
+            var notify = $.notify('', {
+                type: 'warning',
+                allow_dismiss: true,
+                delay: 4000,
+                showProgressbar: true,
+                timer: 300,
+                // timer: 555555500,
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+
+            setTimeout(function () {
+                notify.update('message', '<i class="fas fa-bell"></i></i>' + message + '');
+            }, 1000);
+        }
+        function ShowSuccess(message) {
+            var notify = $.notify('', {
+                type: 'success',
+                allow_dismiss: true,
+                delay: 4000,
+                showProgressbar: true,
+                timer: 300,
+                // timer: 555555500,
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+
+            setTimeout(function () {
+                notify.update('message', '<i class="fas fa-bell"></i></i>' + message + '');
+            }, 1000);
+        }
+        function ShowDanger(message) {
+            var notify = $.notify('', {
+                type: 'danger',
+                allow_dismiss: true,
+                delay: 4000,
+                showProgressbar: true,
+                timer: 300,
+                // timer: 555555500,
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+
+            setTimeout(function () {
+                notify.update('message', '<i class="fas fa-bell"></i></i>' + message + '');
+            }, 1000);
+        }
+    </script>
+
+
+
+
+
+    @RenderSection("script",false)
 </body>
 
 
-<!-- Mirrored from themes.pixelstrap.com/fastkart/back-end/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 24 Aug 2023 10:52:27 GMT -->
+<!-- Mirrored 
+om themes.pixelstrap.com/fastkart/back-end/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 24 Aug 2023 10:52:27 GMT -->
 </html>

@@ -28,6 +28,7 @@ namespace LocalDropshipping.Web.Services
 
         public Product Add(Product product)
         {
+        
             context.Products.Add(product);
             context.SaveChanges();
             return product;
@@ -58,6 +59,11 @@ namespace LocalDropshipping.Web.Services
                 exProduct.Price = productDto.Price;
                 exProduct.Name = productDto.Name;
                 exProduct.Description = productDto.Description;
+                exProduct.ImageContent = productDto.ImageLink;
+                exProduct.Quantity = productDto.Stock;
+                exProduct.UpdatedDate = productDto.UpdatedDate;
+                exProduct.CreatedDate = productDto.CreatedDate;
+                exProduct.SKU = productDto.SKU;
                 context.SaveChanges();
             }
             return exProduct;

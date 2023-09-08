@@ -2,6 +2,7 @@
 @model List<Product>;
 @{
     Layout = "_LayoutDashboard";
+    
 }
 
 
@@ -22,7 +23,7 @@
                                         <a href="javascript:void(0)">Export</a>
                                     </li>
                                     <li>
-                                        <a class="btn btn-solid" asp-controller="Admin" asp-action="AddProduct">Add Product</a>
+                                        <a class="btn btn-solid" asp-controller="Admin" asp-action="AddUpdateProduct">Add Product</a>
                                     </li>
                                 </ul>
                             </div>
@@ -49,14 +50,14 @@
                                                 <tr>
                                                     <td>@product.ImageContent</td>
                                                     <td>@product.Name</td>
-                                                    <td>@product.Category!.Name</td>
+                                                    <td style="color:black;">@product.Category!.Name</td>
                                                     <td>@product.Quantity</td>
                                                     <td>@product.Price</td>
                                              
                                                     <td>
                                                         <ul>
                                                             <li>
-                                                                <a asp-controller="Admin" asp-action="Edit" asp-route-id="@product.ProductId">
+                                                                <a asp-controller="Admin" asp-action="AddUpdateProduct" asp-route-id="@product.ProductId">
                                                                     <i class="ri-pencil-line"></i> 
                                                                 </a>
                                                             </li>
@@ -64,23 +65,14 @@
 
 
                                                             <li>
-                                                                @*    <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                            data-bs-target="#exampleModalToggle">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                            </a>*@
 
-                                                              @*  <a asp-controller="Admin" asp-action="Deleted" asp-route-id="@product.ProductId">
-                                                                    <i class="ri-delete-bin-line"></i>
-                                                                </a>*@
-                                                               
-                                                                <form method="post" asp-controller="Admin" asp-action="Deleted" asp-route-id="@product.ProductId">
+
+                                                                <form method="post" id="txtdelete"  asp-controller="Admin" asp-action="Deleted" asp-route-id="@product.ProductId">
                                                                     <button type="submit" class="btn btn-link">
                                                                         <i class="ri-delete-bin-line"></i>
                                                                     </button>
                                                                 </form>
 
-
-                                                            
                                                             </li>
                                                         </ul>
                                                     </td>
@@ -96,4 +88,71 @@
             </div>
         </div>
     </div>
+
+
 </body>
+
+
+<script src="~/backend-assets/js/notify/index.js"></script>
+@section script{
+    <script>
+        var notifyMessage = '@TempData["Message"]'; 
+        if (notifyMessage) {
+            var notify = $.notify('<i class="fas fa-bell"></i><strong>Loading</strong> ' + notifyMessage, {
+                type: 'theme',
+                allow_dismiss: true,
+                delay: 4000,
+                showProgressbar: true,
+                timer: 300,
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+
+            '@TempData.Remove("Message")';
+        }
+
+
+
+
+        var notifyaddMessages = '@TempData["addded"]';
+        if (notifyaddMessages) {
+            var notify = $.notify('<i class="fas fa-bell"></i><strong>Loading</strong> ' + notifyaddMessages, {
+                type: 'theme',
+                allow_dismiss: true,
+                delay: 4000,
+                showProgressbar: true,
+                timer: 300,
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+
+            '@TempData.Remove("added")';
+        }
+
+        var notifyupdateMessages = '@TempData["updated"]';
+        if (notifyupdateMessages) {
+            var notify = $.notify('<i class="fas fa-bell"></i><strong>Loading</strong> ' + notifyupdateMessages, {
+                type: 'theme',
+                allow_dismiss: true,
+                delay: 4000,
+                showProgressbar: true,
+                timer: 300,
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+
+            '@TempData.Remove("updated")';
+        }
+    </script>
+}
+
+
+
+
+

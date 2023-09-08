@@ -13,14 +13,14 @@ namespace LocalDropshipping.Web.Controllers
     public class AdminController : Controller
     {
 
-        private readonly IAdminService service;
-        private readonly IProductsService productsService;
+        private readonly IAdminService _service;
+        private readonly IProductsService _productsService;
         public ICategoryService CategoryService { get; }
 
         public AdminController(IAdminService service, IProductsService productsService, ICategoryService _categoryService)
         {
-            this.service = service;
-            this.productsService = productsService;
+            _service = service;
+            _productsService = productsService;
             CategoryService = _categoryService;
         }
 
@@ -65,18 +65,18 @@ namespace LocalDropshipping.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await service.AdminLoginUser(model.Email, model.Password);
+                var result = await _service.AdminLoginUser(model.Email, model.Password);
 
                 if (result.Succeeded)
                 {
                     // Check if the user is an admin
-                    var isAdmin = await service.IsUserAdminAsync(model.Email);
+                    var isAdmin = await _service.IsUserAdminAsync(model.Email);
 
                     // Check if the user is superadmin
-                    var isSuperAdmin = await service.IsUserSuperAdminAsync(model.Email);
+                    var isSuperAdmin = await _service.IsUserSuperAdminAsync(model.Email);
 
                     // Check if the user is active
-                    var isActive = await service.IsUserActiveAsync(model.Email);
+                    var isActive = await _service.IsUserActiveAsync(model.Email);
 
                     if (isAdmin)// || isSuperAdmin
                     {
@@ -118,68 +118,98 @@ namespace LocalDropshipping.Web.Controllers
         public IActionResult ProductsList()
         {
 
-            var data = this.productsService.GetAll();
+            var data = _productsService.GetAll();
             return View(data);
         }
 
         [HttpGet]
         public IActionResult GetById(int id)
         {
-            return View(this.productsService.GetById(id));
+            return View(_productsService.GetById(id));
         }
+
 
 
         [HttpGet]
-        public IActionResult AddProduct()
+        public IActionResult AddUpdateProduct(int? Id=0)
         {
-
-            return View();
+            int id = Convert.ToInt32(Id);
+            if (Id == 0)
+            {
+                return View();
+            }
+            return View(_productsService.GetById(id));
         }
 
-
         [HttpPost]
-        public IActionResult AddProduct(Product product)
+        public IActionResult AddUpdateProduct(Product product)
         {
+            ModelState.Remove("ProductId");
             if (ModelState.IsValid)
             {
-                this.productsService.Add(product);
-                return RedirectToAction("ProductsList");
-            }
-            return View();
-        }
+                if (product.ProductId != 0)
+                {
+                    ProductDto data = new ProductDto
+                    {
+                        Name = product.Name,
+                        Description = product.Description,
+                        Price = product.Price,
+                        Stock = product.Quantity,
+                        ImageLink = product.ImageContent,
+                        UpdatedDate = DateTime.Now,
+                        CreatedDate= DateTime.Now,
+                        SKU=product.SKU
+                    };
+                    
+                    if (product.Price > 0)
+                    {
+                        _productsService.Update(product.ProductId, data);
+                        TempData["updated"] = "Product updated successfully";
+                        return RedirectToAction("ProductsList");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("Price", "Price cannot be negative.");
+                    }
 
-        public IActionResult Edit(int id)
-        {
-            var product = this.productsService.GetById(id);
-            if (product == null)
-            {
-                return NotFound();
+
+                }
+                else
+                {
+                    
+                    if (product.Price > 0)
+                    {
+                        _productsService.Add(product);
+                        TempData["addded"] = "Product added successfully";
+                        return RedirectToAction("ProductsList");
+                    }
+                    else
+                    {
+                        
+                        ModelState.AddModelError("Price", "Price cannot be negative.");
+                    }
+                }
+
             }
             return View(product);
-        }
 
-
-        [HttpPost]
-        public IActionResult Edit(int id, ProductDto product)
-        {
-
-        if (ModelState.IsValid)
-        {
-		    this.productsService.Update(id,product);
-            return RedirectToAction("Dashboard");
-        }
-        return View(product);
         }
 
         [HttpPost]
         public IActionResult Deleted(int id)
         {
-            var product = this.productsService.Delete(id);
+            try
+            {
+                var product = _productsService.Delete(id); 
+                TempData["Message"] = "Product deleted successfully.";
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                TempData["Message"] = "no"; 
+            }
             return RedirectToAction("ProductsList");
         }
     }
-
-
-
 }
 
