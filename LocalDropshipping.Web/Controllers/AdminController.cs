@@ -82,7 +82,7 @@ namespace LocalDropshipping.Web.Controllers
                         if (isActive)
                         {
                             // Redirect to the admin dashboard if the user is an admin active
-                            return RedirectToAction("us7yhs6tdgv", "Admin");
+                            return RedirectToAction("dashboard", "Admin");
                         }
                         else
                         {
@@ -106,7 +106,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
 
-        public ActionResult us7yhs6tdgv()
+        public ActionResult dashboard()
         {
             return View();
         }
@@ -139,7 +139,12 @@ namespace LocalDropshipping.Web.Controllers
         #region Categories
         public IActionResult GetAllCategories()
         {
-            return View(categoryService.GetAll());
+            return View();
+        }
+
+        public IActionResult GetAllCategoriess()
+        {
+            return View();
         }
         #endregion
 

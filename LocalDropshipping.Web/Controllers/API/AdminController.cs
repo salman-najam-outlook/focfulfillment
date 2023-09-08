@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace LocalDropshipping.Web.Controllers.API
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[Action]")]
     [ApiController]
     public class AdminController : ControllerBase
     {
