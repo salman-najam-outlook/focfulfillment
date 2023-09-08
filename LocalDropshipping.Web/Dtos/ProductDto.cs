@@ -7,12 +7,16 @@ namespace LocalDropshipping.Web.Dtos
     {
         public string? Name { get; set; }
         public string? Description { get; set; }
-        public decimal Price { get; set; }
+        public int Price { get; set; }
         public string? ImageLink { get; set; }
         public int Stock { get; set; }
         public bool IsDeleted { get; set; }
         public bool IsFeatured { get; set; }
         public int CategoryId { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime UpdatedDate { get; set; }
+        public string? SKU { get; set; }
+
 
         internal Product ToEntity()
         {

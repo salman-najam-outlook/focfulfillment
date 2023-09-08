@@ -16,11 +16,19 @@ namespace LocalDropshipping.Web.Services
 
         public List<Product> GetAll()
         {
-            return context.Products.Include(x => x.Category).Where(x => x.IsDeleted == false).ToList();
+            //return context.Products.Include(x => x.Category).Where(x => x.IsDeleted == false).ToList();
+            var data= context.Products.Include(x => x.Category).ToList();
+            if(data.Count > 0)
+            {
+                return data;
+            }
+            return new List<Product>
+            { new Product() };  
         }
 
         public Product Add(Product product)
         {
+        
             context.Products.Add(product);
             context.SaveChanges();
             return product;
@@ -36,7 +44,8 @@ namespace LocalDropshipping.Web.Services
             var product = context.Products.FirstOrDefault(x => x.ProductId == productId);
             if (product != null)
             {
-                product.IsDeleted = true;
+                context.Products.Remove(product);
+               // product.IsDeleted = true;
                 context.SaveChanges();
             }
             return product;
@@ -50,8 +59,11 @@ namespace LocalDropshipping.Web.Services
                 exProduct.Price = productDto.Price;
                 exProduct.Name = productDto.Name;
                 exProduct.Description = productDto.Description;
-                exProduct.ImageLink = productDto.ImageLink;
-                exProduct.Stock = productDto.Stock;
+                exProduct.ImageContent = productDto.ImageLink;
+                exProduct.Quantity = productDto.Stock;
+                exProduct.UpdatedDate = productDto.UpdatedDate;
+                exProduct.CreatedDate = productDto.CreatedDate;
+                exProduct.SKU = productDto.SKU;
                 context.SaveChanges();
             }
             return exProduct;
