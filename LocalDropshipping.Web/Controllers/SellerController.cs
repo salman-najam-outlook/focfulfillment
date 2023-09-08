@@ -1,5 +1,6 @@
 ﻿using LocalDropshipping.Web.Attributes;
 using LocalDropshipping.Web.Data.Entities;
+using LocalDropshipping.Web.Enums;
 using LocalDropshipping.Web.Exceptions;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
@@ -216,7 +217,8 @@ namespace LocalDropshipping.Web.Controllers
 
             return View();
         }
-
+        [Authorize]
+        [AuthorizeOnly(Roles.Seller, "Login", "Seller")]
         public IActionResult SellerDashboard()
         {
             return View();

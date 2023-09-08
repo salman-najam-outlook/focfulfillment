@@ -1,4 +1,5 @@
 ﻿
+using LocalDropshipping.Web.Attributes;
 using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
@@ -230,6 +231,8 @@ namespace LocalDropshipping.Web.Controllers
 
 
         [HttpGet]
+        [Authorize]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult Dashboard()
         {
             SetRoleByCurrentUser();
