@@ -32,6 +32,39 @@ namespace LocalDropshipping.Web.Controllers
             return View();
         }
 
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        public IActionResult VerificationEmailSent()
+        {
+            return View();
+        }
+
+        public IActionResult EmailVerified()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var user = await _accountService.LoginAsync(model.Email, model.Password);
+                    return RedirectToAction("Shop", "Seller");
+                }
+            }
+            catch (IdentityException ex)
+            {
+                ModelState.AddModelError("Login Failed", ex.Message);
+            }
+            return View(model);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Register(SignupViewModel model)
         {
@@ -70,11 +103,6 @@ namespace LocalDropshipping.Web.Controllers
             return View(model);
         }
 
-        public IActionResult VerificationEmailSent()
-        {
-            return View();
-        }
-
         public async Task<IActionResult> EmailVerification(string userId, string token)
         {
 
@@ -94,66 +122,12 @@ namespace LocalDropshipping.Web.Controllers
             }
         }
 
-        public IActionResult EmailVerified()
-        {
-            return View();
-        }
-
-        public IActionResult ProfileVerification()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> ProfileVerificationAsync(ProfileVerificationViewModel profileVerificationViewModel)
-        {
-            if (ModelState.IsValid == false)
-            {
-                return View(profileVerificationViewModel);
-            }
-
-            var user = (await _userService.GetCurrentUserAsync())!;
-            user.IsProfileCompleted = true;
-
-            var profile = profileVerificationViewModel.ToEntity();
-            profile.UserId = user.Id;
-
-            await _userService.UpdateUserAsync(user);
-            _profileService.Add(profile);
-
-            return RedirectToAction("Shop", "Seller");
-        }
-
         public IActionResult Subscribe()
         {
             var user = _userService.GetCurrentUserAsync().GetAwaiter().GetResult();
             if (user != null && user.IsSubscribed && user.IsActive)
                 return RedirectToAction("Shop", "Seller");
             return View();
-        }
-
-        public IActionResult Login()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    var user = await _accountService.LoginAsync(model.Email, model.Password);
-                    return RedirectToAction("Shop", "Seller");
-                }
-            }
-            catch (IdentityException ex)
-            {
-                ModelState.AddModelError("Login Failed", ex.Message);
-            }
-            return View(model);
         }
 
         [Authorize]
@@ -186,6 +160,32 @@ namespace LocalDropshipping.Web.Controllers
         public IActionResult Checkout()
         {
             return View();
+        }
+
+        public IActionResult ProfileVerification()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> ProfileVerificationAsync(ProfileVerificationViewModel profileVerificationViewModel)
+        {
+            if (ModelState.IsValid == false)
+            {
+                return View(profileVerificationViewModel);
+            }
+
+            var user = (await _userService.GetCurrentUserAsync())!;
+            user.IsProfileCompleted = true;
+
+            var profile = profileVerificationViewModel.ToEntity();
+            profile.UserId = user.Id;
+
+            await _userService.UpdateUserAsync(user);
+            _profileService.Add(profile);
+
+            return RedirectToAction("Shop", "Seller");
         }
     }
 }
