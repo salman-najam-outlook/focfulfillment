@@ -4,7 +4,10 @@
 @{
     Layout = "_LayoutDashboard";
 }
-
+@{
+    bool isAdmin = TempData["IsAdmin"] as bool? ?? false;
+    bool isSuperAdmin = TempData["IsSuperAdmin"] as bool? ?? false;
+}
 @model UserViewModel;
 
 <!-- New User start -->
@@ -70,23 +73,38 @@
 
                                             </div>
 
-                                            <div class="mb-4 row align-items-center">
-                                                <label class="col-lg-2 col-md-3 col-form-label form-label-title">User Role</label>
-                                                <div class="col-md-9">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="radio" asp-for="IsAdmin" id="isAdminRadio" value="true">
-                                                        <label class="form-check-label" for="isAdminRadio">
-                                                            Admin
-                                                        </label>
-                                                    </div>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="radio" asp-for="IsSeller" id="isSellerRadio" value="true">
-                                                        <label class="form-check-label" for="isSellerRadio">
-                                                            Seller
-                                                        </label>
+                                            @if (isSuperAdmin==true)
+                                            {
+                                                <div class="mb-4 row align-items-center">
+                                                    <label class="col-lg-2 col-md-3 col-form-label form-label-title">User Role</label>
+                                                    <div class="col-md-9">
+
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio" asp-for="IsAdmin" id="isAdminRadio" value="true">
+                                                            <label class="form-check-label" for="isAdminRadio">
+                                                                Admin
+                                                            </label>
+                                                        </div>
+
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio" asp-for="IsSeller" id="isSellerRadio" value="true">
+                                                            <label class="form-check-label" for="isSellerRadio">
+                                                                Seller
+                                                            </label>
+                                                        </div>
+
                                                     </div>
                                                 </div>
-                                            </div>
+                                            }
+                                            else if (isAdmin)
+                                            {
+                                                <div class="form-check" style="display:none">
+                                                    <input class="form-check-input" type="radio" asp-for="IsSeller" id="isSellerRadio" value="true" checked>
+                                                    <label class="form-check-label" for="isSellerRadio">
+                                                        Seller
+                                                    </label>
+                                                </div>
+                                            }
                                             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                                             <div class="col-12">
                                                 <button class="btn btn-animation w-100 justify-content-center" type="submit">
@@ -105,18 +123,3 @@
     </div>
 </div>
 
-@* <script>
-    $(document).ready(function () {
-        var validationErrors = @Html.Raw(Json.Serialize(ViewData.ModelState));
-
-        if (Object.keys(validationErrors).length > 0) {
-            // Display Toastr notifications for each validation error
-            Object.keys(validationErrors).forEach(function (key) {
-                var errorMessages = validationErrors[key].errors;
-                errorMessages.forEach(function (errorMessage) {
-                    toastr.error(errorMessage.errorMessage);
-                });
-            });
-        }
-    });
-</script> *@

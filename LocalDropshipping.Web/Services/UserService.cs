@@ -4,6 +4,7 @@ using LocalDropshipping.Web.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using LocalDropshipping.Web.Dtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace LocalDropshipping.Web.Services
 {
@@ -19,7 +20,22 @@ namespace LocalDropshipping.Web.Services
             _signInManager = signInManager;
             _context = context;
         }
+        public async Task<bool> IsCurrentUserAdminAsync(ClaimsPrincipal user)
+        {
+            if (user == null)
+            {
+                return false; // User is not logged in
+            }
 
+            var currentUser = await _userManager.GetUserAsync(user);
+
+            if (currentUser == null)
+            {
+                return false; // User not found
+            }
+
+            return currentUser.IsAdmin;
+        }
         public async Task<User?> GetCurrentUserAsync()
         {
             var user = await _userManager.GetUserAsync(_signInManager.Context.User);
@@ -61,7 +77,6 @@ namespace LocalDropshipping.Web.Services
 
             _context.Users.Add(user);
 
-            //  context.SaveChanges();
             return user;
         }
 
@@ -80,6 +95,7 @@ namespace LocalDropshipping.Web.Services
             }
             catch (Exception ex)
             {
+
             }
             return null;
         }
@@ -101,6 +117,31 @@ namespace LocalDropshipping.Web.Services
                 return false;
             }
         }
+        public bool? ActivateUser(string userId)
+        {
+            try
+            {
+                var user = _context.Users.Find(userId);
+                if (user != null && user.IsActive == false)
+                {
+
+                    user.IsActive = true;
+
+                    _context.SaveChanges();
+                }
+                else
+                {
+                    user.IsActive = false;
+                    _context.SaveChanges();
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
 
         public List<User> GetAllStaffMember()
         {
@@ -109,7 +150,7 @@ namespace LocalDropshipping.Web.Services
 
         public List<User> GetAll()
         {
-            return _context.Users.Where(x => x.IsActive == true && x.IsAdmin == false && x.IsSuperAdmin == false && x.IsDeleted == false).ToList();
+            return _context.Users.Where(x => x.IsAdmin == false && x.IsSuperAdmin == false && x.IsDeleted == false).ToList();
         }
 
         public User? GetById(string userId)
@@ -128,5 +169,7 @@ namespace LocalDropshipping.Web.Services
             }
             return user;
         }
+
+
     }
 }

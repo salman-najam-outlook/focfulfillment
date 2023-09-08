@@ -7,6 +7,7 @@ using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -16,15 +17,15 @@ namespace LocalDropshipping.Web.Controllers
     public class AdminController : Controller
     {
 
-        private readonly IAdminService service;
-        private readonly IProductsService productsService;
-        private readonly IUserService userService;
+        private readonly IAdminService _service;
+        private readonly IProductsService _productsService;
+        private readonly IUserService _userService;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly LocalDropshippingContext context;
-        private readonly ICategoryService categoryService;
+        private readonly LocalDropshippingContext _context;
+        private readonly ICategoryService _categoryService;
 
-        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context)
+        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService)
         {
             _service = service;
             _productsService = productsService;
@@ -35,6 +36,8 @@ namespace LocalDropshipping.Web.Controllers
             _categoryService = categoryService;
         }
 
+
+
         #region Admin Login
         public IActionResult AdminLogin()
         {
@@ -44,23 +47,25 @@ namespace LocalDropshipping.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> AdminLogin(AdminLoginViewModel model)
         {
+
+           
             if (ModelState.IsValid)
             {
-                var result = await service.AdminLoginUser(model.Email, model.Password);
+                var result = await _service.AdminLoginUser(model.Email, model.Password);
 
                 if (result.Succeeded)
                 {
-                    var isAdmin = await service.IsUserAdminAsync(model.Email);
+                    var isAdmin = await _service.IsUserAdminAsync(model.Email);
 
-                    var isSuperAdmin = await service.IsUserSuperAdminAsync(model.Email);
+                    var isSuperAdmin = await _service.IsUserSuperAdminAsync(model.Email);
 
-                    var isActive = await service.IsUserActiveAsync(model.Email);
+                    var isActive = await _service.IsUserActiveAsync(model.Email);
 
-                    if (isAdmin)// || isSuperAdmin
+                    if (isAdmin || isSuperAdmin)
                     {
                         if (isActive)
                         {
-                            return RedirectToAction("us7yhs6tdgv", "Admin");
+                            return RedirectToAction("Dashboard", "Admin");
                         }
                         else
                         {
@@ -78,40 +83,66 @@ namespace LocalDropshipping.Web.Controllers
                 }
             }
 
+
             return View(model);
         }
 
         public IActionResult StaffMember()
         {
-            return View(userService.GetAllStaffMember());
+            return View(_userService.GetAllStaffMember());
         }
         public IActionResult EditUser()
         {
             return View();
         }
-
+     
 
         [HttpPost]
         public IActionResult DeleteUser(string userId)
         {
-            userService.Delete(userId);
-            return View("GetAllSellers", userService.GetAll());
+            _userService.Delete(userId);
+            return View("GetAllSellers", _userService.GetAll());
         }
         [HttpPost]
-        public IActionResult DisableUser(string userId)
+        public IActionResult ActivateUser(string userId)
         {
             if (!string.IsNullOrEmpty(userId))
             {
-                var user = userService.DisableUser(userId);
+                _userService.ActivateUser(userId);
             }
 
-            var sellers = userService.GetAll();
+            var sellers = _userService.GetAll();
 
             return View("StaffMember", sellers);
         }
 
         public IActionResult AddNewUser()
         {
+            try
+            {
+                string? currentUserID = _userManager.GetUserId(HttpContext.User); 
+                var currentUser = _userService.GetById(currentUserID);
+                bool isAdmin = currentUser.IsAdmin;
+                bool isSuperAdmin = currentUser.IsSuperAdmin;
+
+                var model = new UserViewModel();
+
+                if (isAdmin)
+                {
+                    model.IsSeller = true;
+                }
+
+
+                TempData["IsAdmin"] = isAdmin;
+                TempData["IsSuperAdmin"] = isSuperAdmin;
+
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Something went wrong. Please try again later!!!";
+                return RedirectToAction("AdminLogin", "Admin");
+            }
+
             return View();
         }
 
@@ -136,15 +167,15 @@ namespace LocalDropshipping.Web.Controllers
                         PhoneNumber = model.PhoneNumber,
                         IsAdmin = model.IsAdmin,
                         IsSeller = model.IsSeller,
-                        IsActive = true
-                        //DeletedBy = User.Identity.Name 
+                        IsActive = true,
                     };
 
                     var result = await _userManager.CreateAsync(user, model.Password);
 
+
                     if (result.Succeeded)
                     {
-                        userService.Add(user);
+                        _userService.Add(user);
 
                         return RedirectToAction("StaffMember", "Admin");
                     }
@@ -156,6 +187,10 @@ namespace LocalDropshipping.Web.Controllers
                         }
                     }
                 }
+                string? currentUserID = _userManager.GetUserId(HttpContext.User); 
+                var currentUser = _userService.GetById(currentUserID);
+                TempData["IsAdmin"] = currentUser.IsAdmin;
+                TempData["IsSuperAdmin"] = currentUser.IsSuperAdmin;
 
                 return View(model);
             }
@@ -164,9 +199,20 @@ namespace LocalDropshipping.Web.Controllers
                 return View();
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+
+            return RedirectToAction("AdminLogin", "Admin");
+        }
+
+
+
         public IActionResult GetAllSellers()
         {
-            return View(userService.GetAll());
+            return View(_userService.GetAll());
         }
 
 
@@ -180,7 +226,7 @@ namespace LocalDropshipping.Web.Controllers
         #region Products
         public IActionResult GetAllProducts()
         {
-            return View(productsService.GetAll());
+            return View(_productsService.GetAll());
         }
 
         public IActionResult Post()
@@ -188,32 +234,36 @@ namespace LocalDropshipping.Web.Controllers
             return View();
 
         }
+
         [HttpPost]
         public IActionResult SubmitForm(Product model)
         {
             if (model != null)
             {
-                productsService.Add(model);
+                _productsService.Add(model);
                 return RedirectToAction("GetAllProducts");
 
             }
             return View("Post");
         }
+        
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            var product = _productsService.Delete(id);
+            return RedirectToAction("Dashboard");
+        }
+        
         #endregion
 
         #region Categories
         public IActionResult GetAllCategories()
         {
-            return View(categoryService.GetAll());
+            return View(_categoryService.GetAll());
         }
         #endregion
 
-        [HttpPost]
-        public IActionResult Delete(int id)
-        {
-            var product = this.productsService.Delete(id);
-            return RedirectToAction("Dashboard");
-        }
+        
+
     }
 }
-

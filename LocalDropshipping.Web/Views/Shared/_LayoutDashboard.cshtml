@@ -3,6 +3,11 @@
 
     Layout = null;
 }
+@{
+    bool isAdmin = TempData["IsAdmin"] as bool? ?? false;
+    bool isSuperAdmin = TempData["IsSuperAdmin"] as bool? ?? false;
+}
+
 
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -281,11 +286,13 @@
                                         <li>
                                             <a asp-action="GetAllSellers" asp-controller="Admin">Sellers</a>
                                         </li>
-
-                                        <li>
-                                            <a asp-action="StaffMember" asp-controller="Admin">Staff Members</a>
-                                        </li>
-                                     
+                                        @if (isSuperAdmin)
+                                        {
+                                            <li>
+                                                <a asp-action="StaffMember" asp-controller="Admin">Staff Members</a>
+                                            </li>
+                                        }
+                                       
                                     </ul>
                                 </li>
 
@@ -294,14 +301,7 @@
                                         <i class="ri-user-3-line"></i>
                                         <span>Roles</span>
                                     </a>
-                             @*       <ul class="sidebar-submenu">
-                                        <li>
-                                            <a href="role.html">All roles</a>
-                                        </li>
-                                        <li>
-                                            <a href="create-role.html">Create Role</a>
-                                        </li>
-                                    </ul>*@
+                       
                                 </li>
 
                            
@@ -329,11 +329,7 @@
                                         <i class="ri-settings-line"></i>
                                         <span>Profile</span>
                                     </a>
-                                @*    <ul class="sidebar-submenu">
-                                        <li>
-                                            <a href="profile-setting.html">Profile Setting</a>
-                                        </li>
-                                    </ul>*@
+                    
                                 </li>
 
                                 <li class="sidebar-list">
@@ -344,10 +340,12 @@
                                 </li>
 
                                 <li class="sidebar-list">
-                                    <a class="sidebar-link sidebar-title link-nav" href="list-page.html">
-                                         <i class="ri-file-chart-line"></i>
-                                        <span>Logout</span>
-                                    </a>
+                                    <form asp-action="Logout" asp-controller="Admin" method="post">
+                                        <button type="submit" class="sidebar-link sidebar-title link-nav">
+                                            <i class="ri-file-chart-line"></i>
+                                            <span>Logout</span>
+                                        </button>
+                                    </form>
                                 </li>
 
 
