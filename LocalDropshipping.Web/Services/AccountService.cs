@@ -4,6 +4,16 @@ using LocalDropshipping.Web.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
+using System.Linq.Expressions;
+using LocalDropshipping.Web.Models;
+using Microsoft.EntityFrameworkCore.Metadata;
+using LocalDropshipping.Web.Enums;
+using System.Data;
+using System;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.Hosting;
+using static System.Net.WebRequestMethods;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace LocalDropshipping.Web.Services
 {
@@ -80,6 +90,26 @@ namespace LocalDropshipping.Web.Services
             return user;
         }
 
+        public async Task<bool> SendContactEmailAsync(ContactUsViewModel contactUsViewModel)
+        {
+
+            var emailMessage = new EmailMessage
+            {
+                ToEmail = contactUsViewModel.EmailAddress,
+                Subject = "Contact Us Form Query",
+                TemplatePath = "ContactUsTemplate",
+                Placeholders = new List<KeyValuePair<string, string>>
+                {
+
+                    new KeyValuePair<string, string>("{{Name}}", contactUsViewModel.FullName),
+                    new KeyValuePair<string, string>("{{EmailAddress}}", contactUsViewModel.EmailAddress),
+                    new KeyValuePair<string, string>("{{PhoneNumber}}", contactUsViewModel.PhoneNumber),
+                    new KeyValuePair<string, string>("{{Message}}", contactUsViewModel.Message)
+                 }
+            };
+            await _emailService.SendEmail(emailMessage);
+            return true;
+        }
         // TODO: Forget Password(usama)
 
         public async Task<bool> ForgotPasswordAsync(string email)

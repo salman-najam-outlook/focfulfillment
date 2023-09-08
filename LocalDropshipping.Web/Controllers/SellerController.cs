@@ -66,6 +66,34 @@ namespace LocalDropshipping.Web.Controllers
         {
             return View();
         }
+        public IActionResult contactUs()
+        {
+            return View();
+        }
+        public IActionResult contactUsMessage()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> contactUs(ContactUsViewModel contactUsViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                bool emailSent = await service.SendContactEmailAsync(contactUsViewModel);
+
+                if (emailSent)
+                {
+                    return RedirectToAction("contactUsMessage");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Failed to send contact email. Please try again later.");
+                }
+            }
+
+            return View("ContactUs", contactUsViewModel);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)

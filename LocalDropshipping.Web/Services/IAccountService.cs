@@ -2,6 +2,7 @@
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Data.Entities;
 using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace LocalDropshipping.Web.Services
 {
@@ -12,5 +13,6 @@ namespace LocalDropshipping.Web.Services
         Task<bool> UpdatePasswordAsync(NewPasswordViewModel model);
         Task<User> LoginAsync(string email, string password, bool rememberMe = false);
         Task<IdentityResult> RegisterAsync(User user, string password);
+        Task<bool> SendContactEmailAsync(ContactUsViewModel contactUsViewModel);
     }
 }
