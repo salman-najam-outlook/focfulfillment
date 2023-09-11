@@ -1,8 +1,12 @@
-﻿
-@{
+﻿@{
 
     Layout = null;
 }
+@{
+    bool isAdmin = TempData["IsAdmin"] as bool? ?? false;
+    bool isSuperAdmin = TempData["IsSuperAdmin"] as bool? ?? false;
+}
+
 
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -19,7 +23,7 @@
           content="admin template, Fastkart admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="pixelstrap">
     <link rel="icon" src="~/backend-assets/images/favicon.png" type="image/x-icon">
-  
+
     <link rel="shortcut icon" src="~/backend-assets/images/favicon.png" type="image/x-icon">
     <title>Fastkart - Dashboard</title>
 
@@ -88,7 +92,7 @@
                         </a>
                     </div>
                 </div>
-            
+
 
 
 
@@ -221,7 +225,7 @@
                                 <li class="back-btn"></li>
 
 
-                              
+
 
 
                                 <li class="sidebar-list">
@@ -238,11 +242,11 @@
                                     </a>
                                     <ul class="sidebar-submenu">
                                         <li>
-                                            <a asp-controller="Admin" asp-action="ProductsLists">Products List</a>
+                                            <a asp-controller="Admin" asp-action="ProductsList">Products List</a>
                                         </li>
 
                                         <li>
-                                            <a asp-controller="Admin" asp-action="Create">Add A New Product</a>
+                                            <a asp-controller="Admin" asp-action="AddUpdateProduct">Add A New Product</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -276,16 +280,18 @@
                                     </a>
                                     <ul class="sidebar-submenu">
                                         <li>
-                                            <a href="add-new-user.html">Add A New User</a>
+                                            <a asp-action="AddNewUser" asp-controller="Admin">Add A New User</a>
                                         </li>
                                         <li>
-                                            <a href="all-users.html">Sellers</a>
+                                            <a asp-action="GetAllSellers" asp-controller="Admin">Sellers</a>
                                         </li>
+                                        @if (isSuperAdmin)
+                                        {
+                                            <li>
+                                                <a asp-action="StaffMember" asp-controller="Admin">Staff Members</a>
+                                            </li>
+                                        }
 
-                                        <li>
-                                            <a href="all-users.html">Staff Members</a>
-                                        </li>
-                                     
                                     </ul>
                                 </li>
 
@@ -294,17 +300,10 @@
                                         <i class="ri-user-3-line"></i>
                                         <span>Roles</span>
                                     </a>
-                             @*       <ul class="sidebar-submenu">
-                                        <li>
-                                            <a href="role.html">All roles</a>
-                                        </li>
-                                        <li>
-                                            <a href="create-role.html">Create Role</a>
-                                        </li>
-                                    </ul>*@
+
                                 </li>
 
-                           
+
 
                                 <li class="sidebar-list">
                                     <a class="sidebar-link sidebar-title" href="javascript:void(0)">
@@ -313,7 +312,7 @@
                                     </a>
                                     <ul class="sidebar-submenu">
                                         <li>
-                                            <a href="order-list.html">Order List</a>
+                                            <a asp-action="OrdersList" asp-controller="Admin" >Order List</a>
                                         </li>
 
                                         <li>
@@ -322,18 +321,14 @@
                                     </ul>
                                 </li>
 
-                           
+
 
                                 <li class="sidebar-list">
                                     <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
                                         <i class="ri-settings-line"></i>
                                         <span>Profile</span>
                                     </a>
-                                @*    <ul class="sidebar-submenu">
-                                        <li>
-                                            <a href="profile-setting.html">Profile Setting</a>
-                                        </li>
-                                    </ul>*@
+
                                 </li>
 
                                 <li class="sidebar-list">
@@ -344,8 +339,18 @@
                                 </li>
 
                                 <li class="sidebar-list">
-                                    <a class="sidebar-link sidebar-title link-nav" href="list-page.html">
-                                         <i class="ri-file-chart-line"></i>
+                                    @*   <form asp-action="Logout" asp-controller="Admin" method="post">
+                                    <button type="submit" class="sidebar-link sidebar-title link-nav">
+                                    <i class="ri-file-chart-line"></i>
+                                    <span>Logout</span>
+                                    </button>
+                                    </form> *@
+                                   @*  <a href="Logout" class="sidebar-link sidebar-title link-nav">
+                                        <i class="ri-file-chart-line"></i>
+                                        <span>Logout</span>
+                                    </a> *@
+                                    <a href="#" class="sidebar-link sidebar-title link-nav" id="logoutLink">
+                                        <i class="ri-file-chart-line"></i>
                                         <span>Logout</span>
                                     </a>
                                 </li>
@@ -363,7 +368,7 @@
             <!-- Page Sidebar Ends-->
             <!-- index body start -->
             <div class="page-body">
-            
+
                 @RenderBody()
 
             </div>
@@ -413,8 +418,11 @@
 
     <!-- Plugins JS -->
     <script src="~/backend-assets/js/sidebar-menu.js"></script>
+
+
     <script src="~/backend-assets/js/notify/bootstrap-notify.min.js"></script>
-    <script src="~/backend-assets/js/notify/index.js"></script>
+    @*<script src="~/backend-assets/js/notify/index.js"></script>*@
+
 
     <!-- Apexchar js -->
     <script src="~/backend-assets/js/chart/apex-chart/apex-chart1.js"></script>
@@ -439,8 +447,115 @@
 
     <!-- Theme js -->
     <script src="~/backend-assets/js/script.js"></script>
+    <script>
+
+
+
+
+
+
+
+        document.getElementById("logoutLink").addEventListener("click", function (e) {
+            e.preventDefault(); // Prevent the default anchor tag behavior
+            // Submit the form programmatically
+            var form = document.createElement("form");
+            form.method = "post";
+            form.action = "/Admin/Logout"; // Set the action to your controller and action
+            document.body.appendChild(form);
+            form.submit();
+        });
+
+
+
+
+
+
+
+
+
+
+        function ShowMessage(message) {
+            var notify = $.notify('', {
+                type: 'theme',
+                allow_dismiss: true,
+                delay: 3000,
+                showProgressbar: true,
+                timer: 300,
+                // timer: 555555500,
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+
+            setTimeout(function () {
+                notify.update('message', '<i class="fas fa-bell"></i></i>' + message + '');
+            }, 1000);
+        }
+        function ShowWarning(message) {
+            var notify = $.notify('', {
+                type: 'warning',
+                allow_dismiss: true,
+                delay: 4000,
+                showProgressbar: true,
+                timer: 300,
+                // timer: 555555500,
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+
+            setTimeout(function () {
+                notify.update('message', '<i class="fas fa-bell"></i></i>' + message + '');
+            }, 1000);
+        }
+        function ShowSuccess(message) {
+            var notify = $.notify('', {
+                type: 'success',
+                allow_dismiss: true,
+                delay: 4000,
+                showProgressbar: true,
+                timer: 300,
+                // timer: 555555500,
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+
+            setTimeout(function () {
+                notify.update('message', '<i class="fas fa-bell"></i></i>' + message + '');
+            }, 1000);
+        }
+        function ShowDanger(message) {
+            var notify = $.notify('', {
+                type: 'danger',
+                allow_dismiss: true,
+                delay: 4000,
+                showProgressbar: true,
+                timer: 300,
+                // timer: 555555500,
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+
+            setTimeout(function () {
+                notify.update('message', '<i class="fas fa-bell"></i></i>' + message + '');
+            }, 1000);
+        }
+    </script>
+
+
+
+
+
+    @RenderSection("script",false)
 </body>
 
 
-<!-- Mirrored from themes.pixelstrap.com/fastkart/back-end/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 24 Aug 2023 10:52:27 GMT -->
+<!-- Mirrored
+om themes.pixelstrap.com/fastkart/back-end/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 24 Aug 2023 10:52:27 GMT -->
 </html>

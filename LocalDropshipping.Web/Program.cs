@@ -1,9 +1,13 @@
+using LocalDropshipping.Web.Attributes;
 using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System;
@@ -22,7 +26,6 @@ builder.Services.AddDbContext<LocalDropshippingContext>(options =>
 
 // Identity
 builder.Services.AddIdentityCore<User>()
-    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<LocalDropshippingContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
@@ -33,6 +36,13 @@ builder.Services.AddAuthentication(o =>
     o.DefaultSignInScheme = IdentityConstants.ExternalScheme;
 })
 .AddIdentityCookies(o => { });
+
+builder.Services.ConfigureApplicationCookie(configs =>
+{
+    configs.LoginPath = "/Seller/Register";
+});
+builder.Services.AddScoped<IAuthorizationFilter, CustomAuthorizationFilter>();
+
 
 // Swagger 
 builder.Services.AddSwaggerGen(c =>
@@ -51,11 +61,14 @@ builder.Services.AddScoped<ISubscriptionsService, SubscriptionsService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.Configure<SMTPConfigModel>(builder.Configuration.GetSection("SMTPConfig"));
-
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IProfilesService, ProfilesService>();
 builder.Services.AddScoped<IImageService, ImageService>();
-
+builder.Services.AddSession();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -73,6 +86,7 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Foc Fulfilment");
 });
 
+app.UseSession();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -83,6 +97,8 @@ app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+     pattern: "{controller=Seller}/{action=Shop}/{id?}"
+//pattern: "{controller=Admin}/{action=AdminLogin}"
+);
 
 app.Run();
