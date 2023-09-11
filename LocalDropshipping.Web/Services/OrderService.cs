@@ -17,7 +17,7 @@ namespace LocalDropshipping.Web.Services
 
         public Order Add(Order order)
         {
-            context.Order.Add(order);
+            context.Orders.Add(order);
             context.SaveChanges();
 
             return order;
@@ -25,7 +25,7 @@ namespace LocalDropshipping.Web.Services
 
         public Order? Delete(int orderId)
         {
-            var order = context.Order.FirstOrDefault(x => x.Id == orderId);
+            var order = context.Orders.FirstOrDefault(x => x.Id == orderId);
             if (order != null)
             {
                 order.IsDeleted = true;
@@ -36,17 +36,24 @@ namespace LocalDropshipping.Web.Services
 
         public List<Order> GetAll()
         {
-            return context.Order.Where(x => x.IsDeleted == true).ToList();
+            var orderlist= new List<Order>();
+               orderlist = context.Orders.Where(x => x.IsDeleted == false).ToList();
+            if (orderlist != null)
+            {
+                return orderlist;
+            }
+            return new List<Order>();
+           
         }
 
         public Order? GetById(int orderId)
         {
-            return context.Order.FirstOrDefault(x => x.Id == orderId);
+            return context.Orders.FirstOrDefault(x => x.Id == orderId);
         }
 
         public Order? Update(int orderid, OrderDto order)
         {
-            var exOrder = context.Order.FirstOrDefault(x => x.Id == orderid);
+            var exOrder = context.Orders.FirstOrDefault(x => x.Id == orderid);
             if (exOrder != null)
             {
                 exOrder.Name = order.Name;
@@ -61,12 +68,12 @@ namespace LocalDropshipping.Web.Services
 
         public List<Order> GetOrdersByStatus(OrderStatus status)
         {
-            return context.Order.Where(x => x.OrderStatus == status).ToList();
+            return context.Orders.Where(x => x.OrderStatus == status).ToList();
         }
 
         public int CountOrdersByStatus(OrderStatus status)
         {
-            return context.Order.Count(x => x.OrderStatus == status);
+            return context.Orders.Count(x => x.OrderStatus == status);
         }
     }
 }
