@@ -96,6 +96,7 @@
                         url: "/Seller/Minus",
                         success: function (data) {
                             if (data.success) {
+                                $('.cartItem').text(data.counter);
                             }
 
                         },
