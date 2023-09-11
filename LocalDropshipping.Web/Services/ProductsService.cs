@@ -1,77 +1,81 @@
 ﻿using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
-using LocalDropshipping.Web.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace LocalDropshipping.Web.Services
 {
     public class ProductsService : IProductsService
     {
-        private readonly LocalDropshippingContext context;
+        private readonly LocalDropshippingContext _context;
+        private readonly IUserService _userService;
 
-        public ProductsService(LocalDropshippingContext context)
+        public ProductsService(LocalDropshippingContext context, IUserService userService)
         {
-            this.context = context;
+            _context = context;
+            _userService = userService;
         }
 
         public List<Product> GetAll()
         {
-            //return context.Products.Include(x => x.Category).Where(x => x.IsDeleted == false).ToList();
-            var data= context.Products.Include(x => x.Category).ToList();
-            if(data.Count > 0)
-            {
-                return data;
-            }
-            return new List<Product>
-            { new Product() };  
+            var data = _context.Products
+                                .Where(x => !x.IsDeleted)
+                                .Include(x => x.Category)
+                                .ToList();
+            return data;
         }
 
         public Product Add(Product product)
         {
-        
-            context.Products.Add(product);
-            context.SaveChanges();
+            product.CreatedDate = DateTime.Now;
+            product.CreatedBy = _userService.GetCurrentUserAsync().GetAwaiter().GetResult()!.Email;
+
+            // TODO: Add Image Upload Functionality (Zubair)
+            product.ImageLink = "https://picsum.photos/400/400";
+            product.CategoryId = 3;
+
+            _context.Products.Add(product);
+            _context.SaveChanges();
             return product;
         }
 
         public Product? GetById(int productId)
         {
-            return context.Products.FirstOrDefault(p => p.ProductId == productId);
+            return _context.Products.FirstOrDefault(p => p.ProductId == productId && !p.IsDeleted);
         }
 
         public Product? Delete(int productId)
         {
-            var product = context.Products.FirstOrDefault(x => x.ProductId == productId);
+            var product = _context.Products.FirstOrDefault(x => x.ProductId == productId);
             if (product != null)
             {
-                context.Products.Remove(product);
-               // product.IsDeleted = true;
-                context.SaveChanges();
+                product.IsDeleted = true;
+                product = Update(productId, product);
             }
             return product;
         }
 
-        public Product? Update(int productId, ProductDto productDto)
+        public Product? Update(int productId, Product product)
         {
-            var exProduct = context.Products.FirstOrDefault(x => x.ProductId == productId);
+            Product? exProduct = _context.Products.FirstOrDefault(x => x.ProductId == productId);
             if (exProduct != null)
             {
-                exProduct.Price = productDto.Price;
-                exProduct.Name = productDto.Name;
-                exProduct.Description = productDto.Description;
-                exProduct.ImageContent = productDto.ImageLink;
-                exProduct.Quantity = productDto.Stock;
-                exProduct.UpdatedDate = productDto.UpdatedDate;
-                exProduct.CreatedDate = productDto.CreatedDate;
-                exProduct.SKU = productDto.SKU;
-                context.SaveChanges();
+                exProduct.Price = product.Price;
+                exProduct.Name = product.Name;
+                exProduct.Description = product.Description;
+                exProduct.Quantity = product.Quantity;
+                exProduct.SKU = product.SKU;
+                exProduct.IsDeleted = exProduct.IsDeleted;
+
+                exProduct.UpdatedDate = DateTime.Now;
+                exProduct.UpdatedBy = _userService.GetCurrentUserAsync().GetAwaiter().GetResult()!.Email;
+                _context.SaveChanges();
             }
             return exProduct;
         }
 
         public List<Product> GetProductsByPriceRange(decimal minPrice, decimal maxPrice)
         {
-            return context.Products.Where(x => x.IsDeleted == false && x.Price >= minPrice && x.Price <= maxPrice).ToList();
+            return _context.Products.Where(x => x.IsDeleted == false && x.Price >= minPrice && x.Price <= maxPrice && !x.IsDeleted).ToList();
         }
     }
 

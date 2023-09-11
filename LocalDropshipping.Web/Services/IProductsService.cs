@@ -1,6 +1,4 @@
 ﻿using LocalDropshipping.Web.Data.Entities;
-using LocalDropshipping.Web.Dtos;
-using LocalDropshipping.Web.Models;
 
 namespace LocalDropshipping.Web.Services
 {
@@ -10,7 +8,7 @@ namespace LocalDropshipping.Web.Services
         List<Product> GetAll();
         Product? GetById(int productId);
         Product Delete(int productId);
-        Product? Update(int productId, ProductDto productDto);
+        Product? Update(int productId, Product product);
         List<Product> GetProductsByPriceRange(decimal minPrice, decimal maxPrice);
     }
 }

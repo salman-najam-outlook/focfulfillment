@@ -1,5 +1,4 @@
 ﻿using LocalDropshipping.Web.Enums;
-using MailKit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -12,7 +11,7 @@ namespace LocalDropshipping.Web.Attributes
         private readonly string _redirectToController;
         private readonly Roles _allowedUserRoles;
 
-        public AuthorizeOnlyAttribute(Roles roles, string redirectToAction = "UnAuthorized", string redirectToController = "Public")
+        public AuthorizeOnlyAttribute(Roles roles, string redirectToAction = "AuthorizationFailed", string redirectToController = "Public")
         {
             _redirectToAction = redirectToAction;
             _redirectToController = redirectToController;

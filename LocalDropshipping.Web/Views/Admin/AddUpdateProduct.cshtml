@@ -1,5 +1,5 @@
 ﻿@using LocalDropshipping.Web.Data.Entities;
-@model Product
+@model ProductViewModel
 @{
 
     Layout = "_LayoutDashboard";
@@ -11,8 +11,8 @@
             <div class="col-12">
                 <div class="row">
 
-                    <form asp-controller="Admin" asp-action="AddUpdateProduct" method="post" class="theme-form theme-form-2 mega-form" >
-                        @Html.HiddenFor(a=>a.ProductId)
+                    <form asp-controller="Admin" asp-action="AddUpdateProduct" method="post" class="theme-form theme-form-2 mega-form">
+                        @Html.HiddenFor(a => a.ProductId)
                         <div class="col-sm-8 m-auto">
                             <div class="card">
                                 <div class="card-body">
@@ -26,11 +26,8 @@
                                             Name
                                         </label>
                                         <div class="col-sm-9">
-                                            @Html.TextBoxFor(a=>a.Name,new{ @class="form-control", id="nameInput", placeholder="Product Name" })
+                                            @Html.TextBoxFor(a => a.Name, new{ @class="form-control", id="nameInput", placeholder="Product Name" })
                                             @Html.ValidationMessageFor(a => a.Name, "", new { @class = "text-danger" })
-
-                                            @*            <input class="form-control" name="Name" type="text"
-                                            placeholder="Product Name">*@
                                         </div>
                                     </div>
 
@@ -41,7 +38,7 @@
                                             Description
                                         </label>
                                         <div class="col-sm-9">
-                                            @Html.TextBoxFor(a=>a.Description,new{ @class="form-control", id="txtDescription", placeholder="Product Description" })
+                                            @Html.TextBoxFor(a => a.Description,new{ @class="form-control", id="txtDescription", placeholder="Product Description" })
                                             @Html.ValidationMessageFor(a => a.Description, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -50,12 +47,11 @@
                                     <div class="mb-4 row align-items-center">
                                         @Html.LabelFor(model => model.CategoryId, new { @class = "col-sm-3 col-form-label form-label-title" })
                                         <div class="col-sm-9">
-                                            @Html.DropDownListFor(model => model.CategoryId, new SelectList(new List<SelectListItem>
-                                            {
-                                            new SelectListItem { Text = "Select a category", Value = "" },
-                                            new SelectListItem { Text = "Electronics", Value = "1" }
-                                            // Add more SelectListItem items for other categories if needed
-                                            }, "Value", "Text"), new { @class = "js-example-basic-single w-100 select2-hidden-accessible" })
+                                            @Html.DropDownListFor(
+                                            model => model.CategoryId,
+                                            new SelectList(ViewBag.Categories, "CategoryId", "Name", Model.CategoryId),
+                                            "Select Category",
+                                            new { @class = "js-example-basic-single w-100 select2-hidden-accessible" })
                                             @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -68,10 +64,7 @@
                                     <div class="mb-4 row align-items-center">
                                         <label class="col-sm-3 col-form-label form-label-title">New Arrival</label>
                                         <div class="col-sm-9">
-                                            <label>
-                                                <input class="checkbox_animated check-it" type="checkbox" id="myCheckbox"><span></span>
-
-                                            </label>
+                                            @Html.CheckBoxFor(model => model.IsNewArravial, new { @class = "checkbox_animated check-it" })                                            </>
                                         </div>
                                     </div>
 
@@ -79,9 +72,7 @@
                                     <div class="mb-4 row align-items-center">
                                         <label class="col-sm-3 col-form-label form-label-title">Best Selling</label>
                                         <div class="col-sm-9">
-                                            <label>
-                                                <input class="checkbox_animated check-it" type="checkbox" id="myCheckbox"><span></span>
-                                            </label>
+                                            @Html.CheckBoxFor(model => model.IsBestSelling, new { @class = "checkbox_animated check-it" })
                                         </div>
                                     </div>
 
@@ -92,7 +83,7 @@
                                         <label class="col-sm-3 col-form-label form-label-title">Featured</label>
                                         <div class="col-sm-9">
                                             <label>
-                                                <input class="checkbox_animated check-it" type="checkbox" id="myCheckbox"><span></span>
+                                                @Html.CheckBoxFor(model => model.IsFeatured, new { @class = "checkbox_animated check-it" })
                                             </label>
                                         </div>
                                     </div>
@@ -110,11 +101,8 @@
                                     <div class="mb-4 row align-items-center">
                                         <label class="col-sm-3 col-form-label form-label-title">Images</label>
                                         <div class="col-sm-9">
-                                        
-
-                                            @Html.TextBoxFor(a=>a.ImageContent, new{  type ="file",@class = "form-control"})
-                                            @Html.ValidationMessageFor(model => model.ImageContent, "", new { @class = "text-danger" })
-
+                                            <input class="form-control form-choose" type="file"
+                                                   id="formFileMultiple1" multiple>
                                         </div>
                                     </div>
 
