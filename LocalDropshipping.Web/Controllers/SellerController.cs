@@ -16,12 +16,14 @@ namespace LocalDropshipping.Web.Controllers
         private readonly IProfilesService _profileService;
         private readonly IUserService _userService;
         private readonly IAccountService _accountService;
+        private readonly IOrderService _orderService;
 
-        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService)
+        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService)
         {
             _accountService = accountService;
             _profileService = profileService;
             _userService = userService;
+            _orderService = orderService;
         }
 
         public IActionResult Register()
@@ -40,7 +42,7 @@ namespace LocalDropshipping.Web.Controllers
         {
             return View();
         }
-        public IActionResult UpdatePassword(string userId ,string token)
+        public IActionResult UpdatePassword(string userId, string token)
         {
             return View();
         }
@@ -195,7 +197,7 @@ namespace LocalDropshipping.Web.Controllers
             else
             {
                 ModelState.AddModelError(string.Empty, "Email not found.");
-                return View("ForgotPassword"); 
+                return View("ForgotPassword");
             }
         }
 
@@ -216,11 +218,40 @@ namespace LocalDropshipping.Web.Controllers
 
             return View();
         }
+        public IActionResult Withdrawal()
+        {
+            try
+            {
+                var data = _orderService.GetAll();
+                return View(data);
 
+            }
+            catch (Exception ex)
+            {
+                return View(ex.Message);
+            }
+        }
+        [HttpGet]
         public IActionResult SellerDashboard()
+        {
+            try
+            {
+                var data = _orderService.GetAll();
+                return View(data);
+            }
+            catch (Exception ex)
+            {
+                return View(ex.Message);
+            }
+
+        }
+
+        [HttpGet]
+        public IActionResult WishList()
         {
             return View();
         }
+
 
         public IActionResult Productleftthumbnail()
         {

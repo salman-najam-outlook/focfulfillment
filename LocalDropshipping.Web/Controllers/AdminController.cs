@@ -26,8 +26,8 @@ namespace LocalDropshipping.Web.Controllers
         private readonly SignInManager<User> _signInManager;
         private readonly LocalDropshippingContext _context;
         private readonly ICategoryService _categoryService;
-
-        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService)
+        private readonly IAccountService _accountService;
+        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService)
         {
             _service = service;
             _productsService = productsService;
@@ -37,6 +37,7 @@ namespace LocalDropshipping.Web.Controllers
             _context = context;
             _categoryService = categoryService;
             CategoryService = _categoryService;
+            _accountService = accountService;
         }
 
 
@@ -51,7 +52,7 @@ namespace LocalDropshipping.Web.Controllers
         public async Task<IActionResult> AdminLogin(AdminLoginViewModel model)
         {
 
-           
+
             if (ModelState.IsValid)
             {
                 var result = await _service.AdminLoginUser(model.Email, model.Password);
@@ -94,49 +95,11 @@ namespace LocalDropshipping.Web.Controllers
             return View(model);
         }
 
-        public IActionResult StaffMember()
-        {
-            SetRoleByCurrentUser();
-            return View(_userService.GetAllStaffMember());
-        }
-        public IActionResult EditUser()
-        {
-            return View();
-        }
-
-
-        [HttpPost]
-        public IActionResult DeleteUser(string userId)
-        {
-            _userService.Delete(userId);
-            SetRoleByCurrentUser();
-            return View("GetAllSellers", _userService.GetAll());
-        }
-      
-        [HttpPost]
-        public IActionResult ActivateUser(string userId)
-        {
-            if (!string.IsNullOrEmpty(userId))
-            {
-                _userService.ActivateUser(userId);
-            }
-
-            var sellers = _userService.GetAll();
-
-            //string? currentUserID = _userManager.GetUserId(HttpContext.User);
-            //var currentUser = _userService.GetById(currentUserID);
-            //TempData["IsAdmin"] = currentUser.IsAdmin;
-            //TempData["IsSuperAdmin"] = currentUser.IsSuperAdmin;
-            SetRoleByCurrentUser();
-
-            return View("StaffMember", sellers);
-        }
-
         public IActionResult AddNewUser()
         {
             try
             {
-                string? currentUserID = _userManager.GetUserId(HttpContext.User); 
+                string? currentUserID = _userManager.GetUserId(HttpContext.User);
                 var currentUser = _userService.GetById(currentUserID);
                 bool isAdmin = currentUser.IsAdmin;
                 bool isSuperAdmin = currentUser.IsSuperAdmin;
@@ -162,13 +125,14 @@ namespace LocalDropshipping.Web.Controllers
             return View();
         }
 
+        [HttpPost]
         public async Task<IActionResult> AddNewUser(UserViewModel model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    // Check Line 137 To 144 : In this line i am getting FullName Using Email & UserName 
+                    // Check Line 137 To 144: In this line, I am getting FullName Using Email & UserName 
                     string[] emailParts = model.Email.Split('@');
                     string emailUsername = emailParts.Length > 0 ? emailParts[0] : string.Empty;
                     string[] usernameWords = model.UserName.Split(' ');
@@ -185,11 +149,18 @@ namespace LocalDropshipping.Web.Controllers
                         IsActive = true,
                     };
 
-                    var result = await _userManager.CreateAsync(user, model.Password);
-
+                    // Use the AccountService to register the user and send the email
+                    var result = await _accountService.RegisterAsync(user, model.Password);
 
                     if (result.Succeeded)
                     {
+                        TempData["RegistrationConfirmation"] = "Registration was successful. You can now log in.";
+                        HttpContext.Session.SetString("AdminSideVerificationEmailSent", "True");
+                        return RedirectToAction("AdminSideVerificationEmailSent");
+                    }
+                    if (result.Succeeded)
+                    {
+
                         _userService.Add(user);
 
                         return RedirectToAction("StaffMember", "Admin");
@@ -209,8 +180,52 @@ namespace LocalDropshipping.Web.Controllers
             }
             catch (Exception ex)
             {
+                // Handle exceptions
                 return View();
             }
+        }
+
+        #region AdminSideEmailVerification
+
+        public IActionResult AdminSideVerificationEmailSent()
+        {
+            return View();
+        }
+
+        #endregion
+        public IActionResult StaffMember()
+        {
+            SetRoleByCurrentUser();
+            return View(_userService.GetAllStaffMember());
+        }
+        public IActionResult EditUser()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public IActionResult DeleteUser(string userId)
+        {
+            _userService.Delete(userId);
+            SetRoleByCurrentUser();
+            return View("GetAllSellers", _userService.GetAll());
+        }
+
+        [HttpPost]
+        public IActionResult ActivateUser(string userId)
+        {
+            if (!string.IsNullOrEmpty(userId))
+            {
+                _userService.ActivateUser(userId);
+            }
+
+            var sellers = _userService.GetAll();
+
+
+            SetRoleByCurrentUser();
+
+            return View("StaffMember", sellers);
         }
 
         [HttpPost]
@@ -309,14 +324,14 @@ namespace LocalDropshipping.Web.Controllers
             }
             return View(product);
         }
-        
+
         [HttpPost]
         public IActionResult Delete(int id)
         {
             var product = _productsService.Delete(id);
             return RedirectToAction("Dashboard");
         }
-        
+
         [HttpPost]
         public IActionResult Deleted(int id)
         {
@@ -343,8 +358,8 @@ namespace LocalDropshipping.Web.Controllers
             }
             return View("Post");
         }
-       
-      private void SetRoleByCurrentUser()
+
+        private void SetRoleByCurrentUser()
         {
             string? currentUserID = _userManager.GetUserId(HttpContext.User);
             var currentUser = _userService.GetById(currentUserID);

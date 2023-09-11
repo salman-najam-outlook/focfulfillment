@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
 
     Layout = null;
 }
@@ -24,7 +23,7 @@
           content="admin template, Fastkart admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="pixelstrap">
     <link rel="icon" src="~/backend-assets/images/favicon.png" type="image/x-icon">
-  
+
     <link rel="shortcut icon" src="~/backend-assets/images/favicon.png" type="image/x-icon">
     <title>Fastkart - Dashboard</title>
 
@@ -93,7 +92,7 @@
                         </a>
                     </div>
                 </div>
-            
+
 
 
 
@@ -226,7 +225,7 @@
                                 <li class="back-btn"></li>
 
 
-                              
+
 
 
                                 <li class="sidebar-list">
@@ -292,7 +291,7 @@
                                                 <a asp-action="StaffMember" asp-controller="Admin">Staff Members</a>
                                             </li>
                                         }
-                                       
+
                                     </ul>
                                 </li>
 
@@ -301,10 +300,10 @@
                                         <i class="ri-user-3-line"></i>
                                         <span>Roles</span>
                                     </a>
-                       
+
                                 </li>
 
-                           
+
 
                                 <li class="sidebar-list">
                                     <a class="sidebar-link sidebar-title" href="javascript:void(0)">
@@ -322,14 +321,14 @@
                                     </ul>
                                 </li>
 
-                           
+
 
                                 <li class="sidebar-list">
                                     <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
                                         <i class="ri-settings-line"></i>
                                         <span>Profile</span>
                                     </a>
-                                
+
                                 </li>
 
                                 <li class="sidebar-list">
@@ -340,12 +339,20 @@
                                 </li>
 
                                 <li class="sidebar-list">
-                                    <form asp-action="Logout" asp-controller="Admin" method="post">
-                                        <button type="submit" class="sidebar-link sidebar-title link-nav">
-                                            <i class="ri-file-chart-line"></i>
-                                            <span>Logout</span>
-                                        </button>
-                                    </form>
+                                    @*   <form asp-action="Logout" asp-controller="Admin" method="post">
+                                    <button type="submit" class="sidebar-link sidebar-title link-nav">
+                                    <i class="ri-file-chart-line"></i>
+                                    <span>Logout</span>
+                                    </button>
+                                    </form> *@
+                                   @*  <a href="Logout" class="sidebar-link sidebar-title link-nav">
+                                        <i class="ri-file-chart-line"></i>
+                                        <span>Logout</span>
+                                    </a> *@
+                                    <a href="#" class="sidebar-link sidebar-title link-nav" id="logoutLink">
+                                        <i class="ri-file-chart-line"></i>
+                                        <span>Logout</span>
+                                    </a>
                                 </li>
 
 
@@ -361,7 +368,7 @@
             <!-- Page Sidebar Ends-->
             <!-- index body start -->
             <div class="page-body">
-            
+
                 @RenderBody()
 
             </div>
@@ -448,6 +455,15 @@
 
 
 
+        document.getElementById("logoutLink").addEventListener("click", function (e) {
+            e.preventDefault(); // Prevent the default anchor tag behavior
+            // Submit the form programmatically
+            var form = document.createElement("form");
+            form.method = "post";
+            form.action = "/Admin/Logout"; // Set the action to your controller and action
+            document.body.appendChild(form);
+            form.submit();
+        });
 
 
 
@@ -458,8 +474,7 @@
 
 
 
-
-        function ShowMessage(message){
+        function ShowMessage(message) {
             var notify = $.notify('', {
                 type: 'theme',
                 allow_dismiss: true,
@@ -474,7 +489,7 @@
             });
 
             setTimeout(function () {
-                notify.update('message', '<i class="fas fa-bell"></i></i>'+message+'');
+                notify.update('message', '<i class="fas fa-bell"></i></i>' + message + '');
             }, 1000);
         }
         function ShowWarning(message) {
@@ -541,6 +556,6 @@
 </body>
 
 
-<!-- Mirrored 
+<!-- Mirrored
 om themes.pixelstrap.com/fastkart/back-end/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 24 Aug 2023 10:52:27 GMT -->
 </html>

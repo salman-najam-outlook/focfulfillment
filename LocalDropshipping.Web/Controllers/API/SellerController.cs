@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LocalDropshipping.Web.Controllers.API
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class SellerController : ControllerBase
     {
