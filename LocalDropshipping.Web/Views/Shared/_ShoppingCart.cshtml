@@ -1,0 +1,36 @@
+﻿@using LocalDropshipping.Web.Data.Entities;
+@model IEnumerable<LocalDropshipping.Web.Data.Entities.OrderItem>
+@using Newtonsoft.Json;
+@{
+	var data = Context.Session.GetString("cart");
+	List<OrderItem> cartItems;
+	int countCart = 0;
+	if (data == null)
+	{
+		countCart = 0;
+	}
+	else
+	{
+		var data2 = Context.Session.GetString("cart");
+		List<OrderItem> dataCart = JsonConvert.DeserializeObject<List<OrderItem>>(data2);
+		countCart = dataCart.Count();
+		cartItems = dataCart;
+
+	}
+
+}
+<li class="right-side">
+	<div class="onhover-dropdown header-badge">
+		<button type="button" class="btn p-0 position-relative header-wishlist cartBtn">
+			<i data-feather="shopping-cart"></i>
+			<span class="position-absolute top-0 start-100 translate-middle badge cartItem">
+				@countCart
+				@* <span class="visually-hidden">unread messages</span> *@
+			</span>
+		</button>
+
+		<div class="onhover-div" id="exampleModal">
+			
+		</div>
+	</div>
+</li>

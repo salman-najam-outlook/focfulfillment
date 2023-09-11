@@ -1,0 +1,43 @@
+﻿
+
+<ul class="cart-list">
+	@if (Model != null)
+	{
+		@foreach (var cart in Model)
+		{
+			<li class="product-box-contain">
+				<div class="drop-cart">
+					<a href="product-left-thumbnail.html" class="drop-image">
+						<img src="@cart.Image"
+							 class="blur-up lazyload" alt="">
+					</a>
+
+					<div class="drop-contain">
+						<a href="product-left-thumbnail.html">
+							<h5>@cart.Name</h5>
+						</a>
+						<h6><span>@cart.Quantity x</span> @cart.Price</h6>
+						<button class="close-button close_button">
+							<i class="fa-solid fa-xmark"></i>
+						</button>
+					</div>
+				</div>
+			</li>
+		}
+	}
+	else
+	{
+		<p>No Items is in the cart</p>
+	}
+</ul>
+
+<div class="price-box">
+	<h5>Total :</h5>
+	<h4 class="theme-color fw-bold">Rs @ViewBag.total /-</h4>
+</div>
+
+<div class="button-group">
+	<a asp-action="Cart" asp-controller="Seller" class="btn btn-sm cart-button">View Cart</a>
+	<a asp-action="Cart" asp-controller="Checkout" class="btn btn-sm cart-button theme-bg-color
+                                                        text-white">Checkout</a>
+</div>

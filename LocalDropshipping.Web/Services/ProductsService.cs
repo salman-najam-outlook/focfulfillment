@@ -16,7 +16,9 @@ namespace LocalDropshipping.Web.Services
 
         public List<Product> GetAll()
         {
-            return context.Products.Include(x => x.Category).Where(x => x.IsDeleted == false).ToList();
+            return context.Products.Include(x => x.Category).Where(x => x.IsDeleted == false).Take(10).ToList();
+
+
         }
 
         public Product Add(Product product)
@@ -51,7 +53,7 @@ namespace LocalDropshipping.Web.Services
                 exProduct.Name = productDto.Name;
                 exProduct.Description = productDto.Description;
                 exProduct.ImageLink = productDto.ImageLink;
-                exProduct.Stock = productDto.Stock;
+                exProduct.Quantity = productDto.Stock;
                 context.SaveChanges();
             }
             return exProduct;
