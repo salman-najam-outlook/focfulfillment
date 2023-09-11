@@ -56,7 +56,7 @@ namespace LocalDropshipping.Web.Services
             var exOrder = context.Orders.FirstOrDefault(x => x.Id == orderid);
             if (exOrder != null)
             {
-                exOrder.Name = order.Name;
+               // exOrder.Name = order.Name;
                 exOrder.OrderStatus = order.Status;
                 exOrder.SpecialInstructions = order.SpecialInstructions;
                 exOrder.OrderCode = order.OrderCode;

@@ -79,23 +79,37 @@
                                                 <div class="mb-4 row align-items-center">
                                                     <label class="col-lg-2 col-md-3 col-form-label form-label-title">User Role</label>
                                                     <div class="col-md-9">
-
                                                         <div class="form-check">
-                                                            <input class="form-check-input" type="radio" asp-for="IsAdmin" id="isAdminRadio" name="userType" value="true">
-                                                            <label class="form-check-label" for="IsAdmin">
+                                                            <input class="form-check-input" type="radio" asp-for="IsAdmin" id="isAdminRadio" value="true">
+                                                            <label class="form-check-label" for="isAdminRadio">
                                                                 Admin
                                                             </label>
                                                         </div>
 
                                                         <div class="form-check">
-                                                            <input class="form-check-input" type="radio" asp-for="IsSeller" id="isSellerRadio" name="userType" value="true">
-                                                            <label class="form-check-label" for="IsSeller">
+                                                            <input class="form-check-input" type="radio" asp-for="IsSeller" id="isSellerRadio" value="true">
+                                                            <label class="form-check-label" for="isSellerRadio">
                                                                 Seller
                                                             </label>
                                                         </div>
+                                                   @*      <div class="form-check">
+                                                            <input class="form-check-input" type="radio" asp-for="IsAdmin" id="isAdminRadio" value="true" name="userType">
+                                                            <label class="form-check-label" for="isAdminRadio">
+                                                                Admin
+                                                            </label>
+                                                        </div>
+
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio" asp-for="IsSeller" id="isSellerRadio" value="false" name="userType">
+                                                            <label class="form-check-label" for="isSellerRadio">
+                                                                Seller
+                                                            </label>
+                                                        </div> *@
+
 
                                                     </div>
                                                 </div>
+                                             
                                             }
                                             else if (isAdmin)
                                             {

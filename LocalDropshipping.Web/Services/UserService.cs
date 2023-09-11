@@ -122,16 +122,19 @@ namespace LocalDropshipping.Web.Services
             try
             {
                 var user = _context.Users.Find(userId);
-                if (user != null && user.IsActive == false)
+                if (user != null && user.IsActive == false && user.IsSubscribed == false)
                 {
 
                     user.IsActive = true;
+                    user.IsSubscribed = true;
+
 
                     _context.SaveChanges();
                 }
                 else
                 {
                     user.IsActive = false;
+                    user.IsSubscribed = false;
                     _context.SaveChanges();
                 }
                 return true;
