@@ -1,78 +1,227 @@
-﻿using LocalDropshipping.Web.Data.Entities;
+﻿using LocalDropshipping.Web.Attributes;
+using LocalDropshipping.Web.Data.Entities;
+using LocalDropshipping.Web.Exceptions;
 using LocalDropshipping.Web.Extensions;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System;
+using System.Text;
 using System.Reflection.Metadata.Ecma335;
 
 namespace LocalDropshipping.Web.Controllers
 {
     public class SellerController : Controller
     {
-        private readonly IAccountService service;
-        private readonly IProductsService productsService;
+        private readonly IProfilesService _profileService;
+        private readonly IUserService _userService;
+        private readonly IAccountService _accountService;
+        private readonly IOrderService _orderService;
+        private readonly IProductsService _productsService;
 
-        public SellerController(IAccountService service, IProductsService productsService)
+        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, IProductsService productsService)
         {
-            this.service = service;
-            this.productsService = productsService;
+            _accountService = accountService;
+            _profileService = profileService;
+            _userService = userService;
+            _orderService = orderService;
+            _productsService = productsService;
         }
-        #region Seller Register and Login
+
         public IActionResult Register()
+        {
+            string? isEmailSent = HttpContext.Session.GetString("VerificationEmailSent");
+            if (isEmailSent != null && isEmailSent == "True")
+                return RedirectToAction("VerificationEmailSent", "Seller");
+            return View();
+        }
+
+        public IActionResult Login()
         {
             return View();
         }
-        //Seller Account login
-        public IActionResult Login()
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+        public IActionResult UpdatePassword(string userId, string token)
+        {
+            return View();
+        }
+        public IActionResult UpdatePasswordMessage()
+        {
+            return View();
+        }
+        public IActionResult ForgotPasswordMessage()
+        {
+            return View();
+        }
+
+        public IActionResult VerificationEmailSent()
+        {
+            return View();
+        }
+
+        public IActionResult EmailVerified()
+        {
+            return View();
+        }
+        public IActionResult contactUs()
+        {
+            return View();
+        }
+        public IActionResult contactUsMessage()
         {
             return View();
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> contactUs(ContactUsViewModel contactUsViewModel)
         {
             if (ModelState.IsValid)
             {
-                var isLoggedin = await service.LoginAsync(model.Email, model.Password);
+                bool emailSent = await _accountService.SendContactEmailAsync(contactUsViewModel);
 
-                if (isLoggedin)
+                if (emailSent)
                 {
-                    // Redirect to the desired page after successful login
-                    return RedirectToAction("ShopPage", "ShopPage");
+                    return RedirectToAction("contactUsMessage");
                 }
-
-                ModelState.AddModelError("", "Invalid username or password.");
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Failed to send contact email. Please try again later.");
+                }
             }
 
-            return View(model);
+            return View("ContactUs", contactUsViewModel);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var user = await _accountService.LoginAsync(model.Email, model.Password);
+                    return RedirectToAction("Shop", "Seller");
+                }
+            }
+            catch (IdentityException ex)
+            {
+                ModelState.AddModelError("Login Failed", ex.Message);
+            }
+            return View(model);
+        }
         [HttpPost]
         public async Task<IActionResult> Register(SignupViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var isSucceeded = await service.RegisterAsync(model.Email, model.Password, string.Join(" ", model.FirstName, model.LastName));
-                if (!isSucceeded)
+                User user = new User
                 {
-                    ModelState.AddModelError("", "Unknow error occured");
-                    return View(model);
+                    Email = model.Email,
+                    UserName = model.Email,
+                    Fullname = string.Join(" ", model.FirstName, model.LastName),
+                    IsSeller = true
+                };
+
+                var result = await _accountService.RegisterAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    TempData["RegistrationConfirmation"] = "Registration was successful. You can now log in.";
+                    HttpContext.Session.SetString("VerificationEmailSent", "True");
+                    return RedirectToAction("VerificationEmailSent");
                 }
-
-                ModelState.Clear();
-                return RedirectToAction("Account", "Login");
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        if (error.Code == "DuplicateUserName")
+                        {
+                            ModelState.AddModelError("CustomErrorMessage", string.Join(": ", "DuplicateEmail", "Email already exist"));
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("CustomErrorMessage", string.Join(": ", error.Code, error.Description));
+                        }
+                    }
+                }
             }
-
             return View(model);
         }
-        #endregion
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdatePassword(NewPasswordViewModel model)
+        {
+            var isUpdated = await _accountService.UpdatePasswordAsync(model);
 
-        #region Shop
+            if (isUpdated)
+            {
+                return RedirectToAction("UpdatePasswordMessage");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Password update failed.");
+                return View("UpdatePassword");
+            }
+        }
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> EmailVerification(string userId, string token)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("InvalidVerificationLink");
+            }
+
+            var isVerified = await _accountService.ConfirmEmailAsync(userId, token);
+            if (isVerified)
+            {
+                return RedirectToAction("EmailVerified");
+            }
+            else
+            {
+                return RedirectToAction("InvalidVerificationLink");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            var isPasswordResetLinkSent = await _accountService.ForgotPasswordAsync(email);
+
+            if (isPasswordResetLinkSent)
+            {
+                TempData["ForgotPassword"] = "Password Forgot successful. You can now log in.";
+
+                return RedirectToAction("ForgotPasswordMessage");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Email not found.");
+                return View("ForgotPassword");
+            }
+        }
+
+        public IActionResult Subscribe()
+        {
+            var user = _userService.GetCurrentUserAsync().GetAwaiter().GetResult();
+            if (user != null && user.IsSubscribed && user.IsActive)
+                return RedirectToAction("Shop", "Seller");
+            return View();
+        }
+
+        [Authorize]
+        [TypeFilter(typeof(CustomAuthorizationFilter))]
         public IActionResult Shop()
         {
-            ViewBag.products = productsService.GetAll();
+            ViewBag.products = _productsService.GetAll();
 			var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
 			ViewBag.total = TotalCost();
 			ViewBag.totalCost = ViewBag.total + ViewBag.shipping;
@@ -83,7 +232,7 @@ namespace LocalDropshipping.Web.Controllers
         {
             try
             {
-                Product productItem = productsService.GetById(Convert.ToInt32(id == string.Empty ? 0 : id));
+                Product productItem = _productsService.GetById(Convert.ToInt32(id == string.Empty ? 0 : id));
                 var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
                 int quantity = 1;
                 if (cart == null) //no item in the cart
@@ -93,7 +242,7 @@ namespace LocalDropshipping.Web.Controllers
                     {
                         ProductId = productItem.ProductId,
                         Name = productItem.Name,
-						Image = productItem.ImageLink,
+						Image = productItem.ImageContent,
 						Quantity = quantity,
                         Price = productItem.Price,
                         SubTotal = quantity * productItem.Price
@@ -113,7 +262,7 @@ namespace LocalDropshipping.Web.Controllers
                         {
                             ProductId = productItem.ProductId,
                             Name = productItem.Name,
-							Image = productItem.ImageLink,
+							Image = productItem.ImageContent,
 							Quantity = quantity,
                             Price = productItem.Price,
                             SubTotal = quantity * productItem.Price
@@ -134,7 +283,7 @@ namespace LocalDropshipping.Web.Controllers
             
             try
             {
-                Product productItem = productsService.GetById(Convert.ToInt32(id == string.Empty ? 0 : id));
+                Product productItem = _productsService.GetById(Convert.ToInt32(id == string.Empty ? 0 : id));
                 var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
 
 				if (cart!= null && cart.Any())
@@ -177,25 +326,63 @@ namespace LocalDropshipping.Web.Controllers
             return PartialView("_cartItem", cart);
         }
 
-        #endregion
+        public IActionResult Withdrawal()
+        {
+            try
+            {
+                var data = _orderService.GetAll();
+                return View(data);
 
-        #region SellerDashboard
+            }
+            catch (Exception ex)
+            {
+                return View(ex.Message);
+            }
+        }
+        [HttpGet]
         public IActionResult SellerDashboard()
+        {
+            try
+            {
+                var data = _orderService.GetAll();
+                return View(data);
+            }
+            catch (Exception ex)
+            {
+                return View(ex.Message);
+            }
+
+        }
+
+        [HttpGet]
+        public IActionResult WishList()
         {
             return View();
         }
-        #endregion
 
-        #region Productleftthumbnail
+        public IActionResult SellerOrders()
+        {
+            try
+            {
+
+                List<Order> orders = _orderService.GetAll();
+                return View(orders);
+            }
+            catch (Exception ex)
+            {
+
+                return View(ex.Message);
+            }
+        }
+
+
         public IActionResult Productleftthumbnail()
         {
 
             return View();
 
         }
-        #endregion
 
-        #region Cart
         public IActionResult Cart()
         {
 			var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
@@ -214,9 +401,7 @@ namespace LocalDropshipping.Web.Controllers
             return RedirectToAction("Cart");
         }
 
-        #endregion
 
-        #region Checkout
         public IActionResult Checkout()
         {
 			var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
@@ -225,7 +410,31 @@ namespace LocalDropshipping.Web.Controllers
             ViewBag.totalCost = ViewBag.total + ViewBag.shipping;
             return View(cart);
         }
-        #endregion
+
+        public IActionResult ProfileVerification()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> ProfileVerificationAsync(ProfileVerificationViewModel profileVerificationViewModel)
+        {
+            if (ModelState.IsValid == false)
+            {
+                return View(profileVerificationViewModel);
+            }
+
+            var user = (await _userService.GetCurrentUserAsync())!;
+            user.IsProfileCompleted = true;
+
+            var profile = profileVerificationViewModel.ToEntity();
+            profile.UserId = user.Id;
+
+            await _userService.UpdateUserAsync(user);
+            _profileService.Add(profile);
+            return RedirectToAction("Shop", "Seller");
+        }
 
         private decimal TotalCost()
         {

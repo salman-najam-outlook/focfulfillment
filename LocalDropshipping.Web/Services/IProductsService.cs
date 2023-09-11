@@ -10,7 +10,7 @@ namespace LocalDropshipping.Web.Services
         List<Product> GetAll();
         Product? GetById(int productId);
         Product Delete(int productId);
-        Product Update(int productId, ProductDto productDto);
+        Product? Update(int productId, ProductDto productDto);
         List<Product> GetProductsByPriceRange(decimal minPrice, decimal maxPrice);
     }
 }
