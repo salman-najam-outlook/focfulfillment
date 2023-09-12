@@ -242,7 +242,7 @@ namespace LocalDropshipping.Web.Controllers
                     {
                         ProductId = productItem.ProductId,
                         Name = productItem.Name,
-						Image = productItem.ImageContent,
+						Image = productItem.ImageLink,
 						Quantity = quantity,
                         Price = productItem.Price,
                         SubTotal = quantity * productItem.Price
@@ -262,7 +262,7 @@ namespace LocalDropshipping.Web.Controllers
                         {
                             ProductId = productItem.ProductId,
                             Name = productItem.Name,
-							Image = productItem.ImageContent,
+							Image = productItem.ImageLink,
 							Quantity = quantity,
                             Price = productItem.Price,
                             SubTotal = quantity * productItem.Price
