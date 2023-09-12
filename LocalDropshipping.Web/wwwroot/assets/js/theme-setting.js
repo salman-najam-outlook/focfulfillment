@@ -1,12 +1,12 @@
 /*=====================
       Color Picker
 ==========================*/
-var color_picker1 = document.getElementById("colorPick").value;
-document.getElementById("colorPick").onchange = function () {
-    color_picker1 = this.value;
-    document.body.style.setProperty("--theme-color", color_picker1);
-    document.body.style.setProperty("--theme-color-rgb", color_picker1);
-};
+//var color_picker1 = document.getElementById("colorPick").value;
+//document.getElementById("colorPick").onchange = function () {
+//    color_picker1 = this.value;
+//    document.body.style.setProperty("--theme-color", color_picker1);
+//    document.body.style.setProperty("--theme-color-rgb", color_picker1);
+//};
 
 /*========================
  Dark setting js

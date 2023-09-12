@@ -1,8 +1,10 @@
 using LocalDropshipping.Web.Attributes;
 using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
+using LocalDropshipping.Web.Middlewares;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -15,6 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSession();
 
 // DbContext
 builder.Services.AddDbContext<LocalDropshippingContext>(options =>
@@ -23,7 +26,10 @@ builder.Services.AddDbContext<LocalDropshippingContext>(options =>
 });
 
 // Identity
-builder.Services.AddIdentityCore<User>()
+builder.Services.AddIdentityCore<User>(opt =>
+{
+    opt.SignIn.RequireConfirmedEmail = true;
+})
     .AddEntityFrameworkStores<LocalDropshippingContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
@@ -89,8 +95,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
+app.UseMiddleware<AuthenticationMiddleware>();
 app.UseAuthorization();
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

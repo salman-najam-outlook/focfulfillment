@@ -1,18 +1,12 @@
-﻿
+﻿using LocalDropshipping.Web.Attributes;
 using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
-using LocalDropshipping.Web.Dtos;
 using LocalDropshipping.Web.Enums;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
-using System.Security.Claims;
 
 namespace LocalDropshipping.Web.Controllers
 {
@@ -60,18 +54,18 @@ namespace LocalDropshipping.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                var result = await _service.AdminLoginUser(model.Email, model.Password);
+                Microsoft.AspNetCore.Identity.SignInResult result = await _service.AdminLoginUser(model.Email, model.Password);
 
                 if (result.Succeeded)
                 {
                     // Check if the user is an admin
-                    var isAdmin = await _service.IsUserAdminAsync(model.Email);
+                    bool isAdmin = await _service.IsUserAdminAsync(model.Email);
 
                     // Check if the user is superadmin
-                    var isSuperAdmin = await _service.IsUserSuperAdminAsync(model.Email);
+                    bool isSuperAdmin = await _service.IsUserSuperAdminAsync(model.Email);
 
                     // Check if the user is active
-                    var isActive = await _service.IsUserActiveAsync(model.Email);
+                    bool isActive = await _service.IsUserActiveAsync(model.Email);
 
                     if (isAdmin || isSuperAdmin)
                     {
@@ -109,7 +103,7 @@ namespace LocalDropshipping.Web.Controllers
                 bool isAdmin = currentUser.IsAdmin;
                 bool isSuperAdmin = currentUser.IsSuperAdmin;
 
-                var model = new UserViewModel();
+                UserViewModel model = new UserViewModel();
 
                 if (isAdmin)
                 {
@@ -143,7 +137,7 @@ namespace LocalDropshipping.Web.Controllers
                     string[] usernameWords = model.UserName.Split(' ');
                     emailUsername = string.Join(" ", emailUsername.Split(' ').Except(usernameWords));
                     emailUsername = emailUsername.Trim();
-                    var user = new User
+                    User user = new User
                     {
                         Fullname = emailUsername,
                         UserName = model.UserName,
@@ -172,7 +166,7 @@ namespace LocalDropshipping.Web.Controllers
                     }
                     else
                     {
-                        foreach (var error in result.Errors)
+                        foreach (IdentityError error in result.Errors)
                         {
                             ModelState.AddModelError(string.Empty, error.Description);
                         }
@@ -250,6 +244,8 @@ namespace LocalDropshipping.Web.Controllers
 
 
         [HttpGet]
+        [Authorize]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult Dashboard()
         {
             SetRoleByCurrentUser();
@@ -268,98 +264,68 @@ namespace LocalDropshipping.Web.Controllers
             }
             catch (Exception ex)
             {
-                return View(ex.Message); 
+                return View(ex.Message);
             }
         }
 
         #endregion
 
         [HttpGet]
-        public IActionResult ProductsList()
+        [Authorize]
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        public IActionResult Products()
         {
-
-            var data = _productsService.GetAll();
+            List<Product> data = _productsService.GetAll();
             return View(data);
         }
 
-        [HttpGet]
-        public IActionResult GetById(int id)
-        {
-            return View(_productsService.GetById(id));
-        }
 
         [HttpGet]
-        public IActionResult AddUpdateProduct(int? Id = 0)
+        [Authorize]
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        public IActionResult AddUpdateProduct(int id = 0)
         {
-            int id = Convert.ToInt32(Id);
-            if (Id == 0)
-            {
-                return View();
-            }
-            return View(_productsService.GetById(id));
+            ViewBag.Categories = _categoryService.GetAll();
+            var productVeiwModel = new ProductViewModel(_productsService.GetById(id));
+            return View(productVeiwModel);
         }
+
 
         [HttpPost]
-        public IActionResult AddUpdateProduct(Product product)
+        [Authorize]
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        public IActionResult AddUpdateProduct(ProductViewModel model)
         {
             ModelState.Remove("ProductId");
             if (ModelState.IsValid)
             {
-                if (product.ProductId != 0)
+                var product = model.ToEntity();
+                if (model.ProductId != 0)
                 {
-                    ProductDto data = new ProductDto
-                    {
-                        Name = product.Name,
-                        Description = product.Description,
-                        Price = product.Price,
-                        Stock = product.Quantity,
-                        ImageLink = product.ImageContent,
-                        UpdatedDate = DateTime.Now,
-                        CreatedDate = DateTime.Now,
-                        SKU = product.SKU
-                    };
-
-                    if (product.Price > 0)
-                    {
-                        _productsService.Update(product.ProductId, data);
-                        TempData["updated"] = "Product updated successfully";
-                        return RedirectToAction("ProductsList");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("Price", "Price cannot be negative.");
-                    }
+                    _productsService.Update(model.ProductId, product);
+                    TempData["updated"] = "Product updated successfully";
+                    return RedirectToAction("Products");
                 }
                 else
                 {
-                    if (product.Price > 0)
-                    {
-                        _productsService.Add(product);
-                        TempData["addded"] = "Product added successfully";
-                        return RedirectToAction("ProductsList");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("Price", "Price cannot be negative.");
-                    }
+                    _productsService.Add(product);
+                    TempData["ProductAdded"] = "Product added successfully";
+                    return RedirectToAction("Products");
                 }
             }
-            return View(product);
+            ViewBag.Categories = _categoryService.GetAll();
+            return View(model);
         }
 
-        [HttpPost]
-        public IActionResult Delete(int id)
-        {
-            var product = _productsService.Delete(id);
-            return RedirectToAction("Dashboard");
-        }
 
         [HttpPost]
-        public IActionResult Deleted(int id)
+        [Authorize]
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        public IActionResult DeleteProduct(int id)
         {
             try
             {
-                var product = _productsService.Delete(id);
+                Product product = _productsService.Delete(id);
                 TempData["Message"] = "Product deleted successfully.";
             }
             catch (Exception e)
@@ -367,24 +333,14 @@ namespace LocalDropshipping.Web.Controllers
                 Console.WriteLine(e.Message);
                 TempData["Message"] = "no";
             }
-            return RedirectToAction("ProductsList");
+            return RedirectToAction("Products");
         }
 
-        public IActionResult SubmitForm(Product model)
-        {
-            if (model != null)
-            {
-                _productsService.Add(model);
-                return RedirectToAction("GetAllProducts");
-
-            }
-            return View("Post");
-        }
 
         private void SetRoleByCurrentUser()
         {
             string? currentUserID = _userManager.GetUserId(HttpContext.User);
-            var currentUser = _userService.GetById(currentUserID);
+            User? currentUser = _userService.GetById(currentUserID);
             TempData["IsAdmin"] = currentUser.IsAdmin;
             TempData["IsSuperAdmin"] = currentUser.IsSuperAdmin;
         }

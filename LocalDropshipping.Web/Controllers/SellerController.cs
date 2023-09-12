@@ -1,15 +1,11 @@
 ﻿using LocalDropshipping.Web.Attributes;
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Exceptions;
+using LocalDropshipping.Web.Extensions;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System;
 using System.Text;
 
 namespace LocalDropshipping.Web.Controllers
@@ -20,13 +16,15 @@ namespace LocalDropshipping.Web.Controllers
         private readonly IUserService _userService;
         private readonly IAccountService _accountService;
         private readonly IOrderService _orderService;
+        private readonly IProductsService _productsService;
 
-        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService)
+        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, IProductsService productsService)
         {
             _accountService = accountService;
             _profileService = profileService;
             _userService = userService;
             _orderService = orderService;
+            _productsService = productsService;
         }
 
         public IActionResult Register()
@@ -215,9 +213,110 @@ namespace LocalDropshipping.Web.Controllers
         [TypeFilter(typeof(CustomAuthorizationFilter))]
         public IActionResult Shop()
         {
-            if (!_userService.IsUserSignedIn())
-                return RedirectToAction("Register", "Seller");
-            return View();
+            ViewBag.products = _productsService.GetAll();
+            var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
+            ViewBag.total = TotalCost();
+            ViewBag.totalCost = ViewBag.total + ViewBag.shipping;
+            return View(cart);
+        }
+        [HttpPost]
+        public JsonResult AddToCart(string id)
+        {
+            try
+            {
+                Product productItem = _productsService.GetById(Convert.ToInt32(id == string.Empty ? 0 : id));
+                var mainVariant = productItem.Variants.FirstOrDefault(x => x.VariantType == "MAIN_VARIANT");
+                var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
+                int quantity = 1;
+                if (cart == null) //no item in the cart
+                {
+                    cart = new List<OrderItem>();
+                    cart.Add(new OrderItem
+                    {
+                        ProductId = productItem.ProductId,
+                        Name = productItem.Name,
+                        Image = mainVariant.FeatureImageLink,
+                        Quantity = quantity,
+                        Price = mainVariant.VariantPrice,
+                        SubTotal = quantity * mainVariant.VariantPrice
+                    });
+                }
+                else
+                {
+                    int index = cart.FindIndex(w => w.ProductId == (Convert.ToInt32(id)));
+                    if (index != -1) //if item already in the 
+                    {
+                        cart[index].Quantity++; //increment by 1
+                        cart[index].SubTotal = cart[index].Quantity * cart[index].Price;
+                    }
+                    else
+                    {
+                        cart.Add(new OrderItem
+                        {
+                            ProductId = productItem.ProductId,
+                            Name = productItem.Name,
+                            Image = mainVariant.FeatureImageLink,
+                            Quantity = quantity,
+                            Price = mainVariant.VariantPrice,
+                            SubTotal = quantity * mainVariant.VariantPrice
+                        });
+                    }
+                }
+                HttpContext.Session.Set<List<OrderItem>>("cart", cart);
+                return Json(data: new { Success = true, Counter = cart.Count, Cart = cart });
+            }
+            catch (Exception ex)
+            {
+                return Json(data: new { Error = ex.ToString() });
+            }
+        }
+
+        public JsonResult Minus(string id)
+        {
+
+            try
+            {
+                Product productItem = _productsService.GetById(Convert.ToInt32(id == string.Empty ? 0 : id));
+                var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
+
+                if (cart != null && cart.Any())
+                {
+                    int index = cart.FindIndex(w => w.ProductId == (Convert.ToInt32(id == string.Empty ? 0 : id)));
+                    if (index == -1)
+                    {
+                        return Json(data: new { error = false, Counter = cart.Count, Cart = cart });
+                    }
+                    else
+                    {
+                        if (cart[index].Quantity == 1) //last item of a product
+                        {
+                            cart.RemoveAt(index); //remove it
+                        }
+                        else
+                        {
+                            cart[index].Quantity--; //reduce by 1
+                        }
+                        HttpContext.Session.Set<List<OrderItem>>("cart", cart);
+                        return Json(data: new { Success = true, Counter = cart.Count, Cart = cart });
+                    }
+
+                }
+                else
+                {
+                    return Json(data: new { error = false });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Json(data: new { Error = ex.ToString() });
+            }
+        }
+        public PartialViewResult GetCartItems()
+        {
+            var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
+            ViewBag.total = TotalCost();
+            return PartialView("_cartItem", cart);
         }
 
         public IActionResult Withdrawal()
@@ -261,12 +360,30 @@ namespace LocalDropshipping.Web.Controllers
 
         public IActionResult Cart()
         {
-            return View();
+            var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
+            ViewBag.total = TotalCost();
+            ViewBag.shipping = 250;
+            ViewBag.totalCost = ViewBag.total + ViewBag.shipping;
+            return View(cart);
         }
+
+        public IActionResult Remove(int id)
+        {
+            var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
+            int index = cart.FindIndex(w => w.ProductId == id);
+            cart.RemoveAt(index);
+            HttpContext.Session.Set<List<OrderItem>>("cart", cart);
+            return RedirectToAction("Cart");
+        }
+
 
         public IActionResult Checkout()
         {
-            return View();
+            var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
+            ViewBag.total = TotalCost();
+            ViewBag.shipping = 250;
+            ViewBag.totalCost = ViewBag.total + ViewBag.shipping;
+            return View(cart);
         }
 
         public IActionResult ProfileVerification()
@@ -307,6 +424,31 @@ namespace LocalDropshipping.Web.Controllers
 
                 return View(ex.Message);
             }
+        }
+
+        private decimal TotalCost()
+        {
+            try
+            {
+                decimal totalRecord;
+                var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
+                if (cart != null)
+                {
+                    totalRecord = (decimal)cart.Sum(s => s.Quantity * s.Price);
+                }
+                else
+                {
+                    cart = new List<OrderItem>();
+                    totalRecord = 0;
+                }
+
+                return totalRecord;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
     }
 }

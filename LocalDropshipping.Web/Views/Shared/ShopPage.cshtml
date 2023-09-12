@@ -1,8 +1,26 @@
-﻿<!DOCTYPE html>
+﻿@using LocalDropshipping.Web.Data.Entities;
+@model IEnumerable<LocalDropshipping.Web.Data.Entities.OrderItem>
+@using Newtonsoft.Json;
+@{
+	var data = Context.Session.GetString("cart");
+	List<OrderItem> cartItems;
+	int countCart = 0;
+	if (data == null)
+	{
+		countCart = 0;
+	}
+	else
+	{
+		var data2 = Context.Session.GetString("cart");
+		List<OrderItem> dataCart = JsonConvert.DeserializeObject<List<OrderItem>>(data2);
+		countCart = dataCart.Count();
+		cartItems = dataCart;
 
-<html>
+	}
+
+}
+<!DOCTYPE htm"viewport" content="width=device-width" />
 <head>
-	<meta name="viewport" content="width=device-width" />
 	<title>@ViewBag.Title</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -46,6 +64,11 @@
 
 	<!-- Template css -->
 	<link id="color-link" rel="stylesheet" type="text/css" href="../assets/css/style.css">
+	<!-- latest jquery-->
+	<script src="../assets/js/jquery-3.6.0.min.js"></script>
+
+	<!-- jquery ui-->
+	<script src="../assets/js/jquery-ui.min.js"></script>
 </head>
 
 <body class="theme-color-4 bg-gradient-color">
@@ -128,38 +151,49 @@
 												<i data-feather="heart"></i>
 											</a>
 										</li>
-										<li class="right-side">
+										@Html.Partial("_ShoppingCart")
+										@* <li class="right-side">
 											<div class="onhover-dropdown header-badge">
-												<button type="button" class="btn p-0 position-relative header-wishlist">
+												<button type="button" class="btn p-0 position-relative header-wishlist cartBtn">
 													<i data-feather="shopping-cart"></i>
-													<span class="position-absolute top-0 start-100 translate-middle badge">
-														2
-														<span class="visually-hidden">unread messages</span>
+													<span class="position-absolute top-0 start-100 translate-middle badge cartItem">
+														@countCart
+														 <span class="visually-hidden">unread messages</span> 
 													</span>
 												</button>
-
+												
 												<div class="onhover-div">
 													<ul class="cart-list">
-														<li class="product-box-contain">
+														@if (Model != null)
+														{
+															@foreach (var cart in Model)
+															{
+																<li class="product-box-contain">
 															<div class="drop-cart">
 																<a href="product-left-thumbnail.html" class="drop-image">
-																	<img src="../assets/images/vegetable/product/1.png"
+																	<img src="@cart.Image"
 																		 class="blur-up lazyload" alt="">
 																</a>
 
 																<div class="drop-contain">
 																	<a href="product-left-thumbnail.html">
-																		<h5>Fantasy Crunchy Choco Chip Cookies</h5>
+																		<h5>@cart.Name</h5>
 																	</a>
-																	<h6><span>1 x</span> $80.58</h6>
+																	<h6><span>@cart.Quantity x</span> @cart.Price</h6>
 																	<button class="close-button close_button">
 																		<i class="fa-solid fa-xmark"></i>
 																	</button>
 																</div>
 															</div>
 														</li>
-
-														<li class="product-box-contain">
+															}
+														}
+														else
+														{
+															<p>No Items is in the cart</p>
+														}
+														
+														@* <li class="product-box-contain">
 															<div class="drop-cart">
 																<a href="product-left-thumbnail.html" class="drop-image">
 																	<img src="../assets/images/vegetable/product/2.png"
@@ -178,7 +212,7 @@
 																	</button>
 																</div>
 															</div>
-														</li>
+														</li> 
 													</ul>
 
 													<div class="price-box">
@@ -187,13 +221,13 @@
 													</div>
 
 													<div class="button-group">
-														<a href="cart.html" class="btn btn-sm cart-button">View Cart</a>
-														<a href="checkout.html" class="btn btn-sm cart-button theme-bg-color
+														<a asp-action="Cart" asp-controller="Seller" class="btn btn-sm cart-button">View Cart</a>
+														<a asp-action="Cart" asp-controller="Checkout" class="btn btn-sm cart-button theme-bg-color
                                                         text-white">Checkout</a>
 													</div>
 												</div>
 											</div>
-										</li>
+										</li> *@
 										<li class="right-side onhover-dropdown">
 											<div class="delivery-login-box">
 												<div class="delivery-icon">
@@ -416,13 +450,14 @@
 						<h2 class="text-theme font-sm">Food Cupboard</h2>
 						<p>A virtual assistant collects the products from your list</p>
 					</div>
+					@RenderBody()
 
 				</div>
 			</div>
 		</div>
 	</section>
 	<!-- Product Section End -->
-	@RenderBody();
+	
 
 
 	<!-- Footer Section Start -->
@@ -804,11 +839,7 @@
 	<!-- Bg overlay Start -->
 	<div class="bg-overlay"></div>
 	<!-- Bg overlay End -->
-	<!-- latest jquery-->
-	<script src="../assets/js/jquery-3.6.0.min.js"></script>
-
-	<!-- jquery ui-->
-	<script src="../assets/js/jquery-ui.min.js"></script>
+	
 
 	<!-- Bootstrap js-->
 	<script src="../assets/js/bootstrap/bootstrap.bundle.min.js"></script>
