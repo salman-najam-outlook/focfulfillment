@@ -12,12 +12,15 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System;
+using Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
+
+builder.Services.AddInfrastructure();
 
 // DbContext
 builder.Services.AddDbContext<LocalDropshippingContext>(options =>

@@ -1,0 +1,12 @@
+C:\work\localDropshipping\local-dropshipping\Infrastructure\obj\Debug\net7.0\Infrastructure.csproj.AssemblyReference.cache
+C:\work\localDropshipping\local-dropshipping\Infrastructure\obj\Debug\net7.0\Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\work\localDropshipping\local-dropshipping\Infrastructure\obj\Debug\net7.0\Infrastructure.AssemblyInfoInputs.cache
+C:\work\localDropshipping\local-dropshipping\Infrastructure\obj\Debug\net7.0\Infrastructure.AssemblyInfo.cs
+C:\work\localDropshipping\local-dropshipping\Infrastructure\obj\Debug\net7.0\Infrastructure.csproj.CoreCompileInputs.cache
+C:\work\localDropshipping\local-dropshipping\Infrastructure\bin\Debug\net7.0\Infrastructure.deps.json
+C:\work\localDropshipping\local-dropshipping\Infrastructure\bin\Debug\net7.0\Infrastructure.dll
+C:\work\localDropshipping\local-dropshipping\Infrastructure\bin\Debug\net7.0\Infrastructure.pdb
+C:\work\localDropshipping\local-dropshipping\Infrastructure\obj\Debug\net7.0\Infrastructure.dll
+C:\work\localDropshipping\local-dropshipping\Infrastructure\obj\Debug\net7.0\refint\Infrastructure.dll
+C:\work\localDropshipping\local-dropshipping\Infrastructure\obj\Debug\net7.0\Infrastructure.pdb
+C:\work\localDropshipping\local-dropshipping\Infrastructure\obj\Debug\net7.0\ref\Infrastructure.dll
