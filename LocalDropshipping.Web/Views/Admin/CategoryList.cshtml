@@ -7,7 +7,37 @@
     Layout = "_LayoutDashboard";
 }
 
+
 <!-- Container-fluid starts-->
+<style>
+    /* styles.css */
+    .delete-button {
+        background-color: red; /* Rang */
+        color: #fff; /* Text rang */
+        padding: 10px 20px; /* Padding */
+        border: none; /* Border nahi hai */
+        cursor: pointer; /* Cursor pointer ho jaye, isse button clickable lagega */
+        border-radius: 5px; /* Border ke kone rounded ho jayenge */
+    }
+
+        .delete-button:hover {
+            background-color: maroon; /* Hover ke samay rang change ho jayega */
+        }
+
+    .edit-button {
+        background-color: #0DA487; /* Rang */
+        color: #fff; /* Text rang */
+        padding: 10px 20px; /* Padding */
+        border: none; /* Border nahi hai */
+        cursor: pointer; /* Cursor pointer ho jaye, isse button clickable lagega */
+        border-radius: 5px; /* Border ke kone rounded ho jayenge */
+    
+    }
+
+    .edit-button:hover {
+        background-color: #0B8A6E; /* Hover ke samay rang change ho jayega */
+    }
+</style>
 <div class="page-body">
     <!-- All User Table Start -->
     <div class="container-fluid">
@@ -18,7 +48,7 @@
                         <div class="title-header option-title">
                             <h5>All Category</h5>
                             <form class="d-inline-flex">
-                                <a href="add-new-category.html"
+                                <a asp-action="AddNewUser" asp-controller="Admin"
                                    class="align-items-center btn btn-theme d-flex">
                                     <i data-feather="plus-square"></i>Add New
                                 </a>
@@ -63,20 +93,20 @@
                                                                  @*<a href="#" class="delete-category" data-id="@category.CategoryId">
                                                                     <i class="ri-delete-bin-line"></i>
                                                                 </a> *@
-                                                                
-                                                                <button type="submit">
+
+                                                                <button class="edit-button" type="submit">
                                                                     <i class="ri-pencil-line"></i>
                                                                 </button>
                                                             </form>
                                                         </li>
-
+                                                        <br>
                                                         <li>
                                                             <form asp-action="DeleteCategory" asp-controller="Admin" method="post">
                                                                 <input type="hidden" name="id" value="@category.CategoryId" />
                                                                 @*<a asp-action="DeleteCategory" asp-controller="Admin" class="delete-category" data-id="@category.CategoryId">
                                                                     <i class="ri-delete-bin-line"></i>
                                                                 </a> *@
-                                                                <button type="submit">
+                                                                <button class="delete-button" type="submit">
                                                                     <i class="ri-delete-bin-line"></i>
                                                                 </button>
                                                             </form>

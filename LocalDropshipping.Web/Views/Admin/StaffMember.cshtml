@@ -65,6 +65,19 @@
         .slider.round:before {
             border-radius: 50%;
         }
+
+    .delete-button {
+        background-color: red; /* Rang */
+        color: #fff; /* Text rang */
+        padding: 10px 20px; /* Padding */
+        border: none; /* Border nahi hai */
+        cursor: pointer; /* Cursor pointer ho jaye, isse button clickable lagega */
+        border-radius: 5px; /* Border ke kone rounded ho jayenge */
+    }
+
+        .delete-button:hover {
+            background-color: maroon; /* Hover ke samay rang change ho jayega */
+        }
 </style>
 
 <div class="page-body">
@@ -117,7 +130,7 @@
                                                         </label>
                                                     </li>
                                                     <li>
-                                                        <button type="submit">
+                                                        <button class="delete-button" type="submit">
                                                             <i class="ri-delete-bin-line"></i>
                                                         </button>
                                                     </li>

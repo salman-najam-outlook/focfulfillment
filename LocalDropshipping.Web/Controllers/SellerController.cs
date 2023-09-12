@@ -230,6 +230,7 @@ namespace LocalDropshipping.Web.Controllers
 
                 var withdrawalModels = orders.Select(order => new withdrawalModel
                 {
+                    Id = order.Id,
                     Name = order.Name,
                     GrandTotal = order.GrandTotal,
                     OrderCode = order.OrderCode,
