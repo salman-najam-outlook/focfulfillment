@@ -1,0 +1,77 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using LocalDropshipping.Web.Data.Entities;
+@model List<Category>;
+@{
+    Layout = "_LayoutDashboard";
+}
+
+<div class="page-body">
+
+    <!-- New Product Add Start -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-sm-8 m-auto">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card-header-2">
+                                    <h5>Category Information</h5>
+                                </div>
+
+                                <form class="theme-form theme-form-2 mega-form" asp-action="AddNewCategory" asp-controller="Admin" method="post">
+                                    <div class="mb-4 row align-items-center">
+                                        <label class="form-label-title col-sm-3 mb-0">Category Name</label>
+                                        <div class="col-sm-9">
+                                            <input class="form-control" type="text" placeholder="Category Name" name="Name">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4 row align-items-center">
+                                        <label class="col-sm-3 col-form-label form-label-title">
+                                            Category
+                                            Image Link
+                                        </label>
+                                        @*  <div class="form-group col-sm-9">
+                                        <div class="dropzone-wrapper">
+                                        <div class="dropzone-desc">
+                                        <i class="ri-upload-2-line"></i>
+                                        <p>Choose an image file or drag it here.</p>
+                                        </div>
+                                        <input type="file" class="dropzone">
+                                        </div>
+                                        </div> *@
+                                        <div class="col-sm-9">
+                                            <input class="form-control" type="text" placeholder="Category ImageLink" name="ImagePath">
+                                        </div>
+                                    </div>
+
+                                   @*  <div class="mb-4 row align-items-center">
+                                        <button style="background-color:#0DA487" type="submit" asp-action="AddNewCategory" asp-asp-controller="Admin">Click here to add</button>
+                                    </div> *@
+                                    <div class="align-items-center btn btn-theme d-flex">
+                                        <button style="background-color:#0DA487;border:none" type="submit" asp-action="UpdateCategory" asp-asp-controller="Admin">Click here to add</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- New Product Add End -->
+    <!-- footer Start -->
+    <div class="container-fluid">
+        <footer class="footer">
+            <div class="row">
+                <div class="col-md-12 footer-copyright text-center">
+                    <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <!-- footer En -->
+</div>

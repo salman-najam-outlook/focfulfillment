@@ -1,0 +1,111 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using LocalDropshipping.Web.Data.Entities;
+@model List<Category>;
+@{
+    Layout = "_LayoutDashboard";
+}
+
+<!-- Container-fluid starts-->
+<div class="page-body">
+    <!-- All User Table Start -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card card-table">
+                    <div class="card-body">
+                        <div class="title-header option-title">
+                            <h5>All Category</h5>
+                            <form class="d-inline-flex">
+                                <a href="add-new-category.html"
+                                   class="align-items-center btn btn-theme d-flex">
+                                    <i data-feather="plus-square"></i>Add New
+                                </a>
+                            </form>
+                        </div>
+
+                        <div class="table-responsive category-table">
+                            <div>
+                                <table class="table order-table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Category ID</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Image Path</th>
+                                            <th scope="col">Options</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var category in Model)
+                                        {
+                                            <tr>
+                                                <td>@category.CategoryId</td>
+                                                <td>@category.Name</td>
+                                                <td>@category.ImagePath</td>
+                                                <td>
+                                                    <ul>
+
+                                                        <li>
+                                                           @* <a href="javascript:void(0)" class="edit-category" data-id="@category.CategoryId">
+                                                                <i class="ri-pencil-line"></i>
+                                                            </a> *@
+                                                            <form asp-action="UpdateCategory" asp-controller="Admin" method="get">
+
+                                                                <input type="hidden" name="id" value="@category.CategoryId" />
+                                                                
+                                                             @* <a asp-action="DeleteCategory" asp-controller="Admin" class="delete-category" data-id="@category.CategoryId">
+                                                                    <i class="ri-delete-bin-line"></i>
+                                                                </a> *@
+
+
+                                                                 @*<a href="#" class="delete-category" data-id="@category.CategoryId">
+                                                                    <i class="ri-delete-bin-line"></i>
+                                                                </a> *@
+                                                                
+                                                                <button type="submit">
+                                                                    <i class="ri-pencil-line"></i>
+                                                                </button>
+                                                            </form>
+                                                        </li>
+
+                                                        <li>
+                                                            <form asp-action="DeleteCategory" asp-controller="Admin" method="post">
+                                                                <input type="hidden" name="id" value="@category.CategoryId" />
+                                                                @*<a asp-action="DeleteCategory" asp-controller="Admin" class="delete-category" data-id="@category.CategoryId">
+                                                                    <i class="ri-delete-bin-line"></i>
+                                                                </a> *@
+                                                                <button type="submit">
+                                                                    <i class="ri-delete-bin-line"></i>
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- All User Table Ends-->
+
+    <div class="container-fluid">
+        <!-- footer start-->
+        <footer class="footer">
+            <div class="row">
+                <div class="col-md-12 footer-copyright text-center">
+                    <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
+                </div>
+            </div>
+        </footer>
+        <!-- footer end-->
+    </div>
+</div>
+<!-- Container-fluid end -->

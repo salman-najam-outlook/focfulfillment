@@ -268,7 +268,7 @@ namespace LocalDropshipping.Web.Controllers
             }
             catch (Exception ex)
             {
-                return View(ex.Message); 
+                return View(ex.Message);
             }
         }
 
@@ -387,6 +387,100 @@ namespace LocalDropshipping.Web.Controllers
             var currentUser = _userService.GetById(currentUserID);
             TempData["IsAdmin"] = currentUser.IsAdmin;
             TempData["IsSuperAdmin"] = currentUser.IsSuperAdmin;
+        }
+        //private void GetCurrentLoggedInUser()
+        //{
+        //    string? currentUserID = _userManager.GetUserId(HttpContext.User);
+        //    var currentUser = _userService.GetById(currentUserID);
+        //    bool isAdmin = currentUser.IsAdmin;
+        //    bool isSuperAdmin = currentUser.IsSuperAdmin;
+        //}
+        private string GetCurrentLoggedInUserEmail()
+        {
+            string? currentUserID = _userManager.GetUserId(HttpContext.User);
+            var currentUser = _userService.GetById(currentUserID);
+            string currentUserEmail = currentUser.Email;
+
+            return currentUserEmail;
+        }
+
+        public IActionResult CategoryList()
+        {
+            var category = _categoryService.GetAll();
+            return View(category);
+        }
+
+        public IActionResult AddNewCategory()
+        {
+
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AddNewCategory(Category categoryModel)
+        {
+
+            if (ModelState.IsValid)
+            {
+                var createdBy = GetCurrentLoggedInUserEmail();
+                var category = new Category
+                {
+                    Name = categoryModel.Name,
+                    ImagePath = categoryModel.ImagePath,
+                    CreatedDate = DateTime.Now,
+                    CreatedBy = createdBy,
+                    ModifiedDate = DateTime.Today,
+                    ModifiedBy = createdBy,
+                    IsActive = true,
+                    IsDeleted = false
+
+                };
+                _categoryService.Add(category);
+                RedirectToAction("CategoryList", "Admin");
+            }
+
+            //   return ModelState.AddModelError(string.Empty);
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult DeleteCategory(int id)
+        {
+            var user = _categoryService.Delete(id);
+            SetRoleByCurrentUser();
+            return View("CategoryList", _categoryService.GetAll());
+        }
+        [HttpGet]
+        public IActionResult UpdateCategory()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult UpdateCategory(int categoryId, CategoryDto categoryDto)
+        {
+            if (ModelState.IsValid)
+            {
+                var createdBy = GetCurrentLoggedInUserEmail();
+                var category = new CategoryDto
+                {
+                    Name = categoryDto.Name,
+                    ImagePath = categoryDto.ImagePath,
+                    CreatedDate = DateTime.Now,
+                    CreatedBy = createdBy,
+                    ModifiedDate = DateTime.Today,
+                    ModifiedBy = createdBy,
+                    IsActive = true,
+                    IsDeleted = false
+                };
+                if (category!=null)
+                {
+                    _categoryService.Update(categoryId, categoryDto);
+                }
+
+                RedirectToAction("CategoryList", _categoryService.GetAll());
+            }
+            return View();
         }
     }
 }

@@ -224,8 +224,20 @@ namespace LocalDropshipping.Web.Controllers
         {
             try
             {
-                var data = _orderService.GetAll();
-                return View(data);
+                //var data = _orderService.GetAll();
+                //return View(data);
+                var orders = _orderService.GetAll();
+
+                var withdrawalModels = orders.Select(order => new withdrawalModel
+                {
+                    Name = order.Name,
+                    GrandTotal = order.GrandTotal,
+                    OrderCode = order.OrderCode,
+                    OrderStatus=order.OrderStatus,
+
+                }).ToList();
+
+                return View(withdrawalModels);
 
             }
             catch (Exception ex)

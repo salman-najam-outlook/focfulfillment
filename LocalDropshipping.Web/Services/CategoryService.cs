@@ -15,8 +15,8 @@ namespace LocalDropshipping.Web.Services
         }
         public List<Category> GetAll()
         {
-            return context.Categories.ToList();
-           // return context.Categories.Where(x => x.IsActive == true).ToList();
+            return context.Categories.Where(x => x.IsDeleted == false).ToList();
+            // return context.Categories.Where(x => x.IsActive == true).ToList();
         }
 
         public Category Add(Category category)
@@ -41,7 +41,7 @@ namespace LocalDropshipping.Web.Services
                 var Category = context.Categories.Find(CategoryId);
                 if (Category != null)
                 {
-                   // Category.IsActive = false;
+                    Category.IsDeleted = true;
                     context.SaveChanges();
                     return Category;
                 }
@@ -59,7 +59,7 @@ namespace LocalDropshipping.Web.Services
             if (category != null)
             {
                 category.Name = categoryDto.Name;
-                context.SaveChanges();
+               context.SaveChanges();
             }
             return category;
         }
