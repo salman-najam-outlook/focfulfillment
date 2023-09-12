@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 
@@ -27,7 +28,9 @@ namespace LocalDropshipping.Web.Controllers
         private readonly LocalDropshippingContext _context;
         private readonly ICategoryService _categoryService;
         private readonly IAccountService _accountService;
-        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService)
+        private readonly IOrderService _orderService;
+
+        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService)
         {
             _service = service;
             _productsService = productsService;
@@ -36,6 +39,7 @@ namespace LocalDropshipping.Web.Controllers
             _signInManager = signInManager;
             _context = context;
             _categoryService = categoryService;
+            _orderService = orderService;
             CategoryService = _categoryService;
             _accountService = accountService;
         }
@@ -250,6 +254,23 @@ namespace LocalDropshipping.Web.Controllers
             SetRoleByCurrentUser();
             return View();
         }
+
+
+
+        [HttpGet]
+        public IActionResult OrdersList()
+        {
+            try
+            {
+                List<Order> orders = _orderService.GetAll();
+                return View(orders);
+            }
+            catch (Exception ex)
+            {
+                return View(ex.Message); 
+            }
+        }
+
         #endregion
 
         [HttpGet]

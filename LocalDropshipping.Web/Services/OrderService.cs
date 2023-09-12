@@ -36,7 +36,14 @@ namespace LocalDropshipping.Web.Services
 
         public List<Order> GetAll()
         {
-            return context.Orders.Where(x => x.IsDeleted == false).ToList();
+            var orderlist= new List<Order>();
+               orderlist = context.Orders.Where(x => x.IsDeleted == false).ToList();
+            if (orderlist != null)
+            {
+                return orderlist;
+            }
+            return new List<Order>();
+           
         }
 
         public Order? GetById(int orderId)
