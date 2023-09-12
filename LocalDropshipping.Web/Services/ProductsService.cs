@@ -20,18 +20,26 @@ namespace LocalDropshipping.Web.Services
             var data = _context.Products
                                 .Where(x => !x.IsDeleted)
                                 .Include(x => x.Category)
+                                .Include(x => x.Variants)
                                 .ToList();
             return data;
         }
 
         public Product Add(Product product)
         {
-            product.CreatedDate = DateTime.Now;
-            product.CreatedBy = _userService.GetCurrentUserAsync().GetAwaiter().GetResult()!.Email;
+            var userEmail = _userService.GetCurrentUserAsync().GetAwaiter().GetResult()!.Email;
 
-            // TODO: Add Image Upload Functionality (Zubair)
-            product.ImageLink = "https://picsum.photos/400/400";
-            product.CategoryId = 3;
+            product.CreatedDate = DateTime.Now;
+            product.CreatedBy = userEmail;
+
+            foreach (var variant in product.Variants)
+            {
+                variant.CreatedDate = DateTime.Now;
+                variant.CreatedBy = userEmail;
+
+                // TODO: Add Image Upload Functionality (Zubair)
+                variant.FeatureImageLink = "https://picsum.photos/400/400";
+            }
 
             _context.Products.Add(product);
             _context.SaveChanges();
@@ -40,7 +48,7 @@ namespace LocalDropshipping.Web.Services
 
         public Product? GetById(int productId)
         {
-            return _context.Products.FirstOrDefault(p => p.ProductId == productId && !p.IsDeleted);
+            return _context.Products.Include(x => x.Category).Include(x => x.Variants).FirstOrDefault(p => p.ProductId == productId && !p.IsDeleted);
         }
 
         public Product? Delete(int productId)
@@ -59,15 +67,39 @@ namespace LocalDropshipping.Web.Services
             Product? exProduct = _context.Products.FirstOrDefault(x => x.ProductId == productId);
             if (exProduct != null)
             {
-                exProduct.Price = product.Price;
+                var userEmail = _userService.GetCurrentUserAsync().GetAwaiter().GetResult()!.Email;
+
                 exProduct.Name = product.Name;
                 exProduct.Description = product.Description;
-                exProduct.Quantity = product.Quantity;
                 exProduct.SKU = product.SKU;
-                exProduct.IsDeleted = exProduct.IsDeleted;
+                exProduct.IsDeleted = product.IsDeleted;
+                exProduct.CategoryId = product.CategoryId;
+                exProduct.IsFeatured = product.IsFeatured;
+                exProduct.IsBestSelling = product.IsBestSelling ;
+                exProduct.IsNewArravial = product.IsNewArravial;
+
+                foreach (var variant in product.Variants)
+                {
+                    if (variant.VariantId == 0)
+                    {
+                        variant.CreatedDate = DateTime.Now;
+                        variant.CreatedBy = userEmail;
+                        exProduct.Variants.Add(variant);
+                    }
+                    else
+                    {
+                        var exVariant = product.Variants.First(x => x.VariantId == variant.VariantId);
+                        exVariant.VariantType = variant.VariantType;
+                        exVariant.VariantPrice = variant.VariantPrice;
+                        exVariant.Quantity = variant.Quantity;
+                        exVariant.UpdatedDate = DateTime.Now;
+                        exVariant.UpdatedBy = userEmail;
+                    }
+                }
+
 
                 exProduct.UpdatedDate = DateTime.Now;
-                exProduct.UpdatedBy = _userService.GetCurrentUserAsync().GetAwaiter().GetResult()!.Email;
+                exProduct.UpdatedBy = userEmail;
                 _context.SaveChanges();
             }
             return exProduct;
@@ -75,7 +107,9 @@ namespace LocalDropshipping.Web.Services
 
         public List<Product> GetProductsByPriceRange(decimal minPrice, decimal maxPrice)
         {
-            return _context.Products.Where(x => x.IsDeleted == false && x.Price >= minPrice && x.Price <= maxPrice && !x.IsDeleted).ToList();
+            // TODO: Needs to be updated
+            //return _context.Products.Where(x => x.IsDeleted == false && x.Price >= minPrice && x.Price <= maxPrice && !x.IsDeleted).ToList();
+            return _context.Products.ToList();
         }
     }
 

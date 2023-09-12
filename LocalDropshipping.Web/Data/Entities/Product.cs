@@ -5,7 +5,6 @@
         public int ProductId { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
-        public int Price { get; set; }
         public int CategoryId { get; set; }
         public bool IsNewArravial { get; set; }
         public bool IsBestSelling { get; set; }
@@ -14,10 +13,9 @@
         public DateTime? UpdatedDate { get; set; }
         public string? UpdatedBy { get; set; }
         public string? CreatedBy { get; set; }
-        public int Quantity { get; set; }
         public string? SKU { get; set; }
         public bool IsDeleted { get; set; }
         public virtual Category? Category { get; set; }
-        public string? ImageLink { get; set; }
+        public virtual List<ProductVariant> Variants { get; set; }
     }
 }

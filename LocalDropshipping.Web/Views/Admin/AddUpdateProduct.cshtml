@@ -13,6 +13,7 @@
 
                     <form asp-controller="Admin" asp-action="AddUpdateProduct" method="post" class="theme-form theme-form-2 mega-form">
                         @Html.HiddenFor(a => a.ProductId)
+                        @Html.HiddenFor(a => a.MainVariantId)
                         <div class="col-sm-8 m-auto">
                             <div class="card">
                                 <div class="card-body">

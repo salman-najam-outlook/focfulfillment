@@ -261,35 +261,24 @@ namespace LocalDropshipping.Web.Controllers
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
         public IActionResult AddUpdateProduct(ProductViewModel model)
         {
-            ViewBag.Categories = _categoryService.GetAll();
             ModelState.Remove("ProductId");
             if (ModelState.IsValid)
             {
+                var product = model.ToEntity();
                 if (model.ProductId != 0)
                 {
-                    var product = _productsService.GetById(model.ProductId);
-                    product.Name = model.Name;
-                    product.Description = model.Description;
-                    product.Price = model.Price;
-                    product.CategoryId = model.CategoryId;
-                    product.IsNewArravial = model.IsNewArravial;
-                    product.IsBestSelling = model.IsBestSelling;
-                    product.IsFeatured = model.IsFeatured;
-                    product.Quantity = model.Quantity;
-                    product.SKU = model.SKU;
-
                     _productsService.Update(model.ProductId, product);
                     TempData["updated"] = "Product updated successfully";
                     return RedirectToAction("Products");
                 }
                 else
                 {
-                    var product = model.ToEntity();
                     _productsService.Add(product);
                     TempData["ProductAdded"] = "Product added successfully";
                     return RedirectToAction("Products");
                 }
             }
+            ViewBag.Categories = _categoryService.GetAll();
             return View(model);
         }
 
