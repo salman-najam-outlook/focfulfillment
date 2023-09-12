@@ -58,7 +58,7 @@ namespace LocalDropshipping.Web.Services
                 exProduct.Price = productDto.Price;
                 exProduct.Name = productDto.Name;
                 exProduct.Description = productDto.Description;
-                exProduct.ImageContent = productDto.ImageLink;
+                exProduct.ImageLink = productDto.ImageLink;
                 exProduct.Quantity = productDto.Stock;
                 exProduct.UpdatedDate = productDto.UpdatedDate;
                 exProduct.CreatedDate = productDto.CreatedDate;

@@ -312,7 +312,7 @@ namespace LocalDropshipping.Web.Controllers
                         Description = product.Description,
                         Price = product.Price,
                         Stock = product.Quantity,
-                        ImageLink = product.ImageContent,
+                        ImageLink = product.ImageLink,
                         UpdatedDate = DateTime.Now,
                         CreatedDate = DateTime.Now,
                         SKU = product.SKU
