@@ -19,7 +19,6 @@ namespace LocalDropshipping.Web.Controllers
     public class AdminController : Controller
     {
         public ICategoryService CategoryService { get; }
-        public IOrderService _order { get; }
 
         private readonly IAdminService _service;
         private readonly IProductsService _productsService;
@@ -30,6 +29,7 @@ namespace LocalDropshipping.Web.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IAccountService _accountService;
         private readonly IOrderService _orderService;
+
         public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService)
         {
             _service = service;
@@ -39,6 +39,7 @@ namespace LocalDropshipping.Web.Controllers
             _signInManager = signInManager;
             _context = context;
             _categoryService = categoryService;
+            _orderService = orderService;
             CategoryService = _categoryService;
             _accountService = accountService;
             _orderService = orderService;
@@ -262,7 +263,7 @@ namespace LocalDropshipping.Web.Controllers
         {
             try
             {
-                List<Order> orders = _order.GetAll();
+                List<Order> orders = _orderService.GetAll();
                 return View(orders);
             }
             catch (Exception ex)

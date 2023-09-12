@@ -57,12 +57,10 @@ namespace LocalDropshipping.Web.Controllers
         {
             return View();
         }
-
         public IActionResult VerificationEmailSent()
         {
             return View();
         }
-
         public IActionResult EmailVerified()
         {
             return View();
@@ -92,7 +90,6 @@ namespace LocalDropshipping.Web.Controllers
                     ModelState.AddModelError(string.Empty, "Failed to send contact email. Please try again later.");
                 }
             }
-
             return View("ContactUs", contactUsViewModel);
         }
 
@@ -113,6 +110,7 @@ namespace LocalDropshipping.Web.Controllers
             }
             return View(model);
         }
+
         [HttpPost]
         public async Task<IActionResult> Register(SignupViewModel model)
         {
@@ -150,6 +148,7 @@ namespace LocalDropshipping.Web.Controllers
             }
             return View(model);
         }
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -167,6 +166,7 @@ namespace LocalDropshipping.Web.Controllers
                 return View("UpdatePassword");
             }
         }
+
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> EmailVerification(string userId, string token)
@@ -186,15 +186,14 @@ namespace LocalDropshipping.Web.Controllers
                 return RedirectToAction("InvalidVerificationLink");
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> ForgotPassword(string email)
         {
             var isPasswordResetLinkSent = await _accountService.ForgotPasswordAsync(email);
-
             if (isPasswordResetLinkSent)
             {
                 TempData["ForgotPassword"] = "Password Forgot successful. You can now log in.";
-
                 return RedirectToAction("ForgotPasswordMessage");
             }
             else
@@ -218,7 +217,6 @@ namespace LocalDropshipping.Web.Controllers
         {
             if (!_userService.IsUserSignedIn())
                 return RedirectToAction("Register", "Seller");
-
             return View();
         }
 
@@ -235,6 +233,7 @@ namespace LocalDropshipping.Web.Controllers
                 return View(ex.Message);
             }
         }
+
         [HttpGet]
         public IActionResult SellerDashboard()
         {
@@ -247,7 +246,6 @@ namespace LocalDropshipping.Web.Controllers
             {
                 return View(ex.Message);
             }
-
         }
 
         [HttpGet]
@@ -256,27 +254,9 @@ namespace LocalDropshipping.Web.Controllers
             return View();
         }
 
-        public IActionResult SellerOrders()
-        {
-            try
-            {
-
-                List<Order> orders = _orderService.GetAll();
-                return View(orders);
-            }
-            catch (Exception ex)
-            {
-
-                return View(ex.Message);
-            }
-        }
-
-
         public IActionResult Productleftthumbnail()
         {
-
             return View();
-
         }
 
         public IActionResult Cart()
@@ -313,6 +293,20 @@ namespace LocalDropshipping.Web.Controllers
             _profileService.Add(profile);
 
             return RedirectToAction("Shop", "Seller");
+        }
+
+        public IActionResult SellerOrders()
+        {
+            try
+            {
+                List<Order> orders = _orderService.GetAll();
+                return View(orders);
+            }
+            catch (Exception ex)
+            {
+
+                return View(ex.Message);
+            }
         }
     }
 }

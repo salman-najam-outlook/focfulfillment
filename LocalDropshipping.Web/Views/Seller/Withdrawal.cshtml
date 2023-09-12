@@ -1,15 +1,16 @@
 ﻿@using LocalDropshipping.Web.Data.Entities;
 @model List<Order>;
 @{
+
     Layout = "_LayoutSellerDashboard";
 }
+
 <body>
 
-    <div class="tab-pane fade" id="pills-withdrawal" role="tabpanel"
-         aria-labelledby="pills-order-tab">
+    <div class="tab-pane fade active show" id="pills-order" role="tabpanel" aria-labelledby="pills-order-tab">
         <div class="dashboard-order">
             <div class="title">
-                <h2>All Withdrawal</h2>
+                <h2>All Withdrawals</h2>
                 <span class="title-leaf title-leaf-gray">
                     <svg class="icon-width bg-gray">
                         <use xlink:href="https://themes.pixelstrap.com/fastkart/assets/svg/leaf.svg#leaf"></use>
@@ -19,31 +20,31 @@
 
             <div class="order-tab dashboard-bg-box">
                 <div class="table-responsive">
-
                     <table class="table order-table">
                         <thead>
                             <tr>
                                 <th scope="col">Order ID</th>
-                                <th scope="col">OrderCode</th>
-                                <th scope="col">OrderStatus</th>
-                                <th scope="col">Grand Total</th>
+                                <th scope="col">Order Date</th>
+                                <th scope="col">Product Name</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Price</th>
+
                             </tr>
                         </thead>
-                        <tbody id="withdrawalTable">
-
+                        <tbody>
                             @foreach (var order in Model)
                             {
                                 <tr>
-                                    <td>@order?.Id</td>
-                                    <td>@order?.OrderCode</td>
-                                    <td>@order?.OrderStatus</td>
-                                    <td>@order?.GrandTotal</td>
+                                    <td>@order.Id</td>
+                                    <td>@order.OrderDate</td>
+                                    <td>@order.Name</td>
+                                    <td>@order.OrderStatus</td>
+                                    <td>@order.GrandTotal</td>
                                 </tr>
+
                             }
                         </tbody>
-
                     </table>
-                    <button class="btn btn-success" type="submit" disabled>Click here to Withdrawal</button>
                 </div>
 
                 <nav class="custome-pagination">
@@ -72,6 +73,5 @@
             </div>
         </div>
     </div>
-
 
 </body>
