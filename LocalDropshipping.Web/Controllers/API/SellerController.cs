@@ -1,8 +1,6 @@
 ﻿using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
-using LocalDropshipping.Web.Enums;
 using LocalDropshipping.Web.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LocalDropshipping.Web.Controllers.API
@@ -23,7 +21,7 @@ namespace LocalDropshipping.Web.Controllers.API
 
         #region Order
 
-        
+
         [HttpGet]
         public IActionResult GetAllOrders()
         {

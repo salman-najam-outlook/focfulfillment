@@ -47,11 +47,11 @@
                                             @foreach (var product in Model)
                                             {
                                                 <tr>
-                                                    <td>@product.ImageLink</td>
+                                                    <td>ImageLink</td>
                                                     <td>@product.Name</td>
                                                     <td style="color:black;">@product.Category!.Name</td>
-                                                    <td>@product.Quantity</td>
-                                                    <td>@product.Price</td>
+                                                    <td>Quantity</td>
+                                                    <td>Price</td>
                                              
                                                     <td>
                                                         <ul>
@@ -115,7 +115,7 @@
 
 
 
-        var notifyaddMessages = '@TempData["addded"]';
+        var notifyaddMessages = '@TempData["ProductAdded"]';
         if (notifyaddMessages) {
             var notify = $.notify('<i class="fas fa-bell"></i><strong>Loading</strong> ' + notifyaddMessages, {
                 type: 'theme',

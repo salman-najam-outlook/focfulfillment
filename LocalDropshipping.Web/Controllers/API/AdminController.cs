@@ -2,13 +2,11 @@
 using LocalDropshipping.Web.Dtos;
 using LocalDropshipping.Web.Enums;
 using LocalDropshipping.Web.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 
 namespace LocalDropshipping.Web.Controllers.API
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class AdminController : ControllerBase
     {
@@ -55,7 +53,7 @@ namespace LocalDropshipping.Web.Controllers.API
         public IActionResult UpdateProduct(int id, ProductDto productDto)
         {
             Product product = productDto.ToEntity();
-            productService.Update(id, productDto);
+            productService.Update(id, product);
             return Ok();
         }
         [HttpGet]

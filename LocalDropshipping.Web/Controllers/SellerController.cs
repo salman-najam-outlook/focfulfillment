@@ -4,16 +4,9 @@ using LocalDropshipping.Web.Exceptions;
 using LocalDropshipping.Web.Extensions;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System;
 using System.Text;
-using System.Reflection.Metadata.Ecma335;
 
 namespace LocalDropshipping.Web.Controllers
 {
@@ -221,10 +214,10 @@ namespace LocalDropshipping.Web.Controllers
         public IActionResult Shop()
         {
             ViewBag.products = _productsService.GetAll();
-			var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
-			ViewBag.total = TotalCost();
-			ViewBag.totalCost = ViewBag.total + ViewBag.shipping;
-			return View(cart);
+            var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
+            ViewBag.total = TotalCost();
+            ViewBag.totalCost = ViewBag.total + ViewBag.shipping;
+            return View(cart);
         }
         [HttpPost]
         public JsonResult AddToCart(string id)
@@ -232,6 +225,7 @@ namespace LocalDropshipping.Web.Controllers
             try
             {
                 Product productItem = _productsService.GetById(Convert.ToInt32(id == string.Empty ? 0 : id));
+                var mainVariant = productItem.Variants.FirstOrDefault(x => x.VariantType == "MAIN_VARIANT");
                 var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
                 int quantity = 1;
                 if (cart == null) //no item in the cart
@@ -241,10 +235,10 @@ namespace LocalDropshipping.Web.Controllers
                     {
                         ProductId = productItem.ProductId,
                         Name = productItem.Name,
-						Image = productItem.ImageLink,
-						Quantity = quantity,
-                        Price = productItem.Price,
-                        SubTotal = quantity * productItem.Price
+                        Image = mainVariant.FeatureImageLink,
+                        Quantity = quantity,
+                        Price = mainVariant.VariantPrice,
+                        SubTotal = quantity * mainVariant.VariantPrice
                     });
                 }
                 else
@@ -261,10 +255,10 @@ namespace LocalDropshipping.Web.Controllers
                         {
                             ProductId = productItem.ProductId,
                             Name = productItem.Name,
-							Image = productItem.ImageLink,
-							Quantity = quantity,
-                            Price = productItem.Price,
-                            SubTotal = quantity * productItem.Price
+                            Image = mainVariant.FeatureImageLink,
+                            Quantity = quantity,
+                            Price = mainVariant.VariantPrice,
+                            SubTotal = quantity * mainVariant.VariantPrice
                         });
                     }
                 }
@@ -279,45 +273,45 @@ namespace LocalDropshipping.Web.Controllers
 
         public JsonResult Minus(string id)
         {
-            
+
             try
             {
                 Product productItem = _productsService.GetById(Convert.ToInt32(id == string.Empty ? 0 : id));
                 var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
 
-				if (cart!= null && cart.Any())
-				{
-					int index = cart.FindIndex(w => w.ProductId == (Convert.ToInt32(id == string.Empty ? 0 : id)));
-					if (index == -1)
-					{
-						return Json(data: new { error = false, Counter = cart.Count, Cart = cart });
-					}
-					else
-					{
-						if (cart[index].Quantity == 1) //last item of a product
-						{
-							cart.RemoveAt(index); //remove it
-						}
-						else
-						{
-							cart[index].Quantity--; //reduce by 1
-						}
-						HttpContext.Session.Set<List<OrderItem>>("cart", cart);
-						return Json(data: new { Success = true, Counter = cart.Count, Cart = cart });
-					}
-					
-				}
+                if (cart != null && cart.Any())
+                {
+                    int index = cart.FindIndex(w => w.ProductId == (Convert.ToInt32(id == string.Empty ? 0 : id)));
+                    if (index == -1)
+                    {
+                        return Json(data: new { error = false, Counter = cart.Count, Cart = cart });
+                    }
+                    else
+                    {
+                        if (cart[index].Quantity == 1) //last item of a product
+                        {
+                            cart.RemoveAt(index); //remove it
+                        }
+                        else
+                        {
+                            cart[index].Quantity--; //reduce by 1
+                        }
+                        HttpContext.Session.Set<List<OrderItem>>("cart", cart);
+                        return Json(data: new { Success = true, Counter = cart.Count, Cart = cart });
+                    }
+
+                }
                 else
                 {
-					return Json(data: new { error = false});
-				}
-				
-			}
-			catch (Exception ex)
-			{
-				return Json(data: new { Error = ex.ToString() });
-			}
-		}
+                    return Json(data: new { error = false });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Json(data: new { Error = ex.ToString() });
+            }
+        }
         public PartialViewResult GetCartItems()
         {
             var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
@@ -366,12 +360,12 @@ namespace LocalDropshipping.Web.Controllers
 
         public IActionResult Cart()
         {
-			var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
-			ViewBag.total = TotalCost();
-			ViewBag.shipping = 250;
-			ViewBag.totalCost = ViewBag.total + ViewBag.shipping;
-			return View(cart);
-		}
+            var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
+            ViewBag.total = TotalCost();
+            ViewBag.shipping = 250;
+            ViewBag.totalCost = ViewBag.total + ViewBag.shipping;
+            return View(cart);
+        }
 
         public IActionResult Remove(int id)
         {
@@ -385,8 +379,8 @@ namespace LocalDropshipping.Web.Controllers
 
         public IActionResult Checkout()
         {
-			var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
-			ViewBag.total =TotalCost();
+            var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
+            ViewBag.total = TotalCost();
             ViewBag.shipping = 250;
             ViewBag.totalCost = ViewBag.total + ViewBag.shipping;
             return View(cart);
