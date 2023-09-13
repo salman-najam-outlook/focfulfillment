@@ -14,7 +14,7 @@ namespace Infrastructure
                 .AddTrigger(trigger => trigger
                                             .ForJob(jobKey)
                                             .WithSimpleSchedule(schedule => 
-                                                schedule.WithIntervalInSeconds(5).RepeatForever()));
+                                                schedule.WithIntervalInHours(1).RepeatForever()));
             });
             services.AddQuartzHostedService();
         }
