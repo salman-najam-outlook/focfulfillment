@@ -5,7 +5,10 @@ using LocalDropshipping.Web.Extensions;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
+using System.Security.Claims;
 using System.Text;
 
 namespace LocalDropshipping.Web.Controllers
@@ -17,14 +20,20 @@ namespace LocalDropshipping.Web.Controllers
         private readonly IAccountService _accountService;
         private readonly IOrderService _orderService;
         private readonly IProductsService _productsService;
+        private readonly IWishListService _wishlistService;
+        private readonly IProductVariantService _productVariantService;
+        private readonly UserManager<User> _userManager;
 
-        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, IProductsService productsService)
+        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, IWishListService wishList, UserManager<User> userManager, IProductsService productsService, IProductVariantService productVariantService)
         {
             _accountService = accountService;
             _profileService = profileService;
             _userService = userService;
             _orderService = orderService;
             _productsService = productsService;
+            _wishlistService = wishList;
+            _userManager = userManager;
+            _productVariantService = productVariantService;
         }
 
         public IActionResult Register()
@@ -348,10 +357,55 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult WishList()
+        public async Task<IActionResult> WishList()
         {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var cartData = _wishlistService.GetAllbyUserId(userId);            
+                List<AddProductVariantViewModel> data = new List<AddProductVariantViewModel>();
+                foreach (var item in cartData)
+                {
+                    var temp = await _productVariantService.GetById(item.ProductId);
+                    data.Add(new AddProductVariantViewModel {
+                        FeatureImageLink= temp.FeatureImageLink == null?"":temp.FeatureImageLink,
+                        Quantity = temp.Quantity == null? 0: temp.Quantity,
+                        VariantPrice = temp.VariantPrice == null? 0: temp.VariantPrice,
+                        VariantType = temp.VariantType == null?"": temp.VariantType
+                    });
+                }
+
+                return View(data);
+            }
+            catch (Exception ex)
+            {
+                return View();
+            }
+            
+        }
+
+
+        [HttpPost]
+        public IActionResult WishList(int ProductId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (_wishlistService.ValidateWishlistProduct(userId, ProductId))
+            {
+                _wishlistService.Add(userId, ProductId);
+            }
+            else
+            {
+               
+                _wishlistService.Delete(ProductId); 
+            }
+
             return View();
         }
+
+
+
+
 
         public IActionResult Productleftthumbnail()
         {
