@@ -255,6 +255,13 @@ namespace LocalDropshipping.Web.Controllers
             return View();
         }
 
+        public IActionResult Withdrawls()
+        {
+            SetRoleByCurrentUser();
+            return View();
+        }
+
+
 
 
         [HttpGet]
