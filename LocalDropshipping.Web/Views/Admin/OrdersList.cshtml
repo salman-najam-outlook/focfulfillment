@@ -1,13 +1,9 @@
 ﻿@using LocalDropshipping.Web.Data.Entities;
 @model List<Order>;
 @{
-
     Layout = "_LayoutDashboard";
 }
-
-<body>
-
-
+<div class="page-body">
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
@@ -17,42 +13,26 @@
                             <h5>Order List</h5>
                             <a href="#" class="btn btn-solid">Download all orders</a>
                         </div>
-                        <div>
-                            <div class="table-responsive">
-                                <div id="table_id_wrapper" class="dataTables_wrapper no-footer">
-                                    <div id="table_id_filter" class="dataTables_filter"><label>Search:<input type="search" class="" placeholder="" aria-controls="table_id"></label></div><table class="table all-package order-table theme-table dataTable no-footer" id="table_id">
-                                        <thead>
-                                            <tr>
-                                             @*   <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Order Image</th>*@
-                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Order Id</th>
-                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Order Date</th>
-                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Product Name </th>
-                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Delivery Status </th>
-                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Price </th>
-                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 180.938px;">Option</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-
-                                            
-                                            @foreach (var order in Model)
-                                            {
+                        <div class="table-responsive">
+                            <div id="table_id_wrapper" class="dataTables_wrapper no-footer">
+                                <div id="table_id_filter" class="dataTables_filter"><label>Search:<input type="search" class="" placeholder="" aria-controls="table_id"></label></div><table class="table all-package order-table theme-table dataTable no-footer" id="table_id">
+                                    <thead>
+                                        <tr>
+                                            <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Order Id</th>
+                                            <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Order Date</th>
+                                            <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Delivery Status </th>
+                                            <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Price </th>
+                                            <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 180.938px;">Option</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var order in Model)
+                                        {
                                             <tr data-bs-toggle="offcanvas" href="#order-details" class="odd">
-                                     
-                                                @*      <td>
-                                                    <a class="d-block">
-                                                        <span class="order-image">
-                                                            <img src="~/backend-assets/images/product/1.png" class="img-fluid" alt="users">
-                                                        </span>
-                                                    </a>
-                                                </td>
-*@
-                                                    <td>@order.Id</td>
-                                                    <td>@order.OrderDate</td>
-                                                    @* <td style="color:black;">@order.Name</td> *@
-                                                    <td>@order.OrderStatus</td>
-                                                    <td>@order.GrandTotal</td>
+                                                <td>@order.Id</td>
+                                                <td>@order.OrderDate</td>
+                                                <td>@order.OrderStatus</td>
+                                                <td>@order.GrandTotal</td>
                                                 <td>
                                                     <ul>
                                                         <li>
@@ -81,22 +61,16 @@
                                                 </td>
 
                                             </tr>
-
-
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
+                                        }
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
-
-
-</body>
+</div>
 
 
