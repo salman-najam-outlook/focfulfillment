@@ -225,7 +225,7 @@ namespace LocalDropshipping.Web.Controllers
             try
             {
                 Product productItem = _productsService.GetById(Convert.ToInt32(id == string.Empty ? 0 : id));
-                var mainVariant = productItem.Variants.FirstOrDefault(x => x.VariantType == "MAIN_VARIANT");
+                var mainVariant = productItem.Variants.FirstOrDefault(x => x.IsMainVariant);
                 var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
                 int quantity = 1;
                 if (cart == null) //no item in the cart

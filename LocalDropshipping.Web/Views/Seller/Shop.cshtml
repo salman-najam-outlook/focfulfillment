@@ -12,7 +12,7 @@
         <div class="product-box product-white-bg wow fadeIn">
             <div class="product-image">
                 <a href="product-left-thumbnail.html">
-                        <img src="@product.Variants.FirstOrDefault(x => x.VariantType == "MAIN_VARIANT").FeatureImageLink"
+                        <img src="@product.Variants.FirstOrDefault(x => x.IsMainVariant).FeatureImageLink"
                          class="img-fluid blur-up lazyload" alt="">
                 </a>
             </div>
@@ -23,7 +23,7 @@
                     </h6>
                 </a>
 
-                    <h6 class="price theme-color">Rs @product.Variants.FirstOrDefault(x => x.VariantType == "MAIN_VARIANT").VariantPrice/- </h6>
+                    <h6 class="price theme-color">Rs @product.Variants.FirstOrDefault(x => x.IsMainVariant).VariantPrice/- </h6>
 
                 <div class="add-to-cart-btn-2 addtocart_btn">
                     <button class="btn addcart-button btn buy-button">

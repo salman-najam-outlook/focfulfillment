@@ -11,9 +11,9 @@
             <div class="col-12">
                 <div class="row">
 
-                    <form asp-controller="Admin" asp-action="AddUpdateProduct" method="post" class="theme-form theme-form-2 mega-form">
+                    <form asp-controller="Admin" asp-action="AddUpdateProduct" method="post" class="theme-form theme-form-2 mega-form" name="addProductForm" enctype="multipart/form-data">
                         @Html.HiddenFor(a => a.ProductId)
-                        @Html.HiddenFor(a => a.MainVariantId)
+                        @Html.HiddenFor(a => a.VariantCounts, new { @id = "variantCounts" })
                         <div class="col-sm-8 m-auto">
                             <div class="card">
                                 <div class="card-body">
@@ -29,18 +29,6 @@
                                         <div class="col-sm-9">
                                             @Html.TextBoxFor(a => a.Name, new{ @class="form-control", id="nameInput", placeholder="Product Name" })
                                             @Html.ValidationMessageFor(a => a.Name, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-
-
-                                    <div class="mb-4 row align-items-center">
-                                        <label class="form-label-title col-sm-3 mb-0">
-                                            Product
-                                            Description
-                                        </label>
-                                        <div class="col-sm-9">
-                                            @Html.TextBoxFor(a => a.Description,new{ @class="form-control", id="txtDescription", placeholder="Product Description" })
-                                            @Html.ValidationMessageFor(a => a.Description, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
 
@@ -92,6 +80,29 @@
 
                             </div>
 
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="card-header-2">
+                                        <h5>Description</h5>
+                                    </div>
+
+                                    <form class="theme-form theme-form-2 mega-form">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <label class="form-label-title col-sm-3 mb-0">
+                                                        Product
+                                                        Description
+                                                    </label>
+                                                    <div class="col-sm-9">
+                                                        @Html.TextAreaFor(x=> x.Description, new { @id="editor" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
 
                             <div class="card">
                                 <div class="card-body">
@@ -100,23 +111,30 @@
                                     </div>
 
                                     <div class="mb-4 row align-items-center">
-                                        <label class="col-sm-3 col-form-label form-label-title">Images</label>
+                                        <label class="col-sm-3 col-form-label form-label-title">Featured Image</label>
                                         <div class="col-sm-9">
-                                            <input class="form-control form-choose" type="file"
-                                                   id="formFileMultiple1" multiple>
+                                            <input class="form-control form-choose" type="file" accept="image/*"
+                                                   name="featuredImage">
                                         </div>
                                     </div>
 
-                                    <div class="row align-items-center">
-                                        <label class="col-sm-3 col-form-label form-label-title">
-                                            Thumbnail
-                                            Image
-                                        </label>
+                                    <div class="mb-4 row align-items-center">
+                                        <label class="col-sm-3 col-form-label form-label-title">Images</label>
                                         <div class="col-sm-9">
-                                            <input class="form-control form-choose" type="file"
-                                                   id="formFileMultiple1" multiple>
+                                            <input class="form-control form-choose" type="file" accept="image/*"
+                                                   name="otherImages" multiple>
                                         </div>
                                     </div>
+
+                                    @*<div class="row align-items-center">
+                                    <label class="col-sm-3 col-form-label form-label-title">
+                                    Images
+                                    </label>
+                                    <div class="col-sm-9">
+                                    <input class="form-control form-choose" type="file"
+                                    id="formFileMultiple1" multiple>
+                                    </div>
+                                    </div>*@
                                 </div>
                             </div>
 
@@ -128,27 +146,10 @@
 
                                     <div class="mb-4 row align-items-center">
                                         <label class="col-sm-3 col-form-label form-label-title">
-                                            Video
-                                            Provider
+                                            Videos
                                         </label>
                                         <div class="col-sm-9">
-                                            <select class="js-example-basic-single w-100" name="state">
-
-                                                <option>Youtube</option>
-                                                <option>Facebook</option>
-
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="row align-items-center">
-                                        <label class="form-label-title col-sm-3 mb-0">
-                                            Video
-                                            Link
-                                        </label>
-                                        <div class="col-sm-9">
-                                            <input class="form-control" type="text"
-                                                   placeholder="Video Link">
+                                           <input type="file" name="productVideos" class="form-control" multiple/>
                                         </div>
                                     </div>
                                 </div>
@@ -162,34 +163,59 @@
 
                                     <div class="mb-4 row align-items-center">
                                         <label class="form-label-title col-sm-3 mb-0">
-                                            Option
-                                            Name
+                                            Variant Type
                                         </label>
                                         <div class="col-sm-9">
-                                            <select class="js-example-basic-single w-100" name="state">
-                                                <option>Color</option>
-                                                <option>Size</option>
-                                                <option>Material</option>
-                                                <option>Style</option>
-                                            </select>
+                                            <input class="form-control" name="variant-type" type="text" placeholder="Color" />
                                         </div>
                                     </div>
-
-                                    <div class="row align-items-center">
+                                    <p class="my-4"></p>
+                                    <div class="mb-1 row align-items-center">
                                         <label class="col-sm-3 col-form-label form-label-title">
-                                            Option
-                                            Value
+                                            Variant
                                         </label>
                                         <div class="col-sm-9">
                                             <div class="bs-example">
-                                                <input type="text" class="form-control"
-                                                       placeholder="Type tag & hit enter" id="#inputTag"
-                                                       data-role="tagsinput">
+                                                <input type="text" class="form-control" name="variant-1-value" placeholder="e.g., Black">
                                             </div>
                                         </div>
                                     </div>
 
-                                    <a href="#" class="add-option">
+
+
+                                    <div class="mb-1 row align-items-center">
+                                        <label class="col-sm-3 col-form-label form-label-title">
+                                            Price
+                                        </label>
+                                        <div class="col-sm-9">
+                                            <div class="bs-example">
+                                                <input type="number" class="form-control variantPrice" name="variant-1-price" placeholder="1250" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-1 row align-items-center">
+                                        <label class="col-sm-3 col-form-label form-label-title">
+                                            Quantity
+                                        </label>
+                                        <div class="col-sm-9">
+                                            <div class="bs-example">
+                                                <input type="number" class="form-control variantQuantity" placeholder="10" name="variant-1-quantity" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-1 row align-items-center">
+                                        <label class="col-sm-3 col-form-label form-label-title">
+                                            FeaturedImage
+                                        </label>
+                                        <div class="col-sm-9">
+                                            <div class="bs-example">
+                                                <input type="file" class="form-control" name="variant-1-feature-image" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="javascript:void(0)" class="add-option" onclick="addAnOtherOption(event)">
                                         <i class="ri-add-line me-2"></i> Add Another
                                         Option
                                     </a>
@@ -295,19 +321,92 @@
             </div>
         </footer>
     </div>
-    <!-- footer En -->
-    <!-- bootstrap tag-input js -->
-    <!-- ck editor js -->
-    <script src="assets/js/ckeditor.js"></script>
-    <script src="assets/js/ckeditor-custom.js"></script>
 
 </body>
 
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 <script>
+    function addAnOtherOption(e) {
+        let variantNumber =  +($("#variantCounts").val()) + 1; 
+        $("#variantCounts").val(variantNumber)
+        const html = `
+                <hr/>
+                <div class="mb-1 row align-items-center">
+                    <label class="col-sm-3 col-form-label form-label-title">
+                        Variant
+                    </label>
+                    <div class="col-sm-9">
+                        <div class="bs-example">
+                                <input type="text" class="form-control" name="variant-${variantNumber}-value" placeholder="e.g., Black">
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="mb-1 row align-items-center">
+                    <label class="col-sm-3 col-form-label form-label-title">
+                        Price
+                    </label>
+                    <div class="col-sm-9">
+                        <div class="bs-example">
+                                <input type="number" class="form-control" name="variant-${variantNumber}-price" placeholder="1250"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-1 row align-items-center">
+                    <label class="col-sm-3 col-form-label form-label-title">
+                        Quantity
+                    </label>
+                    <div class="col-sm-9">
+                        <div class="bs-example">
+                                <input type="number" class="form-control" name="variant-${variantNumber}-quantity" placeholder="10" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-1 row align-items-center">
+                    <label class="col-sm-3 col-form-label form-label-title">
+                        FeaturedImage
+                    </label>
+                    <div class="col-sm-9">
+                        <div class="bs-example">
+                                <input type="file" class="form-control" name="variant-${variantNumber}-feature-image" />
+                        </div>
+                    </div>
+                </div> `;
+        $(html).insertBefore($(e.target));
+    }
+
+
     $(document).ready(function () {
+
+        // CK Editor
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                toolbar: ['undo', 'redo',
+                    '|', 'heading',
+                    '|', 'fontfamily', 'fontsize', 'fontColor', 'fontBackgroundColor',
+                    '|', 'bold', 'italic', 'strikethrough', 'subscript', 'superscript', 'code',
+                    '|', 'link', 'blockQuote', 'codeBlock',
+                    '|', 'bulletedList', 'numberedList', 'todoList', 'outdent', 'indent'],
+                heading: {
+                    options: [
+                        { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                        { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                        { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                        { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
+                    ]
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
         // Clear validation error messages when a user interacts with the input fields
         $("input, select").on("input change", function () {
             var input = $(this);

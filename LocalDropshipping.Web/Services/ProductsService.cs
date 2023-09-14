@@ -35,9 +35,6 @@ namespace LocalDropshipping.Web.Services
             {
                 variant.CreatedDate = DateTime.Now;
                 variant.CreatedBy = userEmail;
-
-                // TODO: Add Image Upload Functionality (Zubair)
-                variant.FeatureImageLink = "https://picsum.photos/400/400";
             }
 
             _context.Products.Add(product);
