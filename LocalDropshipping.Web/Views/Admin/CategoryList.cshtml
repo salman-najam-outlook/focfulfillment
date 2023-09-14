@@ -12,31 +12,45 @@
 <style>
     /* styles.css */
     .delete-button {
-        background-color: red; /* Rang */
-        color: #fff; /* Text rang */
-        padding: 10px 20px; /* Padding */
-        border: none; /* Border nahi hai */
-        cursor: pointer; /* Cursor pointer ho jaye, isse button clickable lagega */
-        border-radius: 5px; /* Border ke kone rounded ho jayenge */
+        background-color: red;
+        color: #fff; 
+        padding: 10px 20px; 
+        border: none;
+        cursor: pointer; 
+        border-radius: 5px; 
     }
 
         .delete-button:hover {
-            background-color: maroon; /* Hover ke samay rang change ho jayega */
+            background-color: maroon; 
         }
 
     .edit-button {
-        background-color: #0DA487; /* Rang */
-        color: #fff; /* Text rang */
-        padding: 10px 20px; /* Padding */
-        border: none; /* Border nahi hai */
-        cursor: pointer; /* Cursor pointer ho jaye, isse button clickable lagega */
-        border-radius: 5px; /* Border ke kone rounded ho jayenge */
-    
+        background-color: #0DA487;
+        color: #fff; 
+        padding: 10px 20px; 
+        border: none; 
+        cursor: pointer; 
+        border-radius: 5px; 
     }
 
-    .edit-button:hover {
-        background-color: #0B8A6E; /* Hover ke samay rang change ho jayega */
+        .edit-button:hover {
+            background-color: #0B8A6E; 
+        }
+
+    .horizontal-buttons {
+        list-style: none;
+        padding: 0;
+        margin: 0;
     }
+
+        .horizontal-buttons li {
+            display: inline-block; 
+            margin-right: 10px;
+        }
+        .colorBtn{
+            color:red;
+            border:red;
+        }
 </style>
 <div class="page-body">
     <!-- All User Table Start -->
@@ -75,38 +89,16 @@
                                                 <td>@category.Name</td>
                                                 <td>@category.ImagePath</td>
                                                 <td>
-                                                    <ul>
-
+                                                    <ul class="horizontal-buttons">
                                                         <li>
-                                                           @* <a href="javascript:void(0)" class="edit-category" data-id="@category.CategoryId">
-                                                                <i class="ri-pencil-line"></i>
-                                                            </a> *@
-                                                            <form asp-action="UpdateCategory" asp-controller="Admin" method="get">
-
-                                                                <input type="hidden" name="id" value="@category.CategoryId" />
-                                                                
-                                                             @* <a asp-action="DeleteCategory" asp-controller="Admin" class="delete-category" data-id="@category.CategoryId">
-                                                                    <i class="ri-delete-bin-line"></i>
-                                                                </a> *@
-
-
-                                                                 @*<a href="#" class="delete-category" data-id="@category.CategoryId">
-                                                                    <i class="ri-delete-bin-line"></i>
-                                                                </a> *@
-
-                                                                <button class="edit-button" type="submit">
+                                                                <a asp-controller="Admin" asp-action="UpdateCategory" asp-route-id="@category.CategoryId">
                                                                     <i class="ri-pencil-line"></i>
-                                                                </button>
-                                                            </form>
+                                                                </a>
                                                         </li>
-                                                        <br>
+
                                                         <li>
-                                                            <form asp-action="DeleteCategory" asp-controller="Admin" method="post">
-                                                                <input type="hidden" name="id" value="@category.CategoryId" />
-                                                                @*<a asp-action="DeleteCategory" asp-controller="Admin" class="delete-category" data-id="@category.CategoryId">
-                                                                    <i class="ri-delete-bin-line"></i>
-                                                                </a> *@
-                                                                <button class="delete-button" type="submit">
+                                                            <form method="post" id="txtdelete" asp-controller="Admin" asp-action="DeleteCategory" asp-route-id="@category.CategoryId">
+                                                                <button type="submit" class="btn btn-link colorBtn">
                                                                     <i class="ri-delete-bin-line"></i>
                                                                 </button>
                                                             </form>
