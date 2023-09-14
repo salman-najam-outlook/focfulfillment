@@ -1,6 +1,7 @@
 ﻿using LocalDropshipping.Web.Attributes;
 using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
+using LocalDropshipping.Web.Dtos;
 using LocalDropshipping.Web.Enums;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
@@ -23,8 +24,9 @@ namespace LocalDropshipping.Web.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IAccountService _accountService;
         private readonly IOrderService _orderService;
+        private readonly IConsumerService _consumerService;
 
-        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService)
+        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService, IConsumerService consumerService)
         {
             _service = service;
             _productsService = productsService;
@@ -34,6 +36,7 @@ namespace LocalDropshipping.Web.Controllers
             _context = context;
             _categoryService = categoryService;
             _orderService = orderService;
+            _consumerService = consumerService;
             CategoryService = _categoryService;
             _accountService = accountService;
             _orderService = orderService;
@@ -395,7 +398,6 @@ namespace LocalDropshipping.Web.Controllers
                 RedirectToAction("CategoryList", "Admin");
             }
 
-            //   return ModelState.AddModelError(string.Empty);
             return View();
         }
 
@@ -429,7 +431,7 @@ namespace LocalDropshipping.Web.Controllers
                     IsActive = true,
                     IsDeleted = false
                 };
-                if (category!=null)
+                if (category != null)
                 {
                     _categoryService.Update(categoryId, categoryDto);
                 }
@@ -437,6 +439,21 @@ namespace LocalDropshipping.Web.Controllers
                 RedirectToAction("CategoryList", _categoryService.GetAll());
             }
             return View();
+        }
+
+        public IActionResult GetAllConsumers()
+        {
+            SetRoleByCurrentUser();
+            return View(_consumerService.GetAllConsumer());
+        }
+
+        [HttpPost]
+        public IActionResult BlockOrUnblockConsumer(int userId)
+        {
+            var consumer = _consumerService.BlockOrUnblockConsumer(userId);
+            var consumers = _consumerService.GetAllConsumer();
+            SetRoleByCurrentUser();
+            return View("GetAllConsumers", consumers);
         }
     }
 }
