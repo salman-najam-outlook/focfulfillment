@@ -17,7 +17,7 @@ namespace LocalDropshipping.Web.Services
         public List<Product> GetAll()
         {
             var data = _context.Products
-                                .Where(x => !x.IsDeleted)
+                                .Where(x => !x.IsDeleted && x.ProductId != 19)
                                 .Include(x => x.Category)
                                 .Include(x => x.Variants)
                                 .ToList();

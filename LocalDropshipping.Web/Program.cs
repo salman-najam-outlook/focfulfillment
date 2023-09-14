@@ -73,6 +73,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IProfilesService, ProfilesService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IConsumersService, ConsumersService>();
 builder.Services.AddSession();
 var app = builder.Build();
 
