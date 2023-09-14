@@ -12,7 +12,7 @@ namespace LocalDropshipping.Web.Data.Entities
         //public string? OrderCode { get; set; }
         public bool IsDeleted { get; set; } = false;
         public DateTime OrderDate { get; set; } = DateTime.Now;
-        public DateTime UpdatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
         public string? UpdatedBy { get; set; }
         public string? CreatedBy { get; set; }
         public OrderStatus OrderStatus { get; set; }
