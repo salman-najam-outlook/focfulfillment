@@ -8,45 +8,45 @@
 <div class="row row-cols-xxl-6 row-cols-lg-5 row-cols-md-4 row-cols-sm-3 row-cols-2 g-sm-4 g-3 section-b-space">
     @foreach (Product product in ViewBag.products)
     {
-    <div>
-        <div class="product-box product-white-bg wow fadeIn">
-            <div class="product-image">
-                <a href="product-left-thumbnail.html">
+        <div>
+            <div class="product-box product-white-bg wow fadeIn">
+                <div class="product-image">
+                    <a href="product-left-thumbnail.html">
                         <img src="@product.Variants.FirstOrDefault(x => x.VariantType == "MAIN_VARIANT").FeatureImageLink"
-                         class="img-fluid blur-up lazyload" alt="">
-                </a>
-            </div>
-            <div class="product-detail position-relative">
-                <a href="product-left-thumbnail.html">
-                    <h6 class="name">
-                           @product.Name
-                    </h6>
-                </a>
+                             class="img-fluid blur-up lazyload" alt="">
+                    </a>
+                </div>
+                <div class="product-detail position-relative">
+                    <a href="product-left-thumbnail.html">
+                        <h6 class="name">
+                            @product.Name
+                        </h6>
+                    </a>
 
                     <h6 class="price theme-color">Rs @product.Variants.FirstOrDefault(x => x.VariantType == "MAIN_VARIANT").VariantPrice/- </h6>
 
-                <div class="add-to-cart-btn-2 addtocart_btn">
-                    <button class="btn addcart-button btn buy-button">
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
-                    <div class="cart_qty qty-box-2 qty-box-3">
-                        <div class="input-group">
+                    <div class="add-to-cart-btn-2 addtocart_btn">
+                        <button class="btn addcart-button btn buy-button">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                        <div class="cart_qty qty-box-2 qty-box-3">
+                            <div class="input-group">
                                 <button type="button" data-id="@product.ProductId" class="qty-left-minus" data-type="minus"
-                                    data-field="">
-                                <i class="fa fa-minus" aria-hidden="true"></i>
-                            </button>
-                            <input class="form-control input-number qty-input" type="text"
-                                   name="quantity" value="0" disabled>
+                                        data-field="">
+                                    <i class="fa fa-minus" aria-hidden="true"></i>
+                                </button>
+                                <input class="form-control input-number qty-input" type="text"
+                                       name="quantity" value="0" disabled>
                                 <button type="button" data-id="@product.ProductId" class="qty-right-plus" data-type="plus"
-                                    data-field="">
-                                <i class="fa fa-plus" aria-hidden="true"></i>
-                            </button>
+                                        data-field="">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     }
 
     <script type="text/javascript">
@@ -63,12 +63,13 @@
                     data: formData,
                     url: "/Seller/AddToCart",
                     success: function (data) {
-                       
+
                         if (data.success) {
-                            
-                            
+
+
                             $('.cartItem').text(data.counter);
-                           
+                            toastr.success('Added');
+
                         }
 
                     },
@@ -82,7 +83,7 @@
         });
         $(".qty-left-minus").click(function () {
             var itemId = $(this).data("id");
-            if(itemId>0){
+            if (itemId > 0) {
                 var formData = new FormData();
                 formData.append("id", itemId)
 
@@ -95,12 +96,19 @@
                         data: formData,
                         url: "/Seller/Minus",
                         success: function (data) {
+
                             if (data.success) {
                                 $('.cartItem').text(data.counter);
+                                toastr.success('Added');
+
+                            }
+                            else {
+                                toastr.warning('This is a warning notification provided by toastr.')
                             }
 
                         },
-                        error: function () {
+                        error: function (data) {
+
                             alert("Error while inserting data");
                         }
 
@@ -111,13 +119,13 @@
         });
 
         $(".cartBtn").mouseover(function () {
-            debugger;
             $.ajax({
                 type: 'POST',
                 contentType: 'application/json; charset=utf-8',
                 url: '/Seller/GetCartItems',
 
                 success: function (data) {
+                    debugger;
                     $('#exampleModal').html(data);
                     $('#exampleModal').modal({
                         backdrop: false
@@ -130,4 +138,3 @@
         });
     </script>
 </div>
-
