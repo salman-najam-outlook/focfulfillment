@@ -58,6 +58,7 @@ builder.Services.AddSwaggerGen(c =>
 
 // Services
 builder.Services.AddScoped<IProductsService, ProductsService>();
+builder.Services.AddScoped<IProductVariantService, ProductVariantService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IWishListService, WishListService>();
 builder.Services.AddScoped<IWithdrawlsService, WithdrawlsService>();
@@ -73,6 +74,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IProfilesService, ProfilesService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IConsumersService, ConsumersService>();
 builder.Services.AddSession();
 var app = builder.Build();
 

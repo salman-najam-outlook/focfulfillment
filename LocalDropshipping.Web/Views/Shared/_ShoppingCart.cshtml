@@ -1,5 +1,5 @@
 ﻿@using LocalDropshipping.Web.Data.Entities;
-@model IEnumerable<LocalDropshipping.Web.Data.Entities.OrderItem>
+@using static IEnumerable<LocalDropshipping.Web.Data.Entities.OrderItem>
 @using Newtonsoft.Json;
 @{
 	var data = Context.Session.GetString("cart");

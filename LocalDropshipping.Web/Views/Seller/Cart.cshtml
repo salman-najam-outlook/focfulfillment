@@ -2,19 +2,19 @@
 @using LocalDropshipping.Web.Data.Entities;
 @using Newtonsoft.Json;
 @{
-	var data = Context.Session.GetString("cart");
+    var data = Context.Session.GetString("cart");
 
-	int countCart = 0;
-	if (data == null)
-	{
-		countCart = 0;
-	}
-	else
-	{
-		var data2 = Context.Session.GetString("cart");
-		List<OrderItem> dataCart = JsonConvert.DeserializeObject<List<OrderItem>>(data2);
-		countCart = dataCart.Count();
-	}
+    int countCart = 0;
+    if (data == null)
+    {
+        countCart = 0;
+    }
+    else
+    {
+        var data2 = Context.Session.GetString("cart");
+        List<OrderItem> dataCart = JsonConvert.DeserializeObject<List<OrderItem>>(data2);
+        countCart = dataCart.Count();
+    }
 
 }
 @{
@@ -162,53 +162,53 @@
                                     </li>
                                     @Html.Partial("_ShoppingCart")
                                     @* <li class="right-side">
-                                        <div class="onhover-dropdown header-badge">
-                                            <button type="button" class="btn p-0 position-relative header-wishlist">
-                                                <i data-feather="shopping-cart"></i>
-                                                <span class="position-absolute top-0 start-100 translate-middle badge">
-                                                    @countCart
-                                                </span>
-                                            </button>
+                                    <div class="onhover-dropdown header-badge">
+                                    <button type="button" class="btn p-0 position-relative header-wishlist">
+                                    <i data-feather="shopping-cart"></i>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge">
+                                    @countCart
+                                    </span>
+                                    </button>
 
-                                            <div class="onhover-div">
-                                                <ul class="cart-list">
-                                                    @foreach (var cart in Model)
-                                                    {
-                                                        <li class="product-box-contain">
-                                                            <div class="drop-cart">
-                                                                <a href="product-left-thumbnail.html" class="drop-image">
-                                                                    <img src="@cart.Image"
-                                                                         class="blur-up lazyload" alt="">
-                                                                </a>
+                                    <div class="onhover-div">
+                                    <ul class="cart-list">
+                                    @foreach (var cart in Model)
+                                    {
+                                    <li class="product-box-contain">
+                                    <div class="drop-cart">
+                                    <a href="product-left-thumbnail.html" class="drop-image">
+                                    <img src="@cart.Image"
+                                    class="blur-up lazyload" alt="">
+                                    </a>
 
-                                                                <div class="drop-contain">
-                                                                    <a href="product-left-thumbnail.html">
-                                                                        <h5>@cart.Name</h5>
-                                                                    </a>
-                                                                    <h6><span>@cart.Quantity x</span> @cart.Price</h6>
-                                                                    <button class="close-button close_button">
-                                                                        <i class="fa-solid fa-xmark"></i>
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    }
+                                    <div class="drop-contain">
+                                    <a href="product-left-thumbnail.html">
+                                    <h5>@cart.Name</h5>
+                                    </a>
+                                    <h6><span>@cart.Quantity x</span> @cart.Price</h6>
+                                    <button class="close-button close_button">
+                                    <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                    </div>
+                                    </div>
+                                    </li>
+                                    }
 
 
-                                                </ul>
+                                    </ul>
 
-                                                <div class="price-box">
-                                                    <h5>Total :</h5>
-                                                    <h4 class="theme-color fw-bold">Rs @ViewBag.total/-</h4>
-                                                </div>
+                                    <div class="price-box">
+                                    <h5>Total :</h5>
+                                    <h4 class="theme-color fw-bold">Rs @ViewBag.total/-</h4>
+                                    </div>
 
-                                                <div class="button-group">
-                                                    <a asp-controller="Seller" asp-action="Cart" class="btn btn-sm cart-button">View Cart</a>
-                                                    <a asp-controller="Seller" asp-action="Checkout" class="btn btn-sm cart-button theme-bg-color
-                                                    text-white">Checkout</a>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div class="button-group">
+                                    <a asp-controller="Seller" asp-action="Cart" class="btn btn-sm cart-button">View Cart</a>
+                                    <a asp-controller="Seller" asp-action="Checkout" class="btn btn-sm cart-button theme-bg-color
+                                    text-white">Checkout</a>
+                                    </div>
+                                    </div>
+                                    </div>
                                     </li> *@
                                     <li class="right-side onhover-dropdown">
                                         <div class="delivery-login-box">
@@ -338,7 +338,7 @@
 
                                             <td class="save-remove">
                                                 <h4 class="table-title text-content">Action</h4>
-                                                @Html.ActionLink("Remove", "Remove", "Seller", new { id = @cart.ProductId }, new { @class = "remove close_button" })
+                                                @Html.ActionLink("Remove", "RemoveFromCart", "Seller", new { id = @cart.ProductId }, new { @class = "remove close_button" })
 
                                             </td>
                                         </tr>
@@ -359,7 +359,7 @@
                             <ul>
                                 <li>
                                     <h4>Subtotal</h4>
-                                    <h4 class="price">Rs @ViewBag.total/-</h4>
+                                    <h4 class="price costOfAllitems">Rs @ViewBag.total/-</h4>
                                 </li>
                                 <li class="align-items-start">
                                     <h4>Shipping</h4>
@@ -370,8 +370,8 @@
 
                         <ul class="summery-total">
                             <li class="list-total border-top-0">
-                                <h4>Total (USD)</h4>
-                                <h4 class="price theme-color">Rs @ViewBag.totalCost/-</h4>
+                                <h4>Total</h4>
+                                <h4 class="price theme-color totalCostwithShipping">Rs @ViewBag.totalCost/-</h4>
                             </li>
                         </ul>
 
@@ -401,6 +401,7 @@
     <script type="text/javascript">
         $(".qty-right-plus").click(function () {
             var itemId = $(this).data("id");
+            var buttonClicked = $(this);
             var formData = new FormData();
             formData.append("id", itemId)
             // alert(formData);
@@ -413,9 +414,19 @@
                     data: formData,
                     url: "/Seller/AddToCart",
                     success: function (data) {
-                        
                         if (data.success) {
                             $('.cartItem').text(data.counter);
+                            
+                            //Update the subtotal for this item
+                            var subtotalCell = buttonClicked.closest("tr").find(".subtotal h5");
+                            subtotalCell.text("Rs " + data.newSubtotal + "/-");
+                            var shipping = 250;
+                            // Update the total cost
+                            var totalCost = data.totalCost;
+                            var totalCostwithShipping = shipping + totalCost;
+                                $(".costOfAllitems").text("Rs " + totalCost + "/-");
+
+                            $(".totalCostwithShipping").text("Rs " + totalCostwithShipping + "/-");
                         }
 
                     },
@@ -429,6 +440,7 @@
         });
         $(".qty-left-minus").click(function () {
             var itemId = $(this).data("id");
+            var buttonClicked = $(this);
             if (itemId > 0) {
                 var formData = new FormData();
                 formData.append("id", itemId)
@@ -441,9 +453,34 @@
                         data: formData,
                         url: "/Seller/Minus",
                         success: function (data) {
+                            
                             if (data.success) {
                                 $('.cartItem').text(data.counter);
+                                // Update the subtotal for this item
+                                if (data.newQuantity===0) {
+                                    
+                                    buttonClicked.closest('tr').remove();
+                                    // buttonClicked.closest('tr').fadeOut(800, function () {
+                                    //     buttonClicked.remove();
+                                    // });
+                                }
+                                var subtotalCell = buttonClicked.closest("tr").find(".subtotal h5");
+                                subtotalCell.text("Rs " + data.newSubtotal + "/-");
+                                var shipping = 250;
+                                // Update the total cost
+                                var totalCost = data.totalCost;
+                                var totalCostwithShipping = shipping + totalCost;
+                                $(".costOfAllitems").text("Rs " + totalCost + "/-");
+
+                                $(".totalCostwithShipping").text("Rs " + totalCostwithShipping + "/-");
+                                // Disable minus button if quantity is 1
+                                if (data.newQuantity === 1) {
+                                    $(this).prop("disabled", true);
+                                } else {
+                                    $(this).prop("disabled", false);
+                                }
                             }
+
 
                         },
                         error: function () {
@@ -453,16 +490,14 @@
                     }
                 );
             }
-           
+
             return false;
         });
         $(".cartBtn").mouseover(function () {
-            debugger;
             $.ajax({
                 type: 'POST',
                 contentType: 'application/json; charset=utf-8',
                 url: '/Seller/GetCartItems',
-
                 success: function (data) {
                     $('#exampleModal').html(data);
                     $('#exampleModal').modal({
@@ -474,6 +509,7 @@
                 }
             });
         });
+        
     </script>
     <!-- Footer Section Start -->
     <footer class="section-t-space">
