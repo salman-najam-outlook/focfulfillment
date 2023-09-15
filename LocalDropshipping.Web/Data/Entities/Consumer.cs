@@ -11,6 +11,5 @@
         public bool IsBlocked { get; set; } = false;
         public string SellerEmail { get; set; }
         public int OrderId { get; set; }
-       
     }
 }

@@ -11,123 +11,125 @@
 @model UserViewModel;
 
 <!-- New User start -->
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="row">
-                <div class="col-sm-8 m-auto">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="title-header option-title">
-                                <h5>Add New User</h5>
-                            </div>
-                            <div class="tab-content" id="pills-tabContent">
-                                <div class="tab-pane fade show active" id="pills-home" role="tabpanel">
-                                    <form asp-action="AddNewUser" asp-controller="Admin" method="post" class="theme-form theme-form-2 mega-form">
-                                        <div class="row">
-                                            <div class="mb-4 row align-items-center">
-                                                <label class="form-label-title col-lg-2 col-md-3 mb-0">
-                                                    Full Name
-                                                </label>
-                                                <div class="col-md-9 col-lg-10">
-                                                    <input class="form-control" type="text" asp-for="UserName" role="alert">
-                                                    <span asp-validation-for="UserName" class="text-danger"></span>
-                                                </div>
-                                            </div>
-
-                                            <div class="mb-4 row align-items-center">
-                                                <label class="col-lg-2 col-md-3 col-form-label form-label-title">
-                                                    Email Address
-                                                </label>
-                                                <div class="col-md-9 col-lg-10">
-                                                    <input class="form-control" type="email" asp-for="Email">
-                                                    <span asp-validation-for="Email" class="text-danger" role="alert"></span>
-                                                </div>
-                                            </div>
-                                            <div class="mb-4 row align-items-center">
-                                                <label class="col-lg-2 col-md-3 col-form-label form-label-title">
-                                                    Phone Number
-                                                </label>
-                                                <div class="col-md-9 col-lg-10">
-                                                    <input class="form-control" type="text" asp-for="PhoneNumber">
-                                                    <span asp-validation-for="PhoneNumber" class="text-danger" role="alert"></span>
-                                                </div>
-                                            </div>
-
-                                            <div class="mb-4 row align-items-center">
-                                                <label class="col-lg-2 col-md-3 col-form-label form-label-title">Password</label>
-                                                <div class="col-md-9 col-lg-10">
-                                                    <input class="form-control" type="password" asp-for="Password">
-                                                    <span asp-validation-for="Password" class="text-danger" role="alert"></span>
-                                                </div>
-                                            </div>
-
-                                            <div class="row align-items-center">
-                                                <label class="col-lg-2 col-md-3 col-form-label form-label-title">
-                                                    Confirm Password
-                                                </label>
-                                                <div class="col-md-9 col-lg-10">
-                                                    <input class="form-control" type="password" asp-for="ConfirmPassword">
-                                                    <span asp-validation-for="ConfirmPassword" class="text-danger" role="alert"></span>
-                                                </div>
-
-                                            </div>
-
-                                     
-                                            @if (isSuperAdmin == true)
-                                            {
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-sm-8 m-auto">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="title-header option-title">
+                                    <h5>Add New User</h5>
+                                </div>
+                                <div class="tab-content" id="pills-tabContent">
+                                    <div class="tab-pane fade show active" id="pills-home" role="tabpanel">
+                                        <form asp-action="AddNewUser" asp-controller="Admin" method="post" class="theme-form theme-form-2 mega-form">
+                                            <div class="row">
                                                 <div class="mb-4 row align-items-center">
-                                                    <label class="col-lg-2 col-md-3 col-form-label form-label-title">User Role</label>
-                                                    <div class="col-md-9">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio" asp-for="IsAdmin" id="isAdminRadio" value="true">
-                                                            <label class="form-check-label" for="isAdminRadio">
-                                                                Admin
-                                                            </label>
+                                                    <label class="form-label-title col-lg-2 col-md-3 mb-0">
+                                                        Full Name
+                                                    </label>
+                                                    <div class="col-md-9 col-lg-10">
+                                                        <input class="form-control" type="text" asp-for="UserName" role="alert">
+                                                        <span asp-validation-for="UserName" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="mb-4 row align-items-center">
+                                                    <label class="col-lg-2 col-md-3 col-form-label form-label-title">
+                                                        Email Address
+                                                    </label>
+                                                    <div class="col-md-9 col-lg-10">
+                                                        <input class="form-control" type="email" asp-for="Email">
+                                                        <span asp-validation-for="Email" class="text-danger" role="alert"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-4 row align-items-center">
+                                                    <label class="col-lg-2 col-md-3 col-form-label form-label-title">
+                                                        Phone Number
+                                                    </label>
+                                                    <div class="col-md-9 col-lg-10">
+                                                        <input class="form-control" type="text" asp-for="PhoneNumber">
+                                                        <span asp-validation-for="PhoneNumber" class="text-danger" role="alert"></span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="mb-4 row align-items-center">
+                                                    <label class="col-lg-2 col-md-3 col-form-label form-label-title">Password</label>
+                                                    <div class="col-md-9 col-lg-10">
+                                                        <input class="form-control" type="password" asp-for="Password">
+                                                        <span asp-validation-for="Password" class="text-danger" role="alert"></span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row align-items-center">
+                                                    <label class="col-lg-2 col-md-3 col-form-label form-label-title">
+                                                        Confirm Password
+                                                    </label>
+                                                    <div class="col-md-9 col-lg-10">
+                                                        <input class="form-control" type="password" asp-for="ConfirmPassword">
+                                                        <span asp-validation-for="ConfirmPassword" class="text-danger" role="alert"></span>
+                                                    </div>
+
+                                                </div>
+
+
+                                                @if (isSuperAdmin == true)
+                                                {
+                                                    <div class="mb-4 row align-items-center">
+                                                        <label class="col-lg-2 col-md-3 col-form-label form-label-title">User Role</label>
+                                                        <div class="col-md-9">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio" asp-for="IsAdmin" id="isAdminRadio" value="true">
+                                                                <label class="form-check-label" for="isAdminRadio">
+                                                                    Admin
+                                                                </label>
+                                                            </div>
+
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio" asp-for="IsSeller" id="isSellerRadio" value="true">
+                                                                <label class="form-check-label" for="isSellerRadio">
+                                                                    Seller
+                                                                </label>
+                                                            </div>
+                                                            @*      <div class="form-check">
+                                                        <input class="form-check-input" type="radio" asp-for="IsAdmin" id="isAdminRadio" value="true" name="userType">
+                                                        <label class="form-check-label" for="isAdminRadio">
+                                                        Admin
+                                                        </label>
                                                         </div>
 
                                                         <div class="form-check">
-                                                            <input class="form-check-input" type="radio" asp-for="IsSeller" id="isSellerRadio" value="true">
-                                                            <label class="form-check-label" for="isSellerRadio">
-                                                                Seller
-                                                            </label>
-                                                        </div>
-                                                   @*      <div class="form-check">
-                                                            <input class="form-check-input" type="radio" asp-for="IsAdmin" id="isAdminRadio" value="true" name="userType">
-                                                            <label class="form-check-label" for="isAdminRadio">
-                                                                Admin
-                                                            </label>
-                                                        </div>
-
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio" asp-for="IsSeller" id="isSellerRadio" value="false" name="userType">
-                                                            <label class="form-check-label" for="isSellerRadio">
-                                                                Seller
-                                                            </label>
+                                                        <input class="form-check-input" type="radio" asp-for="IsSeller" id="isSellerRadio" value="false" name="userType">
+                                                        <label class="form-check-label" for="isSellerRadio">
+                                                        Seller
+                                                        </label>
                                                         </div> *@
 
 
+                                                        </div>
                                                     </div>
+
+                                                }
+                                                else if (isAdmin)
+                                                {
+                                                    <div class="form-check" style="display:none">
+                                                        <input class="form-check-input" type="radio" asp-for="IsSeller" id="isSellerRadio" value="true" checked>
+                                                        <label class="form-check-label" for="isSellerRadio">
+                                                            Seller
+                                                        </label>
+                                                    </div>
+                                                }
+                                                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                                                <div class="col-12">
+                                                    <button class="btn btn-animation w-100 justify-content-center" type="submit">
+                                                        Click Here To Add
+                                                    </button>
                                                 </div>
-                                             
-                                            }
-                                            else if (isAdmin)
-                                            {
-                                                <div class="form-check" style="display:none">
-                                                    <input class="form-check-input" type="radio" asp-for="IsSeller" id="isSellerRadio" value="true" checked>
-                                                    <label class="form-check-label" for="isSellerRadio">
-                                                        Seller
-                                                    </label>
-                                                </div>
-                                            }
-                                            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-                                            <div class="col-12">
-                                                <button class="btn btn-animation w-100 justify-content-center" type="submit">
-                                                    Click Here To Add
-                                                </button>
                                             </div>
-                                        </div>
-                                    </form>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>

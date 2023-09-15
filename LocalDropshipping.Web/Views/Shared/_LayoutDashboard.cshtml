@@ -264,11 +264,11 @@
                                     </a>
                                     <ul class="sidebar-submenu">
                                         <li>
-                                            <a href="category.html">Categories List</a>
+                                            <a asp-controller="Admin" asp-action="CategoryList">Categories List</a>
                                         </li>
 
                                         <li>
-                                            <a href="add-new-category.html">Add A New Category</a>
+                                            <a asp-controller="Admin" asp-action="AddNewCategory">Add A New Category</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -282,6 +282,7 @@
                                         <li>
                                             <a asp-action="AddNewUser" asp-controller="Admin">Add A New User</a>
                                         </li>
+
                                         <li>
                                             <a asp-action="GetAllSellers" asp-controller="Admin">Sellers</a>
                                         </li>
@@ -291,6 +292,9 @@
                                                 <a asp-action="StaffMember" asp-controller="Admin">Staff Members</a>
                                             </li>
                                         }
+                                        <li>
+                                            <a asp-action="GetAllConsumers" asp-controller="Admin">Get All Consumer</a>
+                                        </li>
 
                                     </ul>
                                 </li>
@@ -312,7 +316,7 @@
                                     </a>
                                     <ul class="sidebar-submenu">
                                         <li>
-                                            <a asp-action="OrdersList" asp-controller="Admin" >Order List</a>
+                                            <a asp-action="OrdersList" asp-controller="Admin">Order List</a>
                                         </li>
 
                                         <li>
@@ -345,9 +349,9 @@
                                     <span>Logout</span>
                                     </button>
                                     </form> *@
-                                   @*  <a href="Logout" class="sidebar-link sidebar-title link-nav">
-                                        <i class="ri-file-chart-line"></i>
-                                        <span>Logout</span>
+                                    @*  <a href="Logout" class="sidebar-link sidebar-title link-nav">
+                                    <i class="ri-file-chart-line"></i>
+                                    <span>Logout</span>
                                     </a> *@
                                     <a href="#" class="sidebar-link sidebar-title link-nav" id="logoutLink">
                                         <i class="ri-file-chart-line"></i>
@@ -367,11 +371,11 @@
             </div>
             <!-- Page Sidebar Ends-->
             <!-- index body start -->
-            <div class="page-body">
+            @*   <div class="page-body"> *@
 
-                @RenderBody()
+            @RenderBody()
 
-            </div>
+            @* </div> *@
             <!-- index body end -->
 
         </div>

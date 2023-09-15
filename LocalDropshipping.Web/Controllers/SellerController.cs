@@ -8,6 +8,8 @@ using MailKit.Search;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
+using System.Security.Claims;
 using System.Text;
 
 namespace LocalDropshipping.Web.Controllers
@@ -19,20 +21,25 @@ namespace LocalDropshipping.Web.Controllers
         private readonly IAccountService _accountService;
         private readonly IOrderService _orderService;
         private readonly IProductsService _productsService;
+        private readonly IWishListService _wishlistService;
+        private readonly IProductVariantService _productVariantService;
         private readonly UserManager<User> _userManager;
         private readonly IConsumersService _consumersService;
         private readonly IOrderItemService _orderItemService;
 
-        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, IProductsService productsService, UserManager<User> userManager, IConsumersService consumersService,IOrderItemService orderItemService)
+        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, UserManager<User> userManager, IWishListService wishList, IProductsService productsService, IProductVariantService productVariantService, IConsumersService consumersService, IOrderItemService orderItemService)
         {
             _accountService = accountService;
             _profileService = profileService;
             _userService = userService;
             _orderService = orderService;
             _productsService = productsService;
+            _wishlistService = wishList;
+            _productVariantService = productVariantService;
             _userManager = userManager;
             _consumersService = consumersService;
             _orderItemService = orderItemService;
+
         }
 
         public IActionResult Register()
@@ -233,7 +240,7 @@ namespace LocalDropshipping.Web.Controllers
             try
             {
                 Product productItem = _productsService.GetById(Convert.ToInt32(id == string.Empty ? 0 : id));
-                var mainVariant = productItem.Variants.FirstOrDefault(x => x.VariantType == "MAIN_VARIANT");
+                var mainVariant = productItem.Variants.FirstOrDefault(x => x.IsMainVariant);
                 var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
                 int quantity = 1;
                 if (cart == null) //no item in the cart
@@ -370,8 +377,19 @@ namespace LocalDropshipping.Web.Controllers
         {
             try
             {
-                var data = _orderService.GetAll();
-                return View(data);
+                //var data = _orderService.GetAll();
+                //return View(data);
+                var orders = _orderService.GetAll();
+
+                var withdrawalModels = orders.Select(order => new withdrawalModel
+                {
+                    Id = order.Id,
+                    GrandTotal = order.GrandTotal,
+                    OrderStatus=order.OrderStatus,
+
+                }).ToList();
+
+                return View(withdrawalModels);
 
             }
             catch (Exception ex)
@@ -385,8 +403,7 @@ namespace LocalDropshipping.Web.Controllers
         {
             try
             {
-                var data = _orderService.GetAll();
-                return View(data);
+                return View();
             }
             catch (Exception ex)
             {
@@ -395,10 +412,55 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult WishList()
+        public async Task<IActionResult> WishList()
         {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var cartData = _wishlistService.GetAllbyUserId(userId);            
+                List<AddProductVariantViewModel> data = new List<AddProductVariantViewModel>();
+                foreach (var item in cartData)
+                {
+                    var temp = await _productVariantService.GetById(item.ProductId);
+                    data.Add(new AddProductVariantViewModel {
+                        FeatureImageLink= temp.FeatureImageLink == null?"":temp.FeatureImageLink,
+                        Quantity = temp.Quantity == null? 0: temp.Quantity,
+                        VariantPrice = temp.VariantPrice == null? 0: temp.VariantPrice,
+                        VariantType = temp.VariantType == null?"": temp.VariantType
+                    });
+                }
+
+                return View(data);
+            }
+            catch (Exception ex)
+            {
+                return View();
+            }
+            
+        }
+
+
+        [HttpPost]
+        public IActionResult WishList(int ProductId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (_wishlistService.ValidateWishlistProduct(userId, ProductId))
+            {
+                _wishlistService.Add(userId, ProductId);
+            }
+            else
+            {
+               
+                _wishlistService.Delete(ProductId); 
+            }
+
             return View();
         }
+
+
+
+
 
         public IActionResult Productleftthumbnail()
         {

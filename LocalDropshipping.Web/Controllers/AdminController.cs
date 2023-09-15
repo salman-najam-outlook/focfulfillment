@@ -1,7 +1,9 @@
 ﻿using LocalDropshipping.Web.Attributes;
 using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
+using LocalDropshipping.Web.Dtos;
 using LocalDropshipping.Web.Enums;
+using LocalDropshipping.Web.Extensions;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -23,8 +25,9 @@ namespace LocalDropshipping.Web.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IAccountService _accountService;
         private readonly IOrderService _orderService;
+        private readonly IConsumerService _consumerService;
 
-        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService)
+        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService, IConsumerService consumerService)
         {
             _service = service;
             _productsService = productsService;
@@ -34,6 +37,7 @@ namespace LocalDropshipping.Web.Controllers
             _context = context;
             _categoryService = categoryService;
             _orderService = orderService;
+            _consumerService = consumerService;
             CategoryService = _categoryService;
             _accountService = accountService;
             _orderService = orderService;
@@ -299,18 +303,61 @@ namespace LocalDropshipping.Web.Controllers
             ModelState.Remove("ProductId");
             if (ModelState.IsValid)
             {
-                var product = model.ToEntity();
-                if (model.ProductId != 0)
+                if (model.ProductId == 0)
                 {
-                    _productsService.Update(model.ProductId, product);
-                    TempData["updated"] = "Product updated successfully";
+                    var form = Request.Form;
+                    var formFiles = form.Files;
+                    var featuredImage = formFiles["featuredImage"]!;
+                    var featureImageLink = featuredImage.SaveTo("images/products", model.Name!);
+
+                    var otherImages = formFiles.GetFiles("otherImages")!.ToArray();
+                    var otherImagesLinks = otherImages.SaveTo("images/products", model.Name + " thumbnails");
+
+                    var productVideos = formFiles.GetFiles("productVideos")!.ToArray();
+                    var videoLinks = productVideos.SaveTo("videos/products", model.Name);
+
+                    var product = new Product()
+                    {
+                        Name = model.Name,
+                        CategoryId = model.CategoryId,
+                        IsBestSelling = model.IsBestSelling,
+                        IsFeatured = model.IsFeatured,
+                        IsNewArravial = model.IsNewArravial,
+                        Description = model.Description,
+                        SKU = model.SKU,
+                        Variants = new List<ProductVariant>
+                        {
+                            new ProductVariant
+                            {
+                                IsMainVariant = true,
+                                VariantPrice = model.Price,
+                                FeatureImageLink = featureImageLink,
+                            }
+                        }
+                    };
+
+                    for (int variantNo = 1; variantNo <= model.VariantCounts; variantNo++)
+                    {
+                        product.Variants.Add(new ProductVariant
+                        {
+                            VariantType = form["variant-type"],
+                            Variant = form["variant-1-value"],
+                            VariantPrice = Convert.ToInt32(form["variant-" + variantNo + "-price"]),
+                            FeatureImageLink = formFiles["variant-" + variantNo + "-feature-image"]!.SaveTo("images/products", model.Name + " " + form["variant-type"]),
+                            Quantity = Convert.ToInt32(form["variant-" + variantNo + "-quantity"]),
+                            IsMainVariant = false
+                        });
+                    }
+
+                    _productsService.Add(product);
+                    TempData["ProductAdded"] = "Product added successfully";
                     return RedirectToAction("Products");
                 }
                 else
                 {
-                    _productsService.Add(product);
-                    TempData["ProductAdded"] = "Product added successfully";
-                    return RedirectToAction("Products");
+                    //_productsService.Update(model.ProductId, product);
+                    //TempData["updated"] = "Product updated successfully";
+                    //return RedirectToAction("Products");
                 }
             }
             ViewBag.Categories = _categoryService.GetAll();
@@ -343,6 +390,114 @@ namespace LocalDropshipping.Web.Controllers
             User? currentUser = _userService.GetById(currentUserID);
             TempData["IsAdmin"] = currentUser.IsAdmin;
             TempData["IsSuperAdmin"] = currentUser.IsSuperAdmin;
+        }
+        //private void GetCurrentLoggedInUser()
+        //{
+        //    string? currentUserID = _userManager.GetUserId(HttpContext.User);
+        //    var currentUser = _userService.GetById(currentUserID);
+        //    bool isAdmin = currentUser.IsAdmin;
+        //    bool isSuperAdmin = currentUser.IsSuperAdmin;
+        //}
+        private string GetCurrentLoggedInUserEmail()
+        {
+            string? currentUserID = _userManager.GetUserId(HttpContext.User);
+            var currentUser = _userService.GetById(currentUserID);
+            string currentUserEmail = currentUser.Email;
+
+            return currentUserEmail;
+        }
+
+        public IActionResult CategoryList()
+        {
+            var category = _categoryService.GetAll();
+            return View(category);
+        }
+
+        public IActionResult AddNewCategory()
+        {
+
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AddNewCategory(Category categoryModel)
+        {
+
+            if (ModelState.IsValid)
+            {
+                var createdBy = GetCurrentLoggedInUserEmail();
+                var category = new Category
+                {
+                    Name = categoryModel.Name,
+                    ImagePath = categoryModel.ImagePath,
+                    CreatedDate = DateTime.Now,
+                    CreatedBy = createdBy,
+                    ModifiedDate = DateTime.Today,
+                    ModifiedBy = createdBy,
+                    IsActive = true,
+                    IsDeleted = false
+
+                };
+                _categoryService.Add(category);
+                RedirectToAction("CategoryList", "Admin");
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult DeleteCategory(int id)
+        {
+            var user = _categoryService.Delete(id);
+            SetRoleByCurrentUser();
+            return View("CategoryList", _categoryService.GetAll());
+        }
+        [HttpGet]
+        public IActionResult UpdateCategory()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult UpdateCategory(int categoryId, CategoryDto categoryDto)
+        {
+            if (ModelState.IsValid)
+            {
+                var createdBy = GetCurrentLoggedInUserEmail();
+                var category = new CategoryDto
+                {
+                    Name = categoryDto.Name,
+                    ImagePath = categoryDto.ImagePath,
+                    CreatedDate = DateTime.Now,
+                    CreatedBy = createdBy,
+                    ModifiedDate = DateTime.Today,
+                    ModifiedBy = createdBy,
+                    IsActive = true,
+                    IsDeleted = false
+                };
+                if (category != null)
+                {
+                    _categoryService.Update(categoryId, categoryDto);
+                }
+
+                RedirectToAction("CategoryList", _categoryService.GetAll());
+            }
+            return View();
+        }
+
+        public IActionResult GetAllConsumers()
+        {
+            SetRoleByCurrentUser();
+            return View(_consumerService.GetAllConsumer());
+        }
+
+        [HttpPost]
+        public IActionResult BlockOrUnblockConsumer(int userId)
+        {
+            var consumer = _consumerService.BlockOrUnblockConsumer(userId);
+            var consumers = _consumerService.GetAllConsumer();
+            SetRoleByCurrentUser();
+            return View("GetAllConsumers", consumers);
         }
     }
 }

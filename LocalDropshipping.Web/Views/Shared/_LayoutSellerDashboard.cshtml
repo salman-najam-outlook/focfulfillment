@@ -155,7 +155,7 @@
                                     </li>
 
                                     <li class="right-side">
-                                        <a href="wishlist.html" class="btn p-0 position-relative header-wishlist">
+                                        <a asp-action="WishList" asp-controller="Seller" class="btn p-0 position-relative header-wishlist">
                                             <i data-feather="heart"></i>
                                         </a>
                                     </li>
@@ -300,7 +300,7 @@
                         <ul class="nav nav-pills user-nav-pills" id="pills-tab" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <a asp-action="SellerDashboard" asp-controller="Seller" class="nav-link active" id="pills-dashboard-tab"
-                                   data-bs-toggle="pill" data-bs-target="#pills-dashboard" role="tab"
+                                   data-bs-target="#pills-dashboard" role="tab"
                                    aria-controls="pills-dashboard" aria-selected="true">
                                     <i data-feather="home"></i>
                                     DashBoard
@@ -321,22 +321,22 @@
                                 </a>
                             </li>
 
-@*                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="pills-withdrawal-tab" data-bs-toggle="pill"
-                                        data-bs-target="#pills-withdrawal" type="button" role="tab" aria-controls="pills-withdrawal"
-                                        aria-selected="false" asp-action="Withdrawal" asp-controller="Seller">
-                                   
-                                    <i data-feather="shopping-bag"></i>Withdrawals
-                                </button>
+                            @*                            <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-withdrawal-tab" data-bs-toggle="pill"
+                            data-bs-target="#pills-withdrawal" type="button" role="tab" aria-controls="pills-withdrawal"
+                            aria-selected="false" asp-action="Withdrawal" asp-controller="Seller">
+
+                            <i data-feather="shopping-bag"></i>Withdrawals
+                            </button>
                             </li>*@
 
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="pills-order-tab" data-bs-toggle="pill"
-                                        data-bs-target="#pills-order" type="button" role="tab" aria-controls="pills-order"
-                                        aria-selected="false">
-                                    <i data-feather="shopping-bag"></i>Wishlist
-                                </button>
+                                <a asp-controller="Seller" asp-action="WishList" class="nav-link" id="pills-wishlist-tab"
+                                   role="tab" aria-controls="pills-wishlist" aria-selected="false">
+                                    <i data-feather="shopping-bag"></i> Wishlist
+                                </a>
                             </li>
+
 
                             <li class="nav-item" role="presentation">
                                 <a asp-controller="Seller" asp-action="Reports" class="nav-link" id="pills-product-tab" data-bs-toggle="pill"
@@ -372,9 +372,9 @@
                     </button>
                     <div class="dashboard-right-sidebar">
                         <div class="tab-content" id="pills-tabContent">
-                    
-                            
-                                @RenderBody()
+
+
+                            @RenderBody()
 
 
 

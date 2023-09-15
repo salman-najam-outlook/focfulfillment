@@ -58,6 +58,7 @@ builder.Services.AddSwaggerGen(c =>
 
 // Services
 builder.Services.AddScoped<IProductsService, ProductsService>();
+builder.Services.AddScoped<IProductVariantService, ProductVariantService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IWishListService, WishListService>();
 builder.Services.AddScoped<IWithdrawlsService, WithdrawlsService>();
@@ -66,6 +67,7 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IConsumerService, ConsumerService>();
 
 builder.Services.Configure<SMTPConfigModel>(builder.Configuration.GetSection("SMTPConfig"));
 builder.Services.AddScoped<IUserService, UserService>();
