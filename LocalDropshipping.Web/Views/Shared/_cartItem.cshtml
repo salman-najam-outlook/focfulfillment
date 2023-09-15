@@ -1,59 +1,51 @@
-﻿
+﻿@if (Model != null)
+{
+    <ul class="cart-list">
+        @foreach (var cart in Model)
+        {
+            <li class="product-box-contain">
+                <div class="drop-cart">
+                    <a href="product-left-thumbnail.html" class="drop-image">
+                        <img src="@cart.Image"
+                             class="blur-up lazyload" alt="">
+                    </a>
 
-<ul class="cart-list">
-	@if (Model != null)
-	{
-		@foreach (var cart in Model)
-		{
-			<li class="product-box-contain">
-				<div class="drop-cart">
-					<a href="product-left-thumbnail.html" class="drop-image">
-						<img src="@cart.Image"
-							 class="blur-up lazyload" alt="">
-					</a>
+                    <div class="drop-contain">
+                        <a href="product-left-thumbnail.html">
+                            <h5>@cart.Name</h5>
+                        </a>
+                        <h6><span>@cart.Quantity x</span> @cart.Price</h6>
+                        <button class="close-button close_button cartDel" data-id="@cart.ProductId">
+                            <i class="fa-solid fa-xmark "></i>
+                        </button>
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+    <div class="price-box">
+        <h5>Total :</h5>
+        <h4 class="theme-color fw-bold">Rs @ViewBag.total /-</h4>
+    </div>
 
-					<div class="drop-contain">
-						<a href="product-left-thumbnail.html">
-							<h5>@cart.Name</h5>
-						</a>
-						<h6><span>@cart.Quantity x</span> @cart.Price</h6>
-						<button class="close-button close_button " data-id="@cart.ProductId">
-							<i class="fa-solid fa-xmark cartDel"></i>
-						</button>
-						<div class="add-to-cart-btn-2 addtocart_btn">
-						<div class="cart_qty qty-box-2 qty-box-3">
-							<div class="input-group">
-								<button type="button" data-id="@cart.ProductId" class="qty-left-minus" data-type="minus"
-										data-field="">
-									<i class="fa fa-minus" aria-hidden="true"></i>
-								</button>
-								<input class="form-control input-number qty-input" type="text"
-									   name="quantity" value="0" disabled>
-								<button type="button" data-id="@cart.ProductId" class="qty-right-plus" data-type="plus"
-										data-field="">
-									<i class="fa fa-plus" aria-hidden="true"></i>
-								</button>
-							</div>
-						</div>
-						</div>
-					</div>
-				</div>
-			</li>
-		}
-	}
-	else
-	{
-		<p>No Items is in the cart</p>
-	}
-</ul>
-
-<div class="price-box">
-	<h5>Total :</h5>
-	<h4 class="theme-color fw-bold">Rs @ViewBag.total /-</h4>
-</div>
-
-<div class="button-group">
-	<a asp-action="Cart" asp-controller="Seller" class="btn btn-sm cart-button">View Cart</a>
-	<a asp-action="Checkout" asp-controller="Seller" class="btn btn-sm cart-button theme-bg-color
+    <div class="button-group">
+        <a asp-action="Cart" asp-controller="Seller" class="btn btn-sm cart-button">View Cart</a>
+        <a asp-action="Checkout" asp-controller="Seller" class="btn btn-sm cart-button theme-bg-color
                                                         text-white">Checkout</a>
-</div>
+    </div>
+}
+else
+{
+    <div class="text-center">
+        <i data-feather="shopping-cart" style="width:20px; height:20px;"></i>
+        <p>Shopping cart is empty!</p>
+
+        <div class="button-group" style="justify-content: center">
+            <a asp-action="Shop" asp-controller="Seller" class="btn btn-sm cart-button">Continue Shopping</a>
+        </div>
+    </div>
+
+}
+
+
+

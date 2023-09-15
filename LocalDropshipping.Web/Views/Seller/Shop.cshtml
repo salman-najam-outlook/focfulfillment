@@ -1,5 +1,4 @@
 ﻿@using LocalDropshipping.Web.Data.Entities;
-
 @using LocalDropshipping.Web.Models
 @{
     Layout = "~/Views/Shared/ShopPage.cshtml";
@@ -12,7 +11,7 @@
         <div class="product-box product-white-bg wow fadeIn">
             <div class="product-image">
                 <a href="product-left-thumbnail.html">
-                        <img src="@product.Variants.FirstOrDefault(x => x.IsMainVariant).FeatureImageLink"
+                        <img src="@product.Variants.First().FeatureImageLink"
                          class="img-fluid blur-up lazyload" alt="">
                 </a>
                     <ul class="product-option">
@@ -42,7 +41,7 @@
                     </h6>
                 </a>
 
-                    <h6 class="price theme-color">Rs @product.Variants.FirstOrDefault(x => x.IsMainVariant).VariantPrice/- </h6>
+                    <h6 class="price theme-color">Rs @product.Variants.First().VariantPrice/- </h6>
 
                     <div class="add-to-cart-btn-2 addtocart_btn">
                         <button class="btn addcart-button btn buy-button">
@@ -84,12 +83,8 @@
                     success: function (data) {
 
                         if (data.success) {
-                            
-                            
                             $('.cartItem').text(data.counter);
-                           
                         }
-
                     },
                     error: function () {
                         alert("Please Select Positive Quantity");
@@ -112,17 +107,14 @@
                     //data: JSON.stringify(productId: productId),
                     url: "/Seller/WishList?productId=" + productId,
                     success: function (data) {
-                      
                         if (data.success) {
                             $('.cartItem').text(data.counter);
-                            toastr.success('Product has been added in to Wishlist!');
                         }
 
                     },
                     error: function () {
                         alert("Please Select Positive Quantity");
                     }
-
                 }
             );
             return false;
@@ -143,22 +135,18 @@
                         data: formData,
                         url: "/Seller/Minus",
                         success: function (data) {
-
+                            debugger;
                             if (data.success) {
                                 $('.cartItem').text(data.counter);
-                                toastr.success('Added');
-
                             }
                             else {
-                                toastr.warning('This is a warning notification provided by toastr.')
+                                alert('Please select positive quantity')
                             }
-
                         },
                         error: function (data) {
 
                             alert("Error while inserting data");
                         }
-
                     }
                 );
             }
@@ -170,16 +158,14 @@
                 type: 'POST',
                 contentType: 'application/json; charset=utf-8',
                 url: '/Seller/GetCartItems',
-
                 success: function (data) {
-                    debugger;
                     $('#exampleModal').html(data);
                     $('#exampleModal').modal({
                         backdrop: false
                     });
                 },
                 error: function (data) {
-                    alert(data);
+                    alert("Error is facing for fetching data");
                 }
             });
         });

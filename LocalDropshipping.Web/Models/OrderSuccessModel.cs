@@ -12,5 +12,6 @@ namespace LocalDropshipping.Web.Models
         public decimal ShippingCharges { get; set;}
         public decimal GrandTotal { get; set; }
         public string ShippingAddress { get; set; }
+        public string ShippingCity { get; set; }
     }
 }

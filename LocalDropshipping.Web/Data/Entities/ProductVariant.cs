@@ -8,7 +8,7 @@ namespace LocalDropshipping.Web.Data.Entities
 #nullable disable
         [Key]
      
-        public int VariantId { get; set; }
+        public int ProductVariantId { get; set; }
         public int ProductId { get; set; }
         public string? VariantType { get; set; }
         public string Variant { get; set; }

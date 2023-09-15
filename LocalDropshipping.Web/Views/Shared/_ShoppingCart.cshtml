@@ -14,7 +14,6 @@
 		var data2 = Context.Session.GetString("cart");
 		List<OrderItem> dataCart = JsonConvert.DeserializeObject<List<OrderItem>>(data2);
 		countCart = dataCart.Count();
-		cartItems = dataCart;
 
 	}
 
@@ -27,7 +26,6 @@
 				@countCart
 			</span>
 		</button>
-
 		<div class="onhover-div" id="exampleModal">
 			
 		</div>

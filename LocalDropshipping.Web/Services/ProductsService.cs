@@ -76,7 +76,7 @@ namespace LocalDropshipping.Web.Services
 
                 foreach (var variant in product.Variants)
                 {
-                    if (variant.VariantId == 0)
+                    if (variant.ProductVariantId == 0)
                     {
                         variant.CreatedDate = DateTime.Now;
                         variant.CreatedBy = userEmail;
@@ -84,7 +84,7 @@ namespace LocalDropshipping.Web.Services
                     }
                     else
                     {
-                        var exVariant = product.Variants.First(x => x.VariantId == variant.VariantId);
+                        var exVariant = product.Variants.First(x => x.ProductVariantId == variant.ProductVariantId);
                         exVariant.VariantType = variant.VariantType;
                         exVariant.VariantPrice = variant.VariantPrice;
                         exVariant.Quantity = variant.Quantity;
