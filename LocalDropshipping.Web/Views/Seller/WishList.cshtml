@@ -1,12 +1,13 @@
 ﻿@using LocalDropshipping.Web.Data.Entities;
-@model List<AddProductVariantViewModel>
+@using LocalDropshipping.Web.Helpers;
+@model PageResponse<List<AddProductVariantViewModel>>
 @{
     Layout = "_LayoutSellerDashboard";
 }
 <div class="row g-sm-3 g-2">
-    @if (Model != null && Model.Count > 0)
+    @if (Model != null && Model.totalCount > 0)
     {
-        @foreach (var wishListItem in Model)
+        @foreach (var wishListItem in Model.Data)
         { 
             <div class="col-xxl-2 col-lg-3 col-md-4 col-6 product-box-contain">
                 <div class="product-box-3 h-100">
