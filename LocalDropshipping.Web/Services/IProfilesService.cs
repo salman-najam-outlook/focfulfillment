@@ -6,6 +6,6 @@ namespace LocalDropshipping.Web.Services
     {
         Profiles? Add(Profiles profile);
         List<Profiles> GetAllProfiles();
-        Profiles? GetProfileById(int id);
+        Profiles? GetProfileById(string id);
     }
 }

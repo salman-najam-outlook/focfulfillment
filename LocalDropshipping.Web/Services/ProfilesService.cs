@@ -33,9 +33,13 @@ namespace LocalDropshipping.Web.Services
             return context.Profiles.Include(x => x.User).ToList();
         }
 
-        public Profiles? GetProfileById(int id)
+        //public Profiles? GetProfileById(string id)
+        //{
+        //    return context.Profiles.FirstOrDefault(x => x.ProfileId == id);
+        //}
+        public Profiles? GetProfileById(string id)
         {
-            return context.Profiles.FirstOrDefault(x => x.ProfileId == id);
+            return context.Profiles.FirstOrDefault(x => x.UserId == id);
         }
     }
 }

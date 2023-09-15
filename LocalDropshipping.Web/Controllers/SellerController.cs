@@ -1,5 +1,6 @@
 ﻿using LocalDropshipping.Web.Attributes;
 using LocalDropshipping.Web.Data.Entities;
+using LocalDropshipping.Web.Dtos;
 using LocalDropshipping.Web.Exceptions;
 using LocalDropshipping.Web.Extensions;
 using LocalDropshipping.Web.Models;
@@ -455,10 +456,6 @@ namespace LocalDropshipping.Web.Controllers
             return View();
         }
 
-
-
-
-
         public IActionResult Productleftthumbnail()
         {
             return View();
@@ -586,6 +583,28 @@ namespace LocalDropshipping.Web.Controllers
                 throw new Exception(ex.Message);
             }
 
+        }
+
+        public IActionResult Profile()
+        {
+            var userId = _userManager.GetUserId(User);
+
+            var userProfile = _profileService.GetProfileById(userId);
+            var userProfileDto = new ProfilesDto
+            {
+                StoreName = userProfile.StoreName,
+                StoreURL = userProfile.StoreURL,
+                BankName = userProfile.BankName,
+                BankAccountTitle = userProfile.BankAccountTitle,
+                BankAccountNumberOrIBAN = userProfile.BankAccountNumberOrIBAN,
+                BankBranch = userProfile.BankBranch,
+                Address = userProfile.Address
+
+            };
+
+            var userProfileList = new List<ProfilesDto> { userProfileDto };
+
+            return View(userProfileList);
         }
     }
 }

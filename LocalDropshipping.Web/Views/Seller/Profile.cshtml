@@ -1,0 +1,63 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using LocalDropshipping.Web.Dtos;
+@model List<ProfilesDto>
+@{
+    Layout = "_LayoutSellerDashboard";
+}
+
+
+<div class="tab-pane fade show active" id="pills-profile" role="tabpanel"
+     aria-labelledby="pills-profile-tab">
+    <div class="dashboard-profile">
+        <div class="title">
+            <h2>Profile</h2>
+            <span class="title-leaf">
+                <svg class="icon-width bg-gray">
+                    <use xlink:href="https://themes.pixelstrap.com/fastkart/assets/svg/leaf.svg#leaf"></use>
+                </svg>
+            </span>
+        </div>
+
+        <div class="profile-tab dashboard-bg-box">
+            <div class="dashboard-title dashboard-flex">
+                <h3>Profile</h3>
+
+            </div>
+            <ul>
+                @foreach (var profile in Model)
+                {
+                    <li>
+                        <h5>Store Name :</h5>
+                        <h5>@profile.StoreName</h5>
+                    </li>
+                    <li>
+                        <h5>Store URL:</h5>
+                        <h5>@profile.StoreURL</h5>
+                    </li>
+                    <li>
+                        <h5>Bank Name:</h5>
+                        <h5>@profile.BankName</h5>
+                    </li>
+                    <li>
+                        <h5>Bank Account Title:</h5>
+                        <h5>@profile.BankAccountTitle</h5>
+                    </li>
+                    <li>
+                        <h5>Bank Account Number / IBAN:</h5>
+                        <h5>@profile.BankAccountNumberOrIBAN</h5>
+                    </li>
+                    <li>
+                        <h5>Bank Branch:</h5>
+                        <h5>@profile.BankBranch</h5>
+                    </li>
+                    <li>
+                        <h5>Address:</h5>
+                        <h5>@profile.Address</h5>
+                    </li>
+                }
+            </ul>
+       </div>
+    </div>
+</div>
