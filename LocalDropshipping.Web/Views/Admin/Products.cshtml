@@ -47,11 +47,11 @@
                                             @foreach (var product in Model)
                                             {
                                                 <tr>
-                                                    <td><img style="width: 150px;" src="@product.Variants.First(x => x.IsMainVariant).FeatureImageLink" alt="Image of product @product.Name" /></td>
+                                                    <td><img style="width: 150px;" src="@product.Variants.First().FeatureImageLink" alt="Image of product @product.Name" /></td>
                                                     <td>@product.Name</td>
                                                     <td style="color:black;">@product.Category!.Name</td>
-                                                    <td>@product.Variants.First(x => x.IsMainVariant).Quantity</td>
-                                                    <td>@product.Variants.First(x => x.IsMainVariant).VariantPrice</td>
+                                                    <td>@product.Variants.First().Quantity</td>
+                                                    <td>@product.Variants.First().VariantPrice</td>
 
                                                     <td>
                                                         <ul>

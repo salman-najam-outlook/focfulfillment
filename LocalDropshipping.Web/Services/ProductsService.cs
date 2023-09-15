@@ -1,6 +1,7 @@
 ﻿using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+
 namespace LocalDropshipping.Web.Services
 {
     public class ProductsService : IProductsService
@@ -74,25 +75,21 @@ namespace LocalDropshipping.Web.Services
                 exProduct.IsBestSelling = product.IsBestSelling;
                 exProduct.IsNewArravial = product.IsNewArravial;
 
-                foreach (var variant in product.Variants)
+                if (product.Variants.All(x => x.IsMainVariant))
                 {
-                    if (variant.VariantId == 0)
+                    var variant = exProduct.Variants.FirstOrDefault(x => x.ProductVariantId == product.Variants.First().ProductVariantId);
+                    if (variant != null)
                     {
-                        variant.CreatedDate = DateTime.Now;
-                        variant.CreatedBy = userEmail;
-                        exProduct.Variants.Add(variant);
-                    }
-                    else
-                    {
-                        var exVariant = product.Variants.First(x => x.VariantId == variant.VariantId);
-                        exVariant.VariantType = variant.VariantType;
-                        exVariant.VariantPrice = variant.VariantPrice;
-                        exVariant.Quantity = variant.Quantity;
-                        exVariant.UpdatedDate = DateTime.Now;
-                        exVariant.UpdatedBy = userEmail;
+                        variant.Quantity = product.Variants.First().Quantity;
+                        variant.VariantPrice = product.Variants.First().VariantPrice;
                     }
                 }
 
+                exProduct.Variants.ForEach(x =>
+                {
+                    x.UpdatedDate = DateTime.Now;
+                    x.UpdatedBy = userEmail;
+                });
 
                 exProduct.UpdatedDate = DateTime.Now;
                 exProduct.UpdatedBy = userEmail;

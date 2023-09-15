@@ -7,5 +7,6 @@
         public int VariantPrice { get; set; }
         public string FeatureImageLink { get; set; }
         public int Quantity { get; set; }
+        public string Variant { get; set; }
     }
 }

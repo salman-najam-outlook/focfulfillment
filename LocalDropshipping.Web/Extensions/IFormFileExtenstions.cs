@@ -12,7 +12,7 @@ namespace LocalDropshipping.Web.Extensions
             using FileStream fs = new FileStream(Path.Combine(uploads, filename + extension), FileMode.Create);
 
             file.CopyTo(fs);
-            return @"\images\products\" + filename + extension;
+            return "/" + path + "/" + filename + extension;
         }
         public static List<string> SaveTo(this IFormFile[] files, string path, string filename)
         {
