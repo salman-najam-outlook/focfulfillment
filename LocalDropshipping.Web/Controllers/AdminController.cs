@@ -466,5 +466,11 @@ namespace LocalDropshipping.Web.Controllers
             SetRoleByCurrentUser();
             return View("GetAllConsumers", consumers);
         }
+
+        public IActionResult Reports()
+        {
+            SetRoleByCurrentUser();
+            return View();
+        }
     }
 }
