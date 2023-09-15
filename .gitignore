@@ -5,3 +5,4 @@
 /LocalDropshipping.Web/bin
 /LocalDropshipping.Web/obj
 /.vs
+/LocalDropshipping.Web/Models/CustomerDetailsViewModel.cs

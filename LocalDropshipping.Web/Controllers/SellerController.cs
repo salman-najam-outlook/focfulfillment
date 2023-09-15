@@ -21,8 +21,9 @@ namespace LocalDropshipping.Web.Controllers
         private readonly IProductsService _productsService;
         private readonly UserManager<User> _userManager;
         private readonly IConsumersService _consumersService;
+        private readonly IOrderItemService _orderItemService;
 
-        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, IProductsService productsService, UserManager<User> userManager, IConsumersService consumersService)
+        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, IProductsService productsService, UserManager<User> userManager, IConsumersService consumersService,IOrderItemService orderItemService)
         {
             _accountService = accountService;
             _profileService = profileService;
@@ -31,6 +32,7 @@ namespace LocalDropshipping.Web.Controllers
             _productsService = productsService;
             _userManager = userManager;
             _consumersService = consumersService;
+            _orderItemService = orderItemService;
         }
 
         public IActionResult Register()
@@ -480,6 +482,7 @@ namespace LocalDropshipping.Web.Controllers
         [HttpPost]
         public IActionResult PlaceOrder(CheckoutViewModel customer)
         {
+            
             var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
             string? currentUserID = _userManager.GetUserId(HttpContext.User);
             var currentUser = _userService.GetById(currentUserID);
@@ -489,18 +492,32 @@ namespace LocalDropshipping.Web.Controllers
             decimal sellingPrice = Convert.ToDecimal(customer.SellingPrice);
 
             var checkConsumer = _consumersService.CheckConsumer(primaryPhone, secondaryPhone);
+            Order order;
+            Consumer consumer;
             if (!checkConsumer)
             {
-                var order = _orderService.AddOrder(cart, email, sellingPrice);
+                order = _orderService.AddOrder(cart, email, sellingPrice);
                 var orderId = order.Id;
-                var consumer=_consumersService.AddConsumer(customer, orderId, email);
+                consumer=_consumersService.AddConsumer(customer, orderId, email);
                 HttpContext.Session.Remove("cart");
             }
             else
             {
-                return View("checkout");
+                return RedirectToAction("checkout");
             }
-            return View();
+            var orderItems = _orderItemService.GetOrderItemsById(order.Id);
+            OrderSuccessModel model = new OrderSuccessModel()
+            {
+                OrderId=order.Id,
+                OrderItems = orderItems,
+                TotalItems = orderItems.Count(),
+                TotalItemsAmount = order.GrandTotal,
+                ShippingCharges=250,
+                ShippingAddress=consumer.Address,
+                GrandTotal=order.GrandTotal+250,
+
+            };
+            return View(model);
         }
         private decimal TotalCost()
         {
