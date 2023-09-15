@@ -10,10 +10,12 @@ namespace LocalDropshipping.Web.Data.Entities
      
         public int VariantId { get; set; }
         public int ProductId { get; set; }
-        public string VariantType { get; set; } = "MAIN_VARIANT";
+        public string? VariantType { get; set; }
+        public string Variant { get; set; }
         public int VariantPrice { get; set; }
         public string FeatureImageLink { get; set; }
         public int Quantity { get; set; }
+        public bool IsMainVariant { get; set; }
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }

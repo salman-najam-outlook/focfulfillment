@@ -5,3 +5,5 @@
 /LocalDropshipping.Web/bin
 /LocalDropshipping.Web/obj
 /.vs
+*/wwwroot/images
+*/wwwroot/videos

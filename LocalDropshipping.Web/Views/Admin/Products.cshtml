@@ -2,7 +2,7 @@
 @model List<Product>;
 @{
     Layout = "_LayoutDashboard";
-    
+
 }
 <div class="page-body">
     <div class="container-fluid">
@@ -46,31 +46,26 @@
                                             @foreach (var product in Model)
                                             {
                                                 <tr>
-                                                    <td>ImageLink</td>
+                                                    <td><img style="width: 150px;" src="@product.Variants.First(x => x.IsMainVariant).FeatureImageLink" alt="Image of product @product.Name" /></td>
                                                     <td>@product.Name</td>
                                                     <td style="color:black;">@product.Category!.Name</td>
-                                                    <td>Quantity</td>
-                                                    <td>Price</td>
-                                             
+                                                    <td>@product.Variants.First(x => x.IsMainVariant).Quantity</td>
+                                                    <td>@product.Variants.First(x => x.IsMainVariant).VariantPrice</td>
+
                                                     <td>
                                                         <ul>
                                                             <li>
                                                                 <a asp-controller="Admin" asp-action="AddUpdateProduct" asp-route-id="@product.ProductId">
-                                                                    <i class="ri-pencil-line"></i> 
+                                                                    <i class="ri-pencil-line"></i>
                                                                 </a>
                                                             </li>
 
-
-
                                                             <li>
-
-
-                                                                <form method="post" id="txtdelete"  asp-controller="Admin" asp-action="Deleted" asp-route-id="@product.ProductId">
+                                                                <form method="post" id="txtdelete" asp-controller="Admin" asp-action="Deleted" asp-route-id="@product.ProductId">
                                                                     <button type="submit" class="btn btn-link">
                                                                         <i class="ri-delete-bin-line"></i>
                                                                     </button>
                                                                 </form>
-
                                                             </li>
                                                         </ul>
                                                     </td>
@@ -91,7 +86,7 @@
 <script src="~/backend-assets/js/notify/index.js"></script>
 @section script{
     <script>
-        var notifyMessage = '@TempData["Message"]'; 
+        var notifyMessage = '@TempData["Message"]';
         if (notifyMessage) {
             var notify = $.notify('<i class="fas fa-bell"></i><strong>Loading</strong> ' + notifyMessage, {
                 type: 'theme',
