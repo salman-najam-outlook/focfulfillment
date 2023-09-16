@@ -4,11 +4,13 @@ using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
 using LocalDropshipping.Web.Enums;
 using LocalDropshipping.Web.Extensions;
+using LocalDropshipping.Web.Helpers;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LocalDropshipping.Web.Controllers
 {
@@ -196,10 +198,13 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         #endregion
-        public IActionResult StaffMember()
+        public IActionResult StaffMember([FromQuery] Pagination pagination)
         {
             SetRoleByCurrentUser();
-            return View(_userService.GetAllStaffMember());
+            var staffMembers = _userService.GetAllStaffMember();
+            var count = staffMembers.Count();
+            staffMembers = staffMembers.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+            return View(new PageResponse<List<User>>(staffMembers, pagination.PageNumber, pagination.PageSize, count));
         }
         public IActionResult EditUser()
         {
@@ -240,10 +245,13 @@ namespace LocalDropshipping.Web.Controllers
         }
 
 
-        public IActionResult GetAllSellers()
+        public IActionResult GetAllSellers([FromQuery] Pagination pagination)
         {
             SetRoleByCurrentUser();
-            return View(_userService.GetAll());
+            var sellers = _userService.GetAll();
+            var count = sellers.Count();
+            sellers = sellers.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+            return View(new PageResponse<List<User>>(sellers, pagination.PageNumber, pagination.PageSize, count));
         }
 
 
@@ -259,12 +267,14 @@ namespace LocalDropshipping.Web.Controllers
 
 
         [HttpGet]
-        public IActionResult OrdersList()
+        public IActionResult OrdersList([FromQuery] Pagination pagination)
         {
             try
             {
                 List<Order> orders = _orderService.GetAll();
-                return View(orders);
+                var count = orders.Count();
+                orders = orders.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+                return View(new PageResponse<List<Order>>(orders, pagination.PageNumber, pagination.PageSize, count));
             }
             catch (Exception ex)
             {
@@ -277,10 +287,12 @@ namespace LocalDropshipping.Web.Controllers
         [HttpGet]
         [Authorize]
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
-        public IActionResult Products()
+        public IActionResult Products([FromQuery] Pagination pagination) 
         {
             List<Product> data = _productsService.GetAll();
-            return View(data);
+            var count = data.Count();
+            data = data.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+            return View(new PageResponse<List<Product>>(data, pagination.PageNumber, pagination.PageSize, count));
         }
 
 
@@ -407,10 +419,12 @@ namespace LocalDropshipping.Web.Controllers
             return currentUserEmail;
         }
 
-        public IActionResult CategoryList()
+        public IActionResult CategoryList([FromQuery] Pagination pagination)
         {
             var category = _categoryService.GetAll();
-            return View(category);
+            var count = category.Count();
+            category = category.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+            return View(new PageResponse<List<Category>>(category, pagination.PageNumber, pagination.PageSize, count));
         }
 
         public IActionResult AddNewCategory()
@@ -485,10 +499,13 @@ namespace LocalDropshipping.Web.Controllers
             return View();
         }
 
-        public IActionResult GetAllConsumers()
+        public IActionResult GetAllConsumers([FromQuery] Pagination pagination)
         {
             SetRoleByCurrentUser();
-            return View(_consumerService.GetAllConsumer());
+            var consumers = _consumerService.GetAllConsumer();
+            var count = consumers.Count();
+            consumers = consumers.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+            return View(new PageResponse<List<Consumer>>(consumers, pagination.PageNumber, pagination.PageSize, count));
         }
 
         [HttpPost]

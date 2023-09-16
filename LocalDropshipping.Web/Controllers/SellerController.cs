@@ -2,6 +2,7 @@
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Exceptions;
 using LocalDropshipping.Web.Extensions;
+using LocalDropshipping.Web.Helpers;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
 using MailKit.Search;
@@ -11,6 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using System.Security.Claims;
 using System.Text;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static NuGet.Packaging.PackagingConstants;
 
 namespace LocalDropshipping.Web.Controllers
 {
@@ -372,7 +375,7 @@ namespace LocalDropshipping.Web.Controllers
             return PartialView("_cartItem", cart);
         }
 
-        public IActionResult Withdrawal()
+        public IActionResult Withdrawal([FromQuery] Pagination pagination)
         {
             try
             {
@@ -387,9 +390,9 @@ namespace LocalDropshipping.Web.Controllers
                     OrderStatus=order.OrderStatus,
 
                 }).ToList();
-
-                return View(withdrawalModels);
-
+                var count = withdrawalModels.Count();
+                withdrawalModels = withdrawalModels.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+                return View(new PageResponse<List<withdrawalModel>>(withdrawalModels, pagination.PageNumber, pagination.PageSize, count));
             }
             catch (Exception ex)
             {
@@ -411,7 +414,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> WishList()
+        public async Task<IActionResult> WishList([FromQuery] Pagination pagination)
         {
             try
             {
@@ -428,8 +431,9 @@ namespace LocalDropshipping.Web.Controllers
                         VariantType = temp.VariantType == null?"": temp.VariantType
                     });
                 }
-
-                return View(data);
+                var count = data.Count();
+                data = data.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+                return View(new PageResponse<List<AddProductVariantViewModel>>(data, pagination.PageNumber, pagination.PageSize, count));
             }
             catch (Exception ex)
             {
@@ -522,12 +526,14 @@ namespace LocalDropshipping.Web.Controllers
             return RedirectToAction("Shop", "Seller");
         }
 
-        public IActionResult SellerOrders()
+        public IActionResult SellerOrders([FromQuery] Pagination pagination)
         {
             try
             {
                 List<Order> orders = _orderService.GetAll();
-                return View(orders);
+                var count = orders.Count();
+                orders = orders.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+                return View(new PageResponse<List<Order>>(orders, pagination.PageNumber, pagination.PageSize, count));
             }
             catch (Exception ex)
             {
