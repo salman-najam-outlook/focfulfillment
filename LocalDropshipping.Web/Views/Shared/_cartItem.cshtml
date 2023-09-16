@@ -1,4 +1,6 @@
-﻿@if (Model != null)
+﻿@model IEnumerable<LocalDropshipping.Web.Data.Entities.OrderItem>
+
+@if (Model != null && Model.Any())
 {
     <ul class="cart-list">
         @foreach (var cart in Model)

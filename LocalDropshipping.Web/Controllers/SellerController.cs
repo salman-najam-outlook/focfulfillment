@@ -231,7 +231,6 @@ namespace LocalDropshipping.Web.Controllers
             ViewBag.products = _productsService.GetAll();
             var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
             ViewBag.total = TotalCost();
-            //ViewBag.totalCost = ViewBag.total + ViewBag.shipping;
             return View(cart);
         }
         [HttpPost]
@@ -326,6 +325,7 @@ namespace LocalDropshipping.Web.Controllers
                         {
                             newTotalCost = TotalCost();
                             newGrandTotal=newTotalCost+ShippingCost();
+                            HttpContext.Session.Set<List<OrderItem>>("cart", cart);
                             return Json(data: new { 
                                 Success = true, 
                                 newQuantity = 0, 
@@ -340,7 +340,8 @@ namespace LocalDropshipping.Web.Controllers
                             int itemQuantity = cart[newIndex].Quantity;
                             newTotalCost = TotalCost();
 							newGrandTotal = newTotalCost + ShippingCost();
-							return Json(data: new { 
+                            HttpContext.Session.Set<List<OrderItem>>("cart", cart);
+                            return Json(data: new { 
                                 Success = true, 
                                 newQuantity = itemQuantity, 
                                 newSubtotal = itemSubtotal, 
