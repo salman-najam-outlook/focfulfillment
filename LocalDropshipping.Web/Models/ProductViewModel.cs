@@ -22,6 +22,8 @@ namespace LocalDropshipping.Web.Models
 
         public int Quantity { get; set; }
 
+        public int MainVariantId { get; set; }
+
         public string? SKU { get; set; }
 
 
@@ -59,6 +61,8 @@ namespace LocalDropshipping.Web.Models
                     Description = product.Description;
                     SKU = product.SKU;
                     Price = product.Variants.First().VariantPrice;
+                    Quantity = product.Variants.First().Quantity;
+                    MainVariantId = product.Variants.First().ProductVariantId;
                 }
                 else
                 {
@@ -78,41 +82,6 @@ namespace LocalDropshipping.Web.Models
 
                 ProductId = product.ProductId;
             }
-        }
-
-        public Product ToEntity()
-        {
-            var product = new Product();
-            product.Name = Name;
-            product.CategoryId = CategoryId;
-            product.IsBestSelling = IsBestSelling;
-            product.IsFeatured = IsFeatured;
-            product.IsNewArravial = IsNewArravial;
-            product.Description = Description;
-            product.SKU = SKU;
-            product.Variants = new List<ProductVariant>();
-
-            if (HasVariants == 1)
-            {
-                product.Variants.AddRange(Variants.Select(x => new ProductVariant
-                {
-                    Quantity = x.Quantity,
-                    VariantPrice = x.VariantPrice,
-                    VariantType = x.VariantType,
-                    Variant = x.Variant,
-                }));
-            }
-            else
-            {
-                product.Variants.Add(new ProductVariant
-                {
-                    IsMainVariant = true,
-                    VariantPrice = Price,
-                    Quantity = Quantity
-                });
-            }
-
-            return product;
         }
     }
 }

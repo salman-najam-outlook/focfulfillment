@@ -15,6 +15,7 @@
                         @Html.HiddenFor(a => a.ProductId)
                         @Html.HiddenFor(a => a.VariantCounts, new { @id = "variantCounts" })
                         @Html.HiddenFor(a => a.HasVariants, new { @id = "hasVariants" })
+                        @Html.HiddenFor(a => a.MainVariantId, new { @id = "mainVariantId" })
                         <div class="col-sm-8 m-auto">
                             <div class="card">
                                 <div class="card-body">
@@ -46,20 +47,19 @@
                                         </div>
                                     </div>
 
-                                    <div class="mb-4 row align-items-center">
-                                        <label class="col-sm-3 col-form-label form-label-title" for="productType">Product Type</label>
-                                        <div class="col-sm-9">
-                                            <select class="js-example-basic-single w-100 select2-hidden-accessible" onchange="updateForm(event)">
-                                                <option value="0" selected="!@Model.HasVariants">Product (no variants)</option>
-                                                <option value=" 1" selected="@Model.HasVariants">Product (with variants)</option>
-                                            </select>
+                                    @if (Model.ProductId == 0)
+                                    {
+                                        <div class="mb-4 row align-items-center">
+                                            <label class="col-sm-3 col-form-label form-label-title" for="productType">Product Type</label>
+                                            <div class="col-sm-9">
+                                                <select class="js-example-basic-single w-100 select2-hidden-accessible" onchange="updateForm(event)" asp-items="@(new List<SelectListItem> { new SelectListItem("Product (no variants)", "0", @Model.HasVariants == 0), new SelectListItem("Product (with variants)", "1", @Model.HasVariants == 1) })"></select>
+                                            </div>
                                         </div>
-                                    </div>
-
+                                    }
                                     <div class="mb-4 row align-items-center">
                                         <label class="col-sm-3 col-form-label form-label-title">New Arrival</label>
                                         <div class="col-sm-9">
-                                            @Html.CheckBoxFor(model => model.IsNewArravial, new { @class = "checkbox_animated check-it" })                                            </>
+                                            @Html.CheckBoxFor(model => model.IsNewArravial, new { @class = "checkbox_animated check-it" })
                                         </div>
                                     </div>
 
@@ -110,47 +110,49 @@
                                 </div>
                             </div>
 
-                            <div class="card productSpecificControl">
-                                <div class="card-body">
-                                    <div class="card-header-2">
-                                        <h5>Product Images</h5>
-                                    </div>
-
-                                    <div class="mb-4 row align-items-center">
-                                        <label class="col-sm-3 col-form-label form-label-title">Featured Image</label>
-                                        <div class="col-sm-9">
-                                            <input class="form-control form-choose" type="file" accept="image/*"
-                                                   name="featuredImage">
+                            @if (Model.ProductId == 0)
+                            {
+                                <div class="card productSpecificControl">
+                                    <div class="card-body">
+                                        <div class="card-header-2">
+                                            <h5>Product Images</h5>
                                         </div>
-                                    </div>
 
-                                    <div class="mb-4 row align-items-center">
-                                        <label class="col-sm-3 col-form-label form-label-title">Images</label>
-                                        <div class="col-sm-9">
-                                            <input class="form-control form-choose" type="file" accept="image/*"
-                                                   name="otherImages" multiple>
+                                        <div class="mb-4 row align-items-center">
+                                            <label class="col-sm-3 col-form-label form-label-title">Featured Image</label>
+                                            <div class="col-sm-9">
+                                                <input class="form-control form-choose" type="file" accept="image/*"
+                                                       name="featuredImage">
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div class="card productSpecificControl">
-                                <div class="card-body">
-                                    <div class="card-header-2">
-                                        <h5>Product Videos</h5>
-                                    </div>
-
-                                    <div class="mb-4 row align-items-center">
-                                        <label class="col-sm-3 col-form-label form-label-title">
-                                            Videos
-                                        </label>
-                                        <div class="col-sm-9">
-                                            <input type="file" name="productVideos" class="form-control" multiple />
+                                        <div class="mb-4 row align-items-center">
+                                            <label class="col-sm-3 col-form-label form-label-title">Images</label>
+                                            <div class="col-sm-9">
+                                                <input class="form-control form-choose" type="file" accept="image/*"
+                                                       name="otherImages" multiple>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
+                                <div class="card productSpecificControl">
+                                    <div class="card-body">
+                                        <div class="card-header-2">
+                                            <h5>Product Videos</h5>
+                                        </div>
+
+                                        <div class="mb-4 row align-items-center">
+                                            <label class="col-sm-3 col-form-label form-label-title">
+                                                Videos
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <input type="file" name="productVideos" class="form-control" multiple />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                             <div class="card variantSpecificControl">
                                 <div class="card-body">
                                     <div class="card-header-2">
@@ -169,8 +171,11 @@
                                         </div>
                                         @for (int variantNo = 1; variantNo <= Model.VariantCounts; variantNo++)
                                         {
-                                            <p class="my-4"></p>
                                             var variant = Model.Variants[variantNo - 1];
+
+                                            <input type="hidden" value="@variant.VariantId" name="variant-@variantNo-variant-id" />
+                                            <input type="hidden" value="@variant.IsDeleted" name="variant-@variantNo-is-deleted" />
+                                            <p class="my-4"></p>
                                             <div class="mb-1 row align-items-center">
                                                 <label class="col-sm-3 col-form-label form-label-title">
                                                     Variant
@@ -399,72 +404,72 @@
     function addAnOtherOption(e) {
         let variantNumber = +($("#variantCounts").val()) + 1;
         $("#variantCounts").val(variantNumber)
-        const html = `
-                                                                                <hr/>
-                                                                                <div class="mb-1 row align-items-center">
-                                                                                    <label class="col-sm-3 col-form-label form-label-title">
-                                                                                        Variant
-                                                                                    </label>
-                                                                                    <div class="col-sm-9">
-                                                                                        <div class="bs-example">
-                                                                                                <input type="text" class="form-control" name="variant-${variantNumber}-value" placeholder="e.g., Black">
+        let html = `
+                                                                                    <hr/>
+                                                                                    <div class="mb-1 row align-items-center">
+                                                                                        <label class="col-sm-3 col-form-label form-label-title">
+                                                                                            Variant
+                                                                                        </label>
+                                                                                        <div class="col-sm-9">
+                                                                                            <div class="bs-example">
+                                                                                                    <input type="text" class="form-control" name="variant-${variantNumber}-value" placeholder="e.g., Black">
+                                                                                            </div>
                                                                                         </div>
                                                                                     </div>
-                                                                                </div>
 
 
 
-                                                                                <div class="mb-1 row align-items-center">
-                                                                                    <label class="col-sm-3 col-form-label form-label-title">
-                                                                                        Price
-                                                                                    </label>
-                                                                                    <div class="col-sm-9">
-                                                                                        <div class="bs-example">
-                                                                                                <input type="number" class="form-control" name="variant-${variantNumber}-price" placeholder="1250"/>
+                                                                                    <div class="mb-1 row align-items-center">
+                                                                                        <label class="col-sm-3 col-form-label form-label-title">
+                                                                                            Price
+                                                                                        </label>
+                                                                                        <div class="col-sm-9">
+                                                                                            <div class="bs-example">
+                                                                                                    <input type="number" class="form-control" name="variant-${variantNumber}-price" placeholder="1250"/>
+                                                                                            </div>
                                                                                         </div>
                                                                                     </div>
-                                                                                </div>
 
-                                                                                <div class="mb-1 row align-items-center">
-                                                                                    <label class="col-sm-3 col-form-label form-label-title">
-                                                                                        Quantity
-                                                                                    </label>
-                                                                                    <div class="col-sm-9">
-                                                                                        <div class="bs-example">
-                                                                                                <input type="number" class="form-control" name="variant-${variantNumber}-quantity" placeholder="10" />
+                                                                                    <div class="mb-1 row align-items-center">
+                                                                                        <label class="col-sm-3 col-form-label form-label-title">
+                                                                                            Quantity
+                                                                                        </label>
+                                                                                        <div class="col-sm-9">
+                                                                                            <div class="bs-example">
+                                                                                                    <input type="number" class="form-control" name="variant-${variantNumber}-quantity" placeholder="10" />
+                                                                                            </div>
                                                                                         </div>
-                                                                                    </div>
-                                                                                </div>`;
+                                                                                    </div>`;
         if (@Model.ProductId == 0) {
             html += `
-                                                                                    <div class="mb-1 row align-items-center">
-                                                                                        <label class="col-sm-3 col-form-label form-label-title">
-                                                                                            Featured Image
-                                                                                        </label>
-                                                                                        <div class="col-sm-9">
-                                                                                            <div class="bs-example">
-                                                                                                    <input type="file" class="form-control" name="variant-${variantNumber}-feature-image" />
+                                                                                        <div class="mb-1 row align-items-center">
+                                                                                            <label class="col-sm-3 col-form-label form-label-title">
+                                                                                                Featured Image
+                                                                                            </label>
+                                                                                            <div class="col-sm-9">
+                                                                                                <div class="bs-example">
+                                                                                                        <input type="file" class="form-control" name="variant-${variantNumber}-feature-image" />
+                                                                                                </div>
                                                                                             </div>
                                                                                         </div>
-                                                                                    </div>
-                                                                                    <div class="mb-1 row align-items-center">
-                                                                                        <label class="col-sm-3 col-form-label form-label-title">
-                                                                                            Images
-                                                                                        </label>
-                                                                                        <div class="col-sm-9">
-                                                                                            <div class="bs-example">
-                                                                                                    <input type="file" class="form-control" name="variant-${variantNumber}-images" multiple/>
+                                                                                        <div class="mb-1 row align-items-center">
+                                                                                            <label class="col-sm-3 col-form-label form-label-title">
+                                                                                                Images
+                                                                                            </label>
+                                                                                            <div class="col-sm-9">
+                                                                                                <div class="bs-example">
+                                                                                                        <input type="file" class="form-control" name="variant-${variantNumber}-images" multiple/>
+                                                                                                </div>
                                                                                             </div>
                                                                                         </div>
-                                                                                    </div>
-                                                                                        <div class="mb-4 row align-items-center">
-                                                                                    <label class="col-sm-3 col-form-label form-label-title">
-                                                                                        Videos
-                                                                                    </label>
-                                                                                    <div class="col-sm-9">
-                                                                                            <input type="file" name="variant-${variantNumber}-videos" class="form-control" multiple />
-                                                                                    </div>
-                                                                                </div>`;
+                                                                                            <div class="mb-4 row align-items-center">
+                                                                                        <label class="col-sm-3 col-form-label form-label-title">
+                                                                                            Videos
+                                                                                        </label>
+                                                                                        <div class="col-sm-9">
+                                                                                                <input type="file" name="variant-${variantNumber}-videos" class="form-control" multiple />
+                                                                                        </div>
+                                                                                    </div>`;
         }
         $(html).insertBefore($(e.target));
     }

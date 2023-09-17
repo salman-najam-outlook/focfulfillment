@@ -312,13 +312,13 @@ namespace LocalDropshipping.Web.Controllers
             }
 
 
+            var form = Request.Form;
+            var formFiles = form.Files;
             if (model.ProductId == 0)
             {
                 if (model.HasVariants == 0)
                 {
                     // Product without variants
-                    var form = Request.Form;
-                    var formFiles = form.Files;
                     var featuredImage = formFiles["featuredImage"]!;
                     var featureImageLink = featuredImage.SaveTo("images/products", model.Name!);
 
@@ -358,8 +358,6 @@ namespace LocalDropshipping.Web.Controllers
                 else
                 {
                     // Product with variants
-                    var form = Request.Form;
-                    var formFiles = form.Files;
                     var product = new Product()
                     {
                         Name = model.Name,
@@ -395,10 +393,47 @@ namespace LocalDropshipping.Web.Controllers
             }
             else
             {
-                var product = model.ToEntity();
-                _productsService.Update(model.ProductId, product);
-                //TempData["updated"] = "Product updated successfully";
-                //return RedirectToAction("Products");
+                var product = new Product();
+                product.Name = model.Name;
+                product.CategoryId = model.CategoryId;
+                product.IsBestSelling = model.IsBestSelling;
+                product.IsFeatured = model.IsFeatured;
+                product.IsNewArravial = model.IsNewArravial;
+                product.Description = model.Description;
+                product.SKU = model.SKU;
+                product.Variants = new List<ProductVariant>();
+
+                if (model.HasVariants == 1)
+                {
+                    for (int variantNo = 1; variantNo <= model.VariantCounts; variantNo++)
+                    {
+                        product.Variants.Add(new ProductVariant
+                        {
+                            ProductVariantId = Convert.ToInt32(form["variant-" + variantNo + "-variant-id"]),
+                            VariantType = form["variant-type"],
+                            Variant = form["variant-" + variantNo + "-value"],
+                            VariantPrice = Convert.ToInt32(form["variant-" + variantNo + "-price"]),
+                            Quantity = Convert.ToInt32(form["variant-" + variantNo + "-quantity"]),
+                            IsMainVariant = false
+                        });
+                    }
+                    _productsService.Update(model.ProductId, product, false);
+                    TempData["updated"] = "Product updated successfully";
+                }
+                else
+                {
+                    product.Variants.Add(new ProductVariant
+                    {
+                        ProductVariantId = model.MainVariantId,
+                        IsMainVariant = true,
+                        VariantPrice = model.Price,
+                        Quantity = model.Quantity
+                    });
+                    _productsService.Update(model.ProductId, product);
+                    TempData["updated"] = "Product updated successfully";
+                }
+
+                return RedirectToAction("Products");
             }
 
             ViewBag.Categories = _categoryService.GetAll();
@@ -406,7 +441,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
         public IActionResult DeleteProduct(int id)
@@ -421,6 +456,21 @@ namespace LocalDropshipping.Web.Controllers
                 Console.WriteLine(e.Message);
                 TempData["Message"] = "no";
             }
+            return RedirectToAction("Products");
+        }
+
+        [HttpGet]
+        [Authorize]
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        public IActionResult Product(int id)
+        {
+            Product? product = _productsService.GetById(id);
+            if (product != null)
+            {
+                return View(product);
+            }
+
+            TempData["Message"] = "Product does not exist.";
             return RedirectToAction("Products");
         }
 

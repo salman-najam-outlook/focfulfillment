@@ -8,5 +8,6 @@
         public string FeatureImageLink { get; set; }
         public int Quantity { get; set; }
         public string Variant { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }
