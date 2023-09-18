@@ -1,8 +1,11 @@
 ﻿@using LocalDropshipping.Web.Data.Entities;
+@using LocalDropshipping.Web.Models;
 @using Newtonsoft.Json;
-@model IEnumerable<LocalDropshipping.Web.Data.Entities.OrderItem>
+@using static IEnumerable<LocalDropshipping.Web.Data.Entities.OrderItem>
+@model LocalDropshipping.Web.Models.CheckoutViewModel
 @{
     Layout = null;
+    var currentuser = TempData["currentUser"];
 }
 @{
     var data = Context.Session.GetString("cart");
@@ -21,6 +24,7 @@
     }
 
 }
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -158,7 +162,7 @@
                                         </a>
                                     </li>
                                     @Html.Partial("_ShoppingCart")
-                                    
+
                                     <li class="right-side onhover-dropdown">
                                         <div class="delivery-login-box">
                                             <div class="delivery-icon">
@@ -219,316 +223,324 @@
     </section>
     <!-- Breadcrumb Section End -->
     <!-- Checkout section Start -->
-    <section class="checkout-section-2 section-b-space">
-        <div class="container-fluid-lg">
-            <div class="row g-sm-4 g-3">
-                <div class="col-lg-8">
-                    <div class="left-sidebar-checkout">
-                        <div class="checkout-detail-box">
-                            <ul>
-                                <li>
-                                    <div class="checkout-icon">
-                                        <lord-icon target=".nav-item" src="https://cdn.lordicon.com/ggihhudh.json"
-                                                   trigger="loop-on-hover"
-                                                   colors="primary:#121331,secondary:#646e78,tertiary:#0baf9a"
-                                                   class="lord-icon">
-                                        </lord-icon>
-                                    </div>
-                                    <div class="checkout-box">
-                                        <div class="checkout-title">
-                                            <h4>Seller Details</h4>
+    <form asp-action="PlaceOrder" asp-controller="Seller" method="post">
+        <section class="checkout-section-2 section-b-space">
+            <div class="container-fluid-lg">
+                <div class="row g-sm-4 g-3">
+                    <div class="col-lg-8">
+                        <div class="left-sidebar-checkout">
+                            <div class="checkout-detail-box">
+                                <ul>
+                                    <li>
+                                        <div class="checkout-icon">
+                                            <lord-icon target=".nav-item" src="https://cdn.lordicon.com/ggihhudh.json"
+                                                       trigger="loop-on-hover"
+                                                       colors="primary:#121331,secondary:#646e78,tertiary:#0baf9a"
+                                                       class="lord-icon">
+                                            </lord-icon>
                                         </div>
+                                        <div class="checkout-box">
+                                            <div class="checkout-title">
+                                                <h4>Seller Details</h4>
+                                            </div>
 
-                                        <div class="checkout-detail">
-                                            <div class="row g-4">
-                                                <div class="col-xxl-6 col-lg-12 col-md-6">
-                                                    <div class="delivery-address-box">
-                                                        <div>
-                                                            <div class="form-check">
-                                                                <input class="form-check-input" type="radio" name="jack"
-                                                                       id="flexRadioDefault1" checked>
-                                                            </div>
+                                            <div class="checkout-detail">
+                                                <div class="row g-4">
+                                                    <div class="col-xxl-6 col-lg-12 col-md-6">
+                                                        <div class="delivery-address-box">
+                                                            <div>
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="radio" name="jack"
+                                                                           id="flexRadioDefault1" checked>
+                                                                </div>
 
-                                                            <ul class="delivery-address-detail">
-                                                                <li>
-                                                                    <h4 class="fw-500">Jack Jennas</h4>
-                                                                </li>
+                                                                <ul class="delivery-address-detail">
+                                                                    <li>
+                                                                        <h4 class="fw-500">@ViewBag.currentUser.Fullname</h4>
+                                                                    </li>
 
-                                                                <li>
-                                                                    <p class="text-content">
-                                                                        <span class="text-title">
-                                                                            Address
-                                                                            :
-                                                                        </span>8424 James Lane South San
-                                                                        Francisco, CA 94080
-                                                                    </p>
-                                                                </li>
+                                                                    <li>
+                                                                        <p class="text-content">
+                                                                            <span class="text-title">
+                                                                                Email
+                                                                                :
+                                                                            </span>@ViewBag.currentUser.Email
+                                                                        </p>
+                                                                    </li>
 
-                                                                <li>
+                                                                    @*  <li>
                                                                     <h6 class="text-content">
-                                                                        <span class="text-title">
-                                                                            Pin Code
-                                                                            :
-                                                                        </span> +380
+                                                                    <span class="text-title">
+                                                                    Pin Code
+                                                                    :
+                                                                    </span> +380
                                                                     </h6>
-                                                                </li>
+                                                                    </li> *@
 
-                                                                <li>
-                                                                    <h6 class="text-content mb-0">
-                                                                        <span class="text-title">
-                                                                            Phone
-                                                                            :
-                                                                        </span> + 380 (0564) 53 - 29 - 68
-                                                                    </h6>
-                                                                </li>
-                                                            </ul>
+                                                                    <li>
+                                                                        <h6 class="text-content mb-0">
+                                                                            <span class="text-title">
+                                                                                User Name
+                                                                                :
+                                                                            </span> @ViewBag.currentUser.UserName
+                                                                        </h6>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="col-12" style="margin-top:15px">
+                                                                <div class="form-floating theme-form-floating" style="width:100%">
+                                                                    <input type="number" asp-for="@Model.SellingPrice" class="form-control" required />
+                                                                    <label for="@Model.SellingPrice">Selling Price</label>
+                                                                    <span asp-validation-for="@Model.SellingPrice" class="text-danger"></span>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
 
-                                              
-                                            </div>
-                                        </div>
-                                        <div class="checkout-title" style="margin-top:10px">
-                                            <h4>Customer Details</h4>
-                                        </div>
 
-                                        <div class="checkout-detail">
-                                            <div class="row g-4">
-                                                <div class="col-xxl-6 col-lg-12 col-md-6">
-                                                    <div class="delivery-address-box">
-                                                        <div>
-                                                            <form class="row g-4">
-                                                                <div class="col-12">
-                                                                    <div class="form-floating theme-form-floating">
-                                                                        <input  class="form-control" placeholder="First Name" />
-                                                                        <label>First Name</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-12">
-                                                                    <div class="form-floating theme-form-floating">
-                                                                        <input class="form-control" placeholder="Full Name" />
-                                                                        <label>Full Name</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-12">
-                                                                    <div class="form-floating theme-form-floating">
-                                                                        <input class="form-control" placeholder="Primary Phone No" />
-                                                                        <label>Primary Phone No</label>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-12">
-                                                                    <div class="form-floating theme-form-floating">
-                                                                        <input class="form-control" placeholder="Secondary Phone No (Optional)" />
-                                                                        <label>Primary Phone No</label>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-12">
-                                                                    <div class="form-floating theme-form-floating">
-                                                                        <input placeholder="Address" class="form-control" />
-                                                                        <label>Address</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-12">
-                                                                    <div class="form-floating theme-form-floating">
-                                                                        <input placeholder="City" class="form-control" />
-                                                                        <label>City</label>
-                                                                    </div>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </li>
+                                            <div class="checkout-title" style="margin-top:10px">
+                                                <h4>Customer Details</h4>
+                                            </div>
 
-                                <li>
-                                    <div class="checkout-icon">
-                                        <lord-icon target=".nav-item" src="https://cdn.lordicon.com/oaflahpk.json"
-                                                   trigger="loop-on-hover" colors="primary:#0baf9a" class="lord-icon">
-                                        </lord-icon>
-                                    </div>
-                                    <div class="checkout-box">
-                                        <div class="checkout-title">
-                                            <h4>Delivery Option</h4>
-                                        </div>
+                                            <div class="checkout-detail">
+                                                <div class="row g-4">
+                                                    <div class="col-xxl-6 col-lg-12 col-md-6">
+                                                        <div class="delivery-address-box">
+                                                            <div>
+                                                                <div class="row g-4">
+                                                                    <div class="col-12">
+                                                                        <div class="form-floating theme-form-floating">
+                                                                            <input type="text" asp-for="@Model.FullName" class="form-control" placeholder="Full Name" required />
+                                                                            <label>Full Name</label>
+                                                                            <span asp-validation-for="@Model.FullName" class="text-danger"></span>
 
-                                        <div class="checkout-detail">
-                                            <div class="row g-4">
-                                                <div class="col-xxl-6">
-                                                    <div class="delivery-option">
-                                                        <div class="delivery-category">
-                                                            <div class="shipment-detail">
-                                                                <div class="form-check custom-form-check hide-check-box">
-                                                                    <input class="form-check-input" type="radio"
-                                                                           name="standard" id="standard" checked>
-                                                                    <label class="form-check-label"
-                                                                           for="standard">
-                                                                        Standard
-                                                                        Delivery Option
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-12">
+                                                                        <div class="form-floating theme-form-floating">
+                                                                            <input type="number" asp-for="@Model.PrimaryPhoneNumber" class="form-control" placeholder="Primary Phone No" required />
+                                                                            <label>Primary Phone No</label>
+                                                                            <span asp-validation-for="@Model.PrimaryPhoneNumber" class="text-danger"></span>
+                                                                        </div>
+                                                                    </div>
 
-                                                <div class="col-xxl-6">
-                                                    <div class="delivery-option">
-                                                        <div class="delivery-category">
-                                                            <div class="shipment-detail">
-                                                                <div class="form-check mb-0 custom-form-check show-box-checked">
-                                                                    <input class="form-check-input" type="radio"
-                                                                           name="standard" id="future">
-                                                                    <label class="form-check-label" for="future">
-                                                                        Future
-                                                                        Delivery Option
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                                    <div class="col-12">
+                                                                        <div class="form-floating theme-form-floating">
+                                                                            <input type="number" asp-for="@Model.SecondaryPhoneNumber" class="form-control" placeholder="Secondary Phone No (Optional)" />
+                                                                            <label>Secondary Phone No</label>
+                                                                            @* <span asp-validation-for="@Model.SecondaryPhoneNumber" class="text-danger"></span> *@
+                                                                        </div>
+                                                                    </div>
 
-                                                <div class="col-12 future-box">
-                                                    <div class="future-option">
-                                                        <div class="row g-md-0 gy-4">
-                                                            <div class="col-md-6">
-                                                                <div class="delivery-items">
-                                                                    <div>
-                                                                        <h5 class="items text-content">
-                                                                            <span>
-                                                                                3
-                                                                                Items
-                                                                            </span>
-                                                                            $693.48
-                                                                        </h5>
-                                                                        <h5 class="charge text-content">
-                                                                            Delivery Charge
-                                                                            $34.67
-                                                                            <button type="button" class="btn p-0"
-                                                                                    data-bs-toggle="tooltip"
-                                                                                    data-bs-placement="top"
-                                                                                    title="Extra Charge">
-                                                                                <i class="fa-solid fa-circle-exclamation"></i>
-                                                                            </button>
-                                                                        </h5>
+                                                                    <div class="col-12">
+                                                                        <div class="form-floating theme-form-floating">
+                                                                            <input type="text" asp-for="@Model.Address" placeholder="Address" class="form-control" required />
+                                                                            <label>Address</label>
+                                                                            <span asp-validation-for="@Model.Address" class="text-danger"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-12">
+                                                                        <div class="form-floating theme-form-floating">
+                                                                            <input type="text" asp-for="@Model.City" placeholder="City" class="form-control" required />
+                                                                            <label>City</label>
+                                                                            <span asp-validation-for="@Model.City" class="text-danger"></span>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-
-                                                            <div class="col-md-6">
-                                                                <form class="form-floating theme-form-floating date-box">
-                                                                    <input type="date" class="form-control">
-                                                                    <label>Select Date</label>
-                                                                </form>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="checkout-icon">
-                                        <lord-icon target=".nav-item" src="https://cdn.lordicon.com/qmcsqnle.json"
-                                                   trigger="loop-on-hover" colors="primary:#0baf9a,secondary:#0baf9a"
-                                                   class="lord-icon">
-                                        </lord-icon>
-                                    </div>
-                                    <div class="checkout-box">
-                                        <div class="checkout-title">
-                                            <h4>Payment Option</h4>
-                                        </div>
-
-                                        <div class="checkout-detail">
-                                            <div class="accordion accordion-flush custom-accordion"
-                                                 id="accordionFlushExample">
-                                                <div class="accordion-item">
-                                                    <div class="accordion-header" id="flush-headingFour">
-                                                        <div class="accordion-button collapsed"
-                                                             data-bs-toggle="collapse"
-                                                             data-bs-target="#flush-collapseFour">
-                                                            <div class="custom-form-check form-check mb-0">
-                                                                <label class="form-check-label" for="cash">
-                                                                    <input class="form-check-input mt-0" type="radio"
-                                                                           name="flexRadioDefault" id="cash" checked> Cash
-                                                                    On Delivery
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div id="flush-collapseFour"
-                                                         class="accordion-collapse collapse show"
-                                                         data-bs-parent="#accordionFlushExample">
-                                                        <div class="accordion-body">
-                                                            <p class="cod-review">
-                                                                Pay digitally with SMS Pay
-                                                                Link. Cash may not be accepted in COVID restricted
-                                                                areas. <a href="javascript:void(0)">Know more.</a>
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4">
-                    <div class="right-side-summery-box">
-                        <div class="summery-box-2">
-                            <div class="summery-header">
-                                <h3>Order Summery</h3>
-                            </div>
-
-                            <ul class="summery-contain">
-                                @foreach (var cart in Model)
-                                {
+                                    </li>
 
                                     <li>
-                                        <img src="@cart.Image"
-                                             class="img-fluid blur-up lazyloaded checkout-image" alt="">
-                                        <h4>@cart.Name <span>X @cart.Quantity</span></h4>
-                                        <h4 class="price">Rs @cart.SubTotal/-</h4>
-                                    </li>
-                                }
-                            </ul>
+                                        <div class="checkout-icon">
+                                            <lord-icon target=".nav-item" src="https://cdn.lordicon.com/oaflahpk.json"
+                                                       trigger="loop-on-hover" colors="primary:#0baf9a" class="lord-icon">
+                                            </lord-icon>
+                                        </div>
+                                        <div class="checkout-box">
+                                            <div class="checkout-title">
+                                                <h4>Delivery Option</h4>
+                                            </div>
 
-                            <ul class="summery-total">
-                                <li>
+                                            <div class="checkout-detail">
+                                                <div class="row g-4">
+                                                    <div class="col-xxl-6">
+                                                        <div class="delivery-option">
+                                                            <div class="delivery-category">
+                                                                <div class="shipment-detail">
+                                                                    <div class="form-check custom-form-check hide-check-box">
+                                                                        <input class="form-check-input" type="radio"
+                                                                               name="standard" id="standard" checked>
+                                                                        <label class="form-check-label"
+                                                                               for="standard">
+                                                                            Standard
+                                                                            Delivery Option
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xxl-6">
+                                                        <div class="delivery-option">
+                                                            <div class="delivery-category">
+                                                                <div class="shipment-detail">
+                                                                    <div class="form-check mb-0 custom-form-check show-box-checked">
+                                                                        <input class="form-check-input" type="radio"
+                                                                               name="standard" id="future">
+                                                                        <label class="form-check-label" for="future">
+                                                                            Future
+                                                                            Delivery Option
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-12 future-box">
+                                                        <div class="future-option">
+                                                            <div class="row g-md-0 gy-4">
+                                                                <div class="col-md-6">
+                                                                    <div class="delivery-items">
+                                                                        <div>
+                                                                            <h5 class="items text-content">
+                                                                                <span>
+                                                                                    3
+                                                                                    Items
+                                                                                </span>
+                                                                                $693.48
+                                                                            </h5>
+                                                                            <h5 class="charge text-content">
+                                                                                Delivery Charge
+                                                                                $34.67
+                                                                                <button type="button" class="btn p-0"
+                                                                                        data-bs-toggle="tooltip"
+                                                                                        data-bs-placement="top"
+                                                                                        title="Extra Charge">
+                                                                                    <i class="fa-solid fa-circle-exclamation"></i>
+                                                                                </button>
+                                                                            </h5>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                @* <div class="col-md-6">
+                                                                <form class="form-floating theme-form-floating date-box">
+                                                                <input type="date" class="form-control">
+                                                                <label>Select Date</label>
+                                                                </form>
+                                                                </div> *@
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+
+                                    <li>
+                                        <div class="checkout-icon">
+                                            <lord-icon target=".nav-item" src="https://cdn.lordicon.com/qmcsqnle.json"
+                                                       trigger="loop-on-hover" colors="primary:#0baf9a,secondary:#0baf9a"
+                                                       class="lord-icon">
+                                            </lord-icon>
+                                        </div>
+                                        <div class="checkout-box">
+                                            <div class="checkout-title">
+                                                <h4>Payment Option</h4>
+                                            </div>
+
+                                            <div class="checkout-detail">
+                                                <div class="accordion accordion-flush custom-accordion"
+                                                     id="accordionFlushExample">
+                                                    <div class="accordion-item">
+                                                        <div class="accordion-header" id="flush-headingFour">
+                                                            <div class="accordion-button collapsed"
+                                                                 data-bs-toggle="collapse"
+                                                                 data-bs-target="#flush-collapseFour">
+                                                                <div class="custom-form-check form-check mb-0">
+                                                                    <label class="form-check-label" for="cash">
+                                                                        <input class="form-check-input mt-0" type="radio"
+                                                                               name="flexRadioDefault" id="cash" checked> Cash
+                                                                        On Delivery
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div id="flush-collapseFour"
+                                                             class="accordion-collapse collapse show"
+                                                             data-bs-parent="#accordionFlushExample">
+                                                            <div class="accordion-body">
+                                                                <p class="cod-review">
+                                                                    Pay digitally with SMS Pay
+                                                                    Link. Cash may not be accepted in COVID restricted
+                                                                    areas. <a href="javascript:void(0)">Know more.</a>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="right-side-summery-box">
+                            <div class="summery-box-2">
+                                <div class="summery-header">
+                                    <h3>Order Summery</h3>
+                                </div>
+
+                                <ul class="summery-contain">
+                                    @foreach (var cart in Model.Cart)
+                                    {
+
+                                    <li>
+                                    <img src="@cart.Image"
+                                    class="img-fluid blur-up lazyloaded checkout-image" alt="">
+                                    <h4>@cart.Name <span>X @cart.Quantity</span></h4>
+                                    <h4 class="price">Rs @cart.SubTotal/-</h4>
+                                    </li>
+                                    }
+                                    </ul>
+
+                                    <ul class="summery-total">
+                                    <li>
                                     <h4>Subtotal</h4>
                                     <h4 class="price">Rs @ViewBag.total/-</h4>
-                                </li>
+                                    </li>
 
-                                <li>
+                                    <li>
                                     <h4>Shipping</h4>
                                     <h4 class="price">Rs @ViewBag.shipping/-</h4>
-                                </li>
+                                    </li>
 
-                                <li class="list-total">
+                                    <li class="list-total">
                                     <h4>Total</h4>
                                     <h4 class="price">Rs @ViewBag.totalCost/-</h4>
-                                </li>
-                            </ul>
-                        </div>
+                                    </li>
+                                </ul>
+                            </div>
 
-                        <button class="btn theme-bg-color text-white btn-md w-100 mt-4 fw-bold">Place Order</button>
+                            <button type="submit" class="btn theme-bg-color text-white btn-md w-100 mt-4 fw-bold">Place Order</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </form>
     <!-- Checkout section End -->
     <!-- Footer Section Start -->
     <footer class="section-t-space">
@@ -999,14 +1011,11 @@
     <script src="../assets/js/theme-setting.js"></script>
     <script>
         $(".cartBtn").mouseover(function () {
-            debugger;
             $.ajax({
                 type: 'POST',
                 contentType: 'application/json; charset=utf-8',
                 url: '/Seller/GetCartItems',
-
                 success: function (data) {
-                    // debugger;
                     $('#exampleModal').html(data);
                     $('#exampleModal').modal({
                         backdrop: false

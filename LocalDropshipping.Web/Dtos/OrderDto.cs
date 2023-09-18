@@ -8,8 +8,8 @@ namespace LocalDropshipping.Web.Dtos
     {
         public decimal GrandTotal { get; set; }
         public string SpecialInstructions { get; set; }
-        public string Name { get; set; }
-        public string OrderCode { get; set; }
+        //public string Name { get; set; }
+        //public string OrderCode { get; set; }
         public OrderStatus Status { get; set; }
 
         internal Order ToEntity()

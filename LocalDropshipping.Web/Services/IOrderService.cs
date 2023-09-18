@@ -5,6 +5,7 @@ namespace LocalDropshipping.Web.Services
 {
     public interface IOrderService
     {
+        Order? AddOrder(List<OrderItem> cart, string email, decimal sellPrice);
         Order? Add(Order order);
         List<Order?> GetAll();
         Order? GetById(int orderId);

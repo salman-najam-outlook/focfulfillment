@@ -15,6 +15,25 @@
                         <img src="@product.Variants.First().FeatureImageLink"
                          class="img-fluid blur-up lazyload" alt="">
                 </a>
+                    <ul class="product-option">
+                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="View">
+                            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </a>
+                        </li>
+
+                        <li  data-bs-placement="top" title="" data-bs-original-title="Compare">
+                            <a href="compare.html">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-refresh-cw"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                            </a>
+                        </li>
+
+                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Wishlist">
+                            <a class="notifi-wishlist btnWishList" productId="@product.ProductId">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                            </a>
+                        </li>
+                    </ul>
             </div>
             <div class="product-detail position-relative">
                 <a href="product-left-thumbnail.html">
@@ -25,28 +44,28 @@
 
                     <h6 class="price theme-color">Rs @product.Variants.First().VariantPrice/- </h6>
 
-                <div class="add-to-cart-btn-2 addtocart_btn">
-                    <button class="btn addcart-button btn buy-button">
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
-                    <div class="cart_qty qty-box-2 qty-box-3">
-                        <div class="input-group">
+                    <div class="add-to-cart-btn-2 addtocart_btn">
+                        <button class="btn addcart-button btn buy-button">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                        <div class="cart_qty qty-box-2 qty-box-3">
+                            <div class="input-group">
                                 <button type="button" data-id="@product.ProductId" class="qty-left-minus" data-type="minus"
-                                    data-field="">
-                                <i class="fa fa-minus" aria-hidden="true"></i>
-                            </button>
-                            <input class="form-control input-number qty-input" type="text"
-                                   name="quantity" value="0" disabled>
+                                        data-field="">
+                                    <i class="fa fa-minus" aria-hidden="true"></i>
+                                </button>
+                                <input class="form-control input-number qty-input" type="text"
+                                       name="quantity" value="0" disabled>
                                 <button type="button" data-id="@product.ProductId" class="qty-right-plus" data-type="plus"
-                                    data-field="">
-                                <i class="fa fa-plus" aria-hidden="true"></i>
-                            </button>
+                                        data-field="">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     }
 
     <script type="text/javascript">
@@ -63,7 +82,7 @@
                     data: formData,
                     url: "/Seller/AddToCart",
                     success: function (data) {
-                       
+
                         if (data.success) {
                             
                             
@@ -80,9 +99,38 @@
             );
             return false;
         });
+
+        $(".btnWishList").click(function () {
+            var th=$(this);
+            var productId = $(this).attr("productId");
+            $.ajax(
+                {
+                    async: true,
+                    type: "post",
+                    contentType: false,
+                    processData: false,
+                    //data: JSON.stringify(productId: productId),
+                    url: "/Seller/WishList?productId=" + productId,
+                    success: function (data) {
+                      
+                        if (data.success) {
+                            $('.cartItem').text(data.counter);
+                            toastr.success('Product has been added in to Wishlist!');
+                        }
+
+                    },
+                    error: function () {
+                        alert("Please Select Positive Quantity");
+                    }
+
+                }
+            );
+            return false;
+        });
+
         $(".qty-left-minus").click(function () {
             var itemId = $(this).data("id");
-            if(itemId>0){
+            if (itemId > 0) {
                 var formData = new FormData();
                 formData.append("id", itemId)
 
@@ -95,12 +143,19 @@
                         data: formData,
                         url: "/Seller/Minus",
                         success: function (data) {
+
                             if (data.success) {
                                 $('.cartItem').text(data.counter);
+                                toastr.success('Added');
+
+                            }
+                            else {
+                                toastr.warning('This is a warning notification provided by toastr.')
                             }
 
                         },
-                        error: function () {
+                        error: function (data) {
+
                             alert("Error while inserting data");
                         }
 
@@ -111,13 +166,13 @@
         });
 
         $(".cartBtn").mouseover(function () {
-            debugger;
             $.ajax({
                 type: 'POST',
                 contentType: 'application/json; charset=utf-8',
                 url: '/Seller/GetCartItems',
 
                 success: function (data) {
+                    debugger;
                     $('#exampleModal').html(data);
                     $('#exampleModal').modal({
                         backdrop: false
@@ -130,4 +185,3 @@
         });
     </script>
 </div>
-

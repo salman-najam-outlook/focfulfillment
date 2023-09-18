@@ -19,8 +19,24 @@ namespace LocalDropshipping.Web.Services
 			return context.WishList.Where(x => x.IsActive == true).ToList();
 		}
 
+        public List<WishList> GetAllbyUserId(string UserId)
+        {
+            return context.WishList.Where(x => x.IsActive == true && x.UserId==UserId).ToList();
+        }
 
-		public WishList Add(int UserId, int ProductId)
+
+        public bool ValidateWishlistProduct(string userId, int productId)
+        {
+            bool isProductInWishlist = context.WishList.Any(x => x.ProductId == productId && x.UserId == userId);
+            if (isProductInWishlist)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public WishList Add(string UserId, int ProductId)
 		{
 			var wishList = new WishList
 			{
@@ -29,12 +45,8 @@ namespace LocalDropshipping.Web.Services
 				CreatedDate = DateTime.Now,
 				IsActive = true
 			};
-
-
 			context.WishList.Add(wishList);
-
 			context.SaveChanges();
-
 			return wishList;
 		}
 
@@ -47,11 +59,12 @@ namespace LocalDropshipping.Web.Services
 		{
 			try
 			{
-				var Wish = context.WishList.Find(WishListId);
+				var Wish = context.WishList.FirstOrDefault(c => c.ProductId == WishListId);
 				if (Wish != null)
 				{
-					Wish.IsActive = false;
-					context.SaveChanges();
+					//Wish.IsActive = false;
+                    context.WishList.Remove(Wish);
+                    context.SaveChanges();
 					return Wish;
 				}
 			}

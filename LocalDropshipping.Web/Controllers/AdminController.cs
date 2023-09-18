@@ -1,15 +1,4 @@
-﻿using LocalDropshipping.Web.Attributes;
-using LocalDropshipping.Web.Data;
-using LocalDropshipping.Web.Data.Entities;
-using LocalDropshipping.Web.Enums;
-using LocalDropshipping.Web.Extensions;
-using LocalDropshipping.Web.Models;
-using LocalDropshipping.Web.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-
-namespace LocalDropshipping.Web.Controllers
+﻿namespace LocalDropshipping.Web.Controllers
 {
     public class AdminController : Controller
     {
@@ -24,8 +13,9 @@ namespace LocalDropshipping.Web.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IAccountService _accountService;
         private readonly IOrderService _orderService;
+        private readonly IConsumerService _consumerService;
 
-        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService)
+        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService, IConsumerService consumerService)
         {
             _service = service;
             _productsService = productsService;
@@ -35,6 +25,7 @@ namespace LocalDropshipping.Web.Controllers
             _context = context;
             _categoryService = categoryService;
             _orderService = orderService;
+            _consumerService = consumerService;
             CategoryService = _categoryService;
             _accountService = accountService;
             _orderService = orderService;
@@ -482,7 +473,113 @@ namespace LocalDropshipping.Web.Controllers
             TempData["IsAdmin"] = currentUser.IsAdmin;
             TempData["IsSuperAdmin"] = currentUser.IsSuperAdmin;
         }
+        //private void GetCurrentLoggedInUser()
+        //{
+        //    string? currentUserID = _userManager.GetUserId(HttpContext.User);
+        //    var currentUser = _userService.GetById(currentUserID);
+        //    bool isAdmin = currentUser.IsAdmin;
+        //    bool isSuperAdmin = currentUser.IsSuperAdmin;
+        //}
+        private string GetCurrentLoggedInUserEmail()
+        {
+            string? currentUserID = _userManager.GetUserId(HttpContext.User);
+            var currentUser = _userService.GetById(currentUserID);
+            string currentUserEmail = currentUser.Email;
 
+            return currentUserEmail;
+        }
 
+        public IActionResult CategoryList()
+        {
+            var category = _categoryService.GetAll();
+            return View(category);
+        }
+
+        public IActionResult AddNewCategory()
+        {
+
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AddNewCategory(Category categoryModel)
+        {
+
+            if (ModelState.IsValid)
+            {
+                var createdBy = GetCurrentLoggedInUserEmail();
+                var category = new Category
+                {
+                    Name = categoryModel.Name,
+                    ImagePath = categoryModel.ImagePath,
+                    CreatedDate = DateTime.Now,
+                    CreatedBy = createdBy,
+                    ModifiedDate = DateTime.Today,
+                    ModifiedBy = createdBy,
+                    IsActive = true,
+                    IsDeleted = false
+
+                };
+                _categoryService.Add(category);
+                RedirectToAction("CategoryList", "Admin");
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult DeleteCategory(int id)
+        {
+            var user = _categoryService.Delete(id);
+            SetRoleByCurrentUser();
+            return View("CategoryList", _categoryService.GetAll());
+        }
+        [HttpGet]
+        public IActionResult UpdateCategory()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult UpdateCategory(int categoryId, CategoryDto categoryDto)
+        {
+            if (ModelState.IsValid)
+            {
+                var createdBy = GetCurrentLoggedInUserEmail();
+                var category = new CategoryDto
+                {
+                    Name = categoryDto.Name,
+                    ImagePath = categoryDto.ImagePath,
+                    CreatedDate = DateTime.Now,
+                    CreatedBy = createdBy,
+                    ModifiedDate = DateTime.Today,
+                    ModifiedBy = createdBy,
+                    IsActive = true,
+                    IsDeleted = false
+                };
+                if (category != null)
+                {
+                    _categoryService.Update(categoryId, categoryDto);
+                }
+
+                RedirectToAction("CategoryList", _categoryService.GetAll());
+            }
+            return View();
+        }
+
+        public IActionResult GetAllConsumers()
+        {
+            SetRoleByCurrentUser();
+            return View(_consumerService.GetAllConsumer());
+        }
+
+        [HttpPost]
+        public IActionResult BlockOrUnblockConsumer(int userId)
+        {
+            var consumer = _consumerService.BlockOrUnblockConsumer(userId);
+            var consumers = _consumerService.GetAllConsumer();
+            SetRoleByCurrentUser();
+            return View("GetAllConsumers", consumers);
+        }
     }
 }
