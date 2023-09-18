@@ -71,7 +71,7 @@ namespace LocalDropshipping.Web.Services
                 if (result.Succeeded)
                 {
                     user.EmailConfirmed = true;
-                    await _userService.UpdateUserAsync(user);    
+                    await _userService.UpdateUserAsync(user);
                     isVerified = true;
                 }
             }
@@ -136,17 +136,26 @@ namespace LocalDropshipping.Web.Services
                     Subject = "ForgotPassword",
                     TemplatePath = "ForgotPasswordTemplate",
                     Placeholders = new List<KeyValuePair<string, string>>
-            {
-                new KeyValuePair<string, string>("{{Link}}", verificationLink),
-            }
+                    {
+                        new KeyValuePair<string, string>("{{Link}}", verificationLink),
+                    }
                 };
                 await _emailService.SendEmail(emailMessage);
 
-                return true; 
+                return true;
             }
 
             return false; // Email not found in the database
         }
+
+        //private string GenerateUpdatePasswordToken(string email)
+        //{
+        //    var user = _userManager.FindByEmailAsync(email);
+        //    var token = _userManager.GeneratePasswordResetTokenAsync(user);
+
+        //    var base64Token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+        //    return base64Token;
+        //}
 
 
         // TODO: Reset Password(usama)
@@ -179,6 +188,37 @@ namespace LocalDropshipping.Web.Services
             }
             return isUpdated;
         }
+
+
+        public async Task<string> GeneratePasswordUpdateToken(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user != null)
+            {
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                return token;
+            }
+
+            return null;
+        }
+
+        public async Task<bool> UpdatePassword(string userId, string token, string newPassword)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user != null)
+            {
+                var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+
+                if (result.Succeeded)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
 
         // TODO: External Login Google(zubair)
 

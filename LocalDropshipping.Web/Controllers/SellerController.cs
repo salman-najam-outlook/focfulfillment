@@ -290,8 +290,8 @@ namespace LocalDropshipping.Web.Controllers
                 int newIndex = cart.FindIndex(w => w.ProductId == (Convert.ToInt32(id)));
                 double itemSubtotal = cart[newIndex].SubTotal;
                 var newTotalCost = TotalCost();
-                var newgrandTotal=newTotalCost+ShippingCost();
-                return Json(data: new { Success = true, newSubtotal = itemSubtotal, totalCost = newTotalCost, grandTotal= newgrandTotal, Counter = cart.Count, Cart = cart });
+                var newgrandTotal = newTotalCost + ShippingCost();
+                return Json(data: new { Success = true, newSubtotal = itemSubtotal, totalCost = newTotalCost, grandTotal = newgrandTotal, Counter = cart.Count, Cart = cart });
                 //return Json(data: new { Success = true, Counter = cart.Count, Cart = cart });
             }
             catch (Exception ex)
@@ -334,31 +334,35 @@ namespace LocalDropshipping.Web.Controllers
                         if (newIndex == -1)
                         {
                             newTotalCost = TotalCost();
-                            newGrandTotal=newTotalCost+ShippingCost();
+                            newGrandTotal = newTotalCost + ShippingCost();
                             HttpContext.Session.Set<List<OrderItem>>("cart", cart);
-                            return Json(data: new { 
-                                Success = true, 
-                                newQuantity = 0, 
+                            return Json(data: new
+                            {
+                                Success = true,
+                                newQuantity = 0,
                                 totalCost = newTotalCost,
-                                grandTotal=newGrandTotal,
-                                Counter = cart.Count, 
-                                Cart = cart });
+                                grandTotal = newGrandTotal,
+                                Counter = cart.Count,
+                                Cart = cart
+                            });
                         }
                         else
                         {
                             double itemSubtotal = cart[newIndex].SubTotal;
                             int itemQuantity = cart[newIndex].Quantity;
                             newTotalCost = TotalCost();
-							newGrandTotal = newTotalCost + ShippingCost();
+                            newGrandTotal = newTotalCost + ShippingCost();
                             HttpContext.Session.Set<List<OrderItem>>("cart", cart);
-                            return Json(data: new { 
-                                Success = true, 
-                                newQuantity = itemQuantity, 
-                                newSubtotal = itemSubtotal, 
+                            return Json(data: new
+                            {
+                                Success = true,
+                                newQuantity = itemQuantity,
+                                newSubtotal = itemSubtotal,
                                 totalCost = newTotalCost,
-								grandTotal=newGrandTotal,
-								Counter = cart.Count, 
-                                Cart = cart });
+                                grandTotal = newGrandTotal,
+                                Counter = cart.Count,
+                                Cart = cart
+                            });
                             //return Json(data: new { Success = true, Counter = cart.Count, Cart = cart });
                         }
                     }
@@ -394,7 +398,7 @@ namespace LocalDropshipping.Web.Controllers
                 {
                     Id = order.Id,
                     GrandTotal = order.GrandTotal,
-                    OrderStatus=order.OrderStatus,
+                    OrderStatus = order.OrderStatus,
 
                 }).ToList();
                 var count = withdrawalModels.Count();
@@ -426,16 +430,17 @@ namespace LocalDropshipping.Web.Controllers
             try
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var cartData = _wishlistService.GetAllbyUserId(userId);            
+                var cartData = _wishlistService.GetAllbyUserId(userId);
                 List<AddProductVariantViewModel> data = new List<AddProductVariantViewModel>();
                 foreach (var item in cartData)
                 {
                     var temp = await _productVariantService.GetById(item.ProductId);
-                    data.Add(new AddProductVariantViewModel {
-                        FeatureImageLink= temp.FeatureImageLink == null?"":temp.FeatureImageLink,
-                        Quantity = temp.Quantity == null? 0: temp.Quantity,
-                        VariantPrice = temp.VariantPrice == null? 0: temp.VariantPrice,
-                        VariantType = temp.VariantType == null?"": temp.VariantType
+                    data.Add(new AddProductVariantViewModel
+                    {
+                        FeatureImageLink = temp.FeatureImageLink == null ? "" : temp.FeatureImageLink,
+                        Quantity = temp.Quantity == null ? 0 : temp.Quantity,
+                        VariantPrice = temp.VariantPrice == null ? 0 : temp.VariantPrice,
+                        VariantType = temp.VariantType == null ? "" : temp.VariantType
                     });
                 }
                 var count = data.Count();
@@ -446,7 +451,7 @@ namespace LocalDropshipping.Web.Controllers
             {
                 return View();
             }
-            
+
         }
 
 
@@ -461,8 +466,8 @@ namespace LocalDropshipping.Web.Controllers
             }
             else
             {
-               
-                _wishlistService.Delete(ProductId); 
+
+                _wishlistService.Delete(ProductId);
             }
 
             return View();
@@ -477,7 +482,7 @@ namespace LocalDropshipping.Web.Controllers
             var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
             ViewBag.total = TotalCost();
             ViewBag.shipping = ShippingCost();
-			ViewBag.totalCost = ViewBag.total + ViewBag.shipping;
+            ViewBag.totalCost = ViewBag.total + ViewBag.shipping;
             return View(cart);
         }
 
@@ -551,7 +556,7 @@ namespace LocalDropshipping.Web.Controllers
         [HttpPost]
         public IActionResult PlaceOrder(CheckoutViewModel customer)
         {
-            
+
             var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
             string? currentUserID = _userManager.GetUserId(HttpContext.User);
             var currentUser = _userService.GetById(currentUserID);
@@ -567,7 +572,7 @@ namespace LocalDropshipping.Web.Controllers
             {
                 order = _orderService.AddOrder(cart, email, sellingPrice);
                 var orderId = order.Id;
-                consumer=_consumerService.AddConsumer(customer, orderId, email);
+                consumer = _consumerService.AddConsumer(customer, orderId, email);
                 HttpContext.Session.Remove("cart");
             }
             else
@@ -577,14 +582,14 @@ namespace LocalDropshipping.Web.Controllers
             var orderItems = _orderItemService.GetOrderItemsById(order.Id);
             OrderSuccessModel model = new OrderSuccessModel()
             {
-                OrderId=order.Id,
+                OrderId = order.Id,
                 OrderItems = orderItems,
                 TotalItems = orderItems.Count(),
                 TotalItemsAmount = order.GrandTotal,
-                ShippingCharges= ShippingCost(),
-                ShippingAddress=consumer.Address,
-                ShippingCity=consumer.City,
-                GrandTotal=order.GrandTotal+ ShippingCost(),
+                ShippingCharges = ShippingCost(),
+                ShippingAddress = consumer.Address,
+                ShippingCity = consumer.City,
+                GrandTotal = order.GrandTotal + ShippingCost(),
 
             };
             return View(model);
@@ -647,7 +652,7 @@ namespace LocalDropshipping.Web.Controllers
 
                 var uniqueFileName = profileImage.SaveTo(folderPath, profileImage.FileName);
 
-              
+
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 var sellerProfile = _context.Profiles.FirstOrDefault(p => p.UserId == userId);
@@ -661,7 +666,7 @@ namespace LocalDropshipping.Web.Controllers
                     sellerProfile = new Profiles
                     {
                         UserId = userId,
-                        
+
                         ImageLink = "/ProfileImages/" + uniqueFileName
                     };
 
@@ -675,10 +680,44 @@ namespace LocalDropshipping.Web.Controllers
 
             return View("Profile");
         }
+        [HttpGet]
+        public async Task<IActionResult> UpdateSellerPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> UpdateSellerPassword(SellerUpdatePasswordViewModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user != null)
+            {
+                var token = await _accountService.GeneratePasswordUpdateToken(user.Email);
+
+                var isUpdated = await _accountService.UpdatePassword(user.Id, token, model.NewPassword);
+
+                if (isUpdated)
+                {
+                    return RedirectToAction("Login");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Failed to update password.");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "User not found.");
+            }
+            return View("Profile");
+        }
         private decimal ShippingCost()
         {
-			string shippingCost = "Shipping Cost";
-			return Convert.ToDecimal(_focSettingService.GetShippingCost(shippingCost));
-		}
+            string shippingCost = "Shipping Cost";
+            return Convert.ToDecimal(_focSettingService.GetShippingCost(shippingCost));
+        }
+
     }
 }
