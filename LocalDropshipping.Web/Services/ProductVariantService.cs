@@ -48,7 +48,7 @@ namespace LocalDropshipping.Web.Services
 
         public async Task<ProductVariant?> Update(int productId, ProductVariant product)
         {
-            var exProduct = await _context.ProductVariants.FirstOrDefaultAsync(x => x.VariantId == productId);
+            var exProduct = await _context.ProductVariants.FirstOrDefaultAsync(x => x.ProductVariantId == productId);
             if (exProduct != null)
             {
                 var userEmail = await _userService.GetCurrentUserAsync();

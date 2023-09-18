@@ -7,15 +7,15 @@ namespace LocalDropshipping.Web.Services
 {
     public class CategoryService : ICategoryService
     {
-        private readonly LocalDropshippingContext context;
+        private readonly LocalDropshippingContext _context;
 
         public CategoryService(LocalDropshippingContext context)
         {
-            this.context = context;
+            _context = context;
         }
         public List<Category> GetAll()
         {
-            return context.Categories.Where(x => x.IsDeleted == false).ToList();
+            return _context.Categories.Where(x => x.IsDeleted == false).ToList();
             // return context.Categories.Where(x => x.IsActive == true).ToList();
         }
 
@@ -23,26 +23,26 @@ namespace LocalDropshipping.Web.Services
         {
 
             //category.IsActive = true;
-            context.Categories.Add(category);
+            _context.Categories.Add(category);
 
-            context.SaveChanges();
+            _context.SaveChanges();
             return category;
         }
 
         public Category? GetById(int CategoryId)
         {
-            return context.Categories.FirstOrDefault(c => c.CategoryId == CategoryId);
+            return _context.Categories.FirstOrDefault(c => c.CategoryId == CategoryId);
         }
 
         public Category? Delete(int CategoryId)
         {
             try
             {
-                var Category = context.Categories.Find(CategoryId);
+                var Category = _context.Categories.Find(CategoryId);
                 if (Category != null)
                 {
                     Category.IsDeleted = true;
-                    context.SaveChanges();
+                    _context.SaveChanges();
                     return Category;
                 }
             }
@@ -55,13 +55,18 @@ namespace LocalDropshipping.Web.Services
 
         public Category? Update(int CategoryId, CategoryDto categoryDto)
         {
-            var category = context.Categories.FirstOrDefault(x => x.CategoryId == CategoryId);
+            var category = _context.Categories.FirstOrDefault(x => x.CategoryId == CategoryId);
             if (category != null)
             {
                 category.Name = categoryDto.Name;
-               context.SaveChanges();
+                _context.SaveChanges();
             }
             return category;
+        }
+
+        public List<Category> GetCatagoreyBySearch(string searchString)
+        {
+            return _context.Categories.Where(x => !x.IsDeleted && x.Name.Contains(searchString)).ToList();
         }
     }
 

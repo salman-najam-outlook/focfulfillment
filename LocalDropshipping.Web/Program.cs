@@ -74,7 +74,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IProfilesService, ProfilesService>();
 builder.Services.AddScoped<IImageService, ImageService>();
-builder.Services.AddScoped<IConsumersService, ConsumersService>();
+builder.Services.AddScoped<IOrderItemService,  OrderItemService>();
+builder.Services.AddScoped<IFocSettingService, FocSettingService>();
 builder.Services.AddSession();
 var app = builder.Build();
 

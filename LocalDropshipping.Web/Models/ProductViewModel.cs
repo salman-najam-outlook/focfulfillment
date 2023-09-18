@@ -22,6 +22,8 @@ namespace LocalDropshipping.Web.Models
 
         public int Quantity { get; set; }
 
+        public int MainVariantId { get; set; }
+
         public string? SKU { get; set; }
 
 
@@ -36,79 +38,50 @@ namespace LocalDropshipping.Web.Models
         [ValidateNever]
         public int VariantCounts { get; set; } = 1;
 
+        [ValidateNever]
+        public int HasVariants { get; set; } = 0;
+
+        public List<ProductVariantViewModel> Variants { get; set; }
+
+
         public ProductViewModel() { }
 
         public ProductViewModel(Product? product = null)
         {
             if (product != null)
             {
+                var hasVariants = product.Variants.Count > 1;
+                if (!hasVariants)
+                {
+                    Name = product.Name;
+                    CategoryId = product.CategoryId;
+                    IsBestSelling = product.IsBestSelling;
+                    IsFeatured = product.IsFeatured;
+                    IsNewArravial = product.IsNewArravial;
+                    Description = product.Description;
+                    SKU = product.SKU;
+                    Price = product.Variants.First().VariantPrice;
+                    Quantity = product.Variants.First().Quantity;
+                    MainVariantId = product.Variants.First().ProductVariantId;
+                }
+                else
+                {
+                    HasVariants = 1;
+                    VariantCounts = product.Variants.Count;
+                    Name = product.Name;
+                    CategoryId = product.CategoryId;
+                    IsBestSelling = product.IsBestSelling;
+                    IsFeatured = product.IsFeatured;
+                    IsNewArravial = product.IsNewArravial;
+                    Description = product.Description;
+                    SKU = product.SKU;
+                    Price = product.Variants.First().VariantPrice;
+                    Variants = new List<ProductVariantViewModel>();
+                    Variants.AddRange(product.Variants.Select(x => new ProductVariantViewModel { Quantity = x.Quantity, VariantPrice = x.VariantPrice, VariantType = x.VariantType, VariantId = x.ProductVariantId, Variant = x.Variant }));
+                }
+
                 ProductId = product.ProductId;
-                Name = product.Name;
-                Description = product.Description;
-                CategoryId = product.CategoryId;
-                IsNewArravial = product.IsNewArravial;
-                IsBestSelling = product.IsBestSelling;
-                IsFeatured = product.IsFeatured;
-                SKU = product.SKU;
-                var mainVariant = product.Variants.First(x => x.IsMainVariant);
-                var actualVariants = product.Variants.Where(x => x.VariantType != "MAIN_VARIANT");
-
-                //MainVariantId = mainVariant.VariantId;
-                Price = mainVariant.VariantPrice;
-                Quantity = mainVariant.Quantity;
-                //Variants = actualVariants.Select(x => new ProductVariantViewModel
-                //{
-                //    VariantId = x.VariantId,
-                //    VariantType = x.VariantType,
-                //    VariantPrice = x.VariantPrice,
-                //    Quantity = x.Quantity,
-                //    FeatureImageLink = x.FeatureImageLink
-
-                //}).ToList();
             }
         }
-
-        public Product ToEntity()
-        {
-            var product = new Product();
-            product.Name = Name;
-            product.Description = Description;
-            product.CategoryId = CategoryId;
-            product.IsNewArravial = IsNewArravial;
-            product.IsBestSelling = IsBestSelling;
-            product.IsFeatured = IsFeatured;
-            product.SKU = SKU;
-
-            //product.Variants = new List<ProductVariant>
-            //{
-            //    // Main Variant
-            //    new ProductVariant
-            //    {
-            //        VariantId = MainVariantId,
-            //        CreatedDate = DateTime.Now,
-            //        VariantType = "MAIN_VARIANT",
-            //        VariantPrice = Price,
-            //        Quantity = Quantity,
-            //    }
-            //};
-
-            //// Actual Variants
-            //if (Variants != null)
-            //{
-            //    product.Variants.AddRange(Variants.Select(x =>
-            //    {
-            //        return new ProductVariant
-            //        {
-            //            CreatedDate = DateTime.Now,
-            //            VariantType = x.VariantType,
-            //            VariantPrice = x.VariantPrice,
-            //            Quantity = x.Quantity,
-            //        };
-            //    }));
-            //}
-
-            return product;
-        }
-
     }
 }

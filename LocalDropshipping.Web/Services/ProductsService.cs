@@ -1,6 +1,7 @@
 ﻿using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+
 namespace LocalDropshipping.Web.Services
 {
     public class ProductsService : IProductsService
@@ -44,7 +45,11 @@ namespace LocalDropshipping.Web.Services
 
         public Product? GetById(int productId)
         {
-            return _context.Products.Include(x => x.Category).Include(x => x.Variants).FirstOrDefault(p => p.ProductId == productId && !p.IsDeleted);
+            return _context.Products
+                .Include(x => x.Category)
+                .Include(x => x.Variants)
+                .ThenInclude(x => x.Images)
+                .FirstOrDefault(p => p.ProductId == productId && !p.IsDeleted);
         }
 
         public Product? Delete(int productId)
@@ -58,38 +63,60 @@ namespace LocalDropshipping.Web.Services
             return product;
         }
 
-        public Product? Update(int productId, Product product)
+        public Product? Update(int productId, Product product, bool isSimpleProduct = true)
         {
-            Product? exProduct = _context.Products.FirstOrDefault(x => x.ProductId == productId);
+            Product? exProduct = _context.Products.Include(x => x.Variants).FirstOrDefault(x => x.ProductId == productId);
             if (exProduct != null)
             {
                 var userEmail = _userService.GetCurrentUserAsync().GetAwaiter().GetResult()!.Email;
-
                 exProduct.Name = product.Name;
                 exProduct.Description = product.Description;
                 exProduct.SKU = product.SKU;
-                exProduct.IsDeleted = product.IsDeleted;
                 exProduct.CategoryId = product.CategoryId;
                 exProduct.IsFeatured = product.IsFeatured;
                 exProduct.IsBestSelling = product.IsBestSelling;
                 exProduct.IsNewArravial = product.IsNewArravial;
 
-                foreach (var variant in product.Variants)
+                exProduct.IsDeleted = product.IsDeleted;
+
+                if (isSimpleProduct)
                 {
-                    if (variant.VariantId == 0)
+                    var variant = exProduct.Variants.FirstOrDefault(x => x.ProductVariantId == product.Variants.First().ProductVariantId);
+                    variant.Quantity = product.Variants.First().Quantity;
+                    variant.VariantPrice = product.Variants.First().VariantPrice;
+                    variant.UpdatedDate = DateTime.Now;
+                    variant.UpdatedBy = userEmail;
+                }
+                else
+                {
+                    var exVariants = exProduct.Variants;
+                    foreach (var variant in product.Variants)
                     {
-                        variant.CreatedDate = DateTime.Now;
-                        variant.CreatedBy = userEmail;
-                        exProduct.Variants.Add(variant);
-                    }
-                    else
-                    {
-                        var exVariant = product.Variants.First(x => x.VariantId == variant.VariantId);
-                        exVariant.VariantType = variant.VariantType;
-                        exVariant.VariantPrice = variant.VariantPrice;
-                        exVariant.Quantity = variant.Quantity;
-                        exVariant.UpdatedDate = DateTime.Now;
-                        exVariant.UpdatedBy = userEmail;
+                        if (exVariants.Any(x => variant.ProductVariantId == x.ProductVariantId))
+                        {
+                            var exVariant = exVariants.First(x => variant.ProductVariantId == x.ProductVariantId);
+
+                            exVariant.VariantType = variant.VariantType;
+                            exVariant.Variant = variant.Variant;
+                            exVariant.VariantPrice = variant.VariantPrice;
+                            exVariant.Quantity = variant.Quantity;
+
+                            exVariant.UpdatedDate = DateTime.Now;
+                            exVariant.UpdatedBy = userEmail;
+                        }
+                        else
+                        {
+                            exProduct.Variants.Add(new ProductVariant
+                            {
+                                VariantType = variant.VariantType,
+                                Variant = variant.Variant,
+                                VariantPrice = variant.VariantPrice,
+                                Quantity = variant.Quantity,
+
+                                CreatedBy = userEmail,
+                                CreatedDate = DateTime.Now,
+                            });
+                        }
                     }
                 }
 
@@ -106,6 +133,16 @@ namespace LocalDropshipping.Web.Services
             // TODO: Needs to be updated
             //return _context.Products.Where(x => x.IsDeleted == false && x.Price >= minPrice && x.Price <= maxPrice && !x.IsDeleted).ToList();
             return _context.Products.ToList();
+        }
+
+        public List<Product> GetProductsBySearch(string searchString)
+        {
+            return _context.Products.Where(x => !x.IsDeleted && x.Name.Contains(searchString))
+                                .Include(x => x.Category)
+                                .Include(x => x.Variants)
+                                .ToList();
+
+       
         }
     }
 

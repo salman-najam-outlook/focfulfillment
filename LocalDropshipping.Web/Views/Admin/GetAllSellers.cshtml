@@ -2,7 +2,8 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @using LocalDropshipping.Web.Data.Entities;
-@model List<User>;
+@using LocalDropshipping.Web.Helpers;
+@model PageResponse<List<User>>;
 @{
     Layout = "_LayoutDashboard";
 }
@@ -85,11 +86,24 @@
                                 </a>
                             </form>
                         </div>
+                        <div class="table-responsive dataTables_wrapper">
+                            <div id="table_id_filter" class="dataTables_filter">
+                                <form asp-controller="Admin" asp-action="GetAllSellers" method="get">
+                                    <label style="display:flex; justify-content:end; align-items:center">
+                                        Search:
+                                        <input type="search" name="SearchString" class="" placeholder="" aria-controls="table_id">
+                                        <button class="btn btn-solid" style="padding: 7px 24px;" type="submit" id="button-addon2">
+                                            <i style="color:white" data-feather="search"></i>
+                                        </button>
+                                    </label>
+                                </form>
+                            </div>
+                        </div>
 
                         <table class="table all-package theme-table table-product" id="table_id">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
+                                    <th>@Html.ActionLink("Name", "GetAllSellers","Admin", new { sortByName = ViewBag.NameSortParm, searchString=ViewBag.CurrentFilter })</th>
                                     <th>Phone</th>
                                     <th>Email</th>
                                     <th>Options</th>
@@ -98,7 +112,7 @@
                             </thead>
 
                             <tbody>
-                                @foreach (var user in Model)
+                                @foreach (var user in Model.Data)
                                 {
                                     <tr>
                                         <td>@user.Fullname</td>
@@ -135,6 +149,34 @@
                             </tbody>
                         </table>
                     </div>
+                    <nav aria-label="Page navigation" class="custome-pagination mt-2">
+                        <ul class="pagination justify-content-center">
+                            @if (Model.pageNumber > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="?pageNumber=@(Model.pageNumber - 1)&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Previous">
+                                        <i class="fa-solid fa-angles-left"></i>
+                                    </a>
+                                </li>
+                            }
+
+                            @for (int i = 1; i <= Math.Ceiling((double)Model.totalCount / Model.pageSize); i++)
+                            {
+                                <li class="page-item @(i == Model.pageNumber ? "active" : "")">
+                                    <a class="page-link" href="?pageNumber=@i&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter">@i</a>
+                                </li>
+                            }
+
+                            @if (Model.pageNumber < Math.Ceiling((double)Model.totalCount / Model.pageSize))
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="?pageNumber=@(Model.pageNumber + 1)&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Next">
+                                        <i class="fa-solid fa-angles-right"></i>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
