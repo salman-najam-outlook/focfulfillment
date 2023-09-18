@@ -317,12 +317,12 @@ namespace LocalDropshipping.Web.Controllers
         [HttpGet]
         [Authorize]
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
-        public IActionResult Products([FromQuery] Pagination pagination, string searchString, string sortByName,string sortByPrice, string currentFilter) 
+        public IActionResult Products([FromQuery] Pagination pagination, string searchString, string sortProduct, string currentFilter) 
         {
             //Add ViewBag to save SortOrder of table
-            ViewBag.CurrentSort = sortByName;
-            ViewBag.NameSortParm = string.IsNullOrEmpty(sortByName) ? "name_asc" : (sortByName == "name_asc" ? "name_desc" : "name_asc");
-            ViewBag.PriceSortParm = string.IsNullOrEmpty(sortByPrice) ? "price_asc" : (sortByPrice == "price_asc" ? "price_desc" : "price_asc");
+            ViewBag.CurrentSort = sortProduct;
+            ViewBag.NameSortParm = string.IsNullOrEmpty(sortProduct) ? "name_asc" : (sortProduct == "name_asc" ? "name_desc" : "name_asc");
+            ViewBag.PriceSortParm = string.IsNullOrEmpty(sortProduct) ? "price_asc" : (sortProduct == "price_asc" ? "price_desc" : "price_asc");
 
             if (searchString != null)
             {
@@ -337,9 +337,11 @@ namespace LocalDropshipping.Web.Controllers
             List<Product> data= _productsService.GetAll();
             if (!string.IsNullOrEmpty(searchString))
             {
-                data = _productsService.GetProductsBySearch(searchString);
+                data = data.Where(x=>x.Name.ToLower().Contains(searchString.ToLower())|| 
+                x.Description.ToLower().Contains(searchString.ToLower())||
+                 x.Category.Name.ToLower().Contains(searchString.ToLower())).ToList();
             }
-            switch (sortByName)
+            switch (sortProduct)
             {
                 case "name_asc":
                     data = data.OrderBy(s => s.Name).ToList();
@@ -351,7 +353,7 @@ namespace LocalDropshipping.Web.Controllers
                     data = data.OrderBy(s => s.Variants.FirstOrDefault().VariantPrice).ToList();
                     break;
                 case "price_desc":
-                    data = data.OrderByDescending(s => s.Name).ToList();
+                    data = data.OrderByDescending(s => s.Variants.FirstOrDefault().VariantPrice).ToList();
                     break;
                 default:
                     data = data.OrderBy(s => s.ProductId).ToList();
@@ -596,8 +598,7 @@ namespace LocalDropshipping.Web.Controllers
 			List<Category> category = _categoryService.GetAll();
 			if (!string.IsNullOrEmpty(searchString))
 			{
-				category =_categoryService.GetCatagoreyBySearch(searchString);
-                    //_productsService.GetProductsBySearch(searchString);
+				category =category.Where(c=>c.Name.ToLower().Contains(searchString.ToLower())).ToList();
 			}
 			switch (sortByName)
 			{

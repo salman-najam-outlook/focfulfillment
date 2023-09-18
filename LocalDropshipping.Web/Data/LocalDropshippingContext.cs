@@ -1,4 +1,8 @@
-﻿namespace LocalDropshipping.Web.Data
+﻿using LocalDropshipping.Web.Data.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+
+namespace LocalDropshipping.Web.Data
 {
     public class LocalDropshippingContext : IdentityDbContext<User>
     {
