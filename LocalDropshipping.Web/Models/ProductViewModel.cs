@@ -77,7 +77,17 @@ namespace LocalDropshipping.Web.Models
                     SKU = product.SKU;
                     Price = product.Variants.First().VariantPrice;
                     Variants = new List<ProductVariantViewModel>();
-                    Variants.AddRange(product.Variants.Select(x => new ProductVariantViewModel { Quantity = x.Quantity, VariantPrice = x.VariantPrice, VariantType = x.VariantType, VariantId = x.ProductVariantId, Variant = x.Variant }));
+                    Variants.AddRange(
+                        product.Variants
+                        .Select(x => new ProductVariantViewModel { 
+                            Quantity = x.Quantity, 
+                            VariantPrice = x.VariantPrice, 
+                            VariantType = x.VariantType, 
+                            VariantId = x.ProductVariantId, 
+                            Variant = x.Variant,
+                            FeatureImageLink = x.FeatureImageLink,
+                            Images = x.Images.Select(x => x.Link).ToList()
+                        }));
                 }
 
                 ProductId = product.ProductId;

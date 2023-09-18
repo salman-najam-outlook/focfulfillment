@@ -1,6 +1,8 @@
 ﻿using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
+using LocalDropshipping.Web.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace LocalDropshipping.Web.Services
 {
@@ -8,11 +10,13 @@ namespace LocalDropshipping.Web.Services
     {
         private readonly LocalDropshippingContext _context;
         private readonly IUserService _userService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductsService(LocalDropshippingContext context, IUserService userService)
+        public ProductsService(LocalDropshippingContext context, IUserService userService, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _userService = userService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public List<Product> GetAll()
@@ -65,7 +69,13 @@ namespace LocalDropshipping.Web.Services
 
         public Product? Update(int productId, Product product, bool isSimpleProduct = true)
         {
-            Product? exProduct = _context.Products.Include(x => x.Variants).FirstOrDefault(x => x.ProductId == productId);
+            Product? exProduct = _context.Products
+                .Include(x => x.Variants)
+                .ThenInclude(x => x.Images)
+                .Include(x => x.Variants)
+                .ThenInclude(x => x.Videos)
+                .FirstOrDefault(x => x.ProductId == productId);
+
             if (exProduct != null)
             {
                 var userEmail = _userService.GetCurrentUserAsync().GetAwaiter().GetResult()!.Email;
@@ -100,6 +110,20 @@ namespace LocalDropshipping.Web.Services
                             exVariant.Variant = variant.Variant;
                             exVariant.VariantPrice = variant.VariantPrice;
                             exVariant.Quantity = variant.Quantity;
+
+                            if (variant.Images.Any())
+                            {
+                                exVariant.Images.DeleteAllFromServer(_webHostEnvironment.ContentRootPath);
+                                exVariant.Images.RemoveAll(_ => true);
+                                exVariant.Images.AddRange(variant.Images);
+                            }
+
+                            if (!variant.FeatureImageLink.IsNullOrEmpty())
+                            {
+                                new ProductVariantImage { Link = exVariant.FeatureImageLink }.DeleteFromServer(_webHostEnvironment.ContentRootPath);
+                                exVariant.FeatureImageLink = variant.FeatureImageLink;
+                            }
+
 
                             exVariant.UpdatedDate = DateTime.Now;
                             exVariant.UpdatedBy = userEmail;
@@ -142,7 +166,7 @@ namespace LocalDropshipping.Web.Services
                                 .Include(x => x.Variants)
                                 .ToList();
 
-       
+
         }
     }
 

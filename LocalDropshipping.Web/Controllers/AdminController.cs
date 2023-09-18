@@ -250,7 +250,7 @@ namespace LocalDropshipping.Web.Controllers
             SetRoleByCurrentUser();
             ViewBag.CurrentSort = sortByName;
             ViewBag.NameSortParm = string.IsNullOrEmpty(sortByName) ? "name_asc" : (sortByName == "name_asc" ? "name_desc" : "name_asc");
-            
+
             if (searchString != null)
             {
                 pagination.PageNumber = 1;
@@ -264,7 +264,7 @@ namespace LocalDropshipping.Web.Controllers
             var sellers = _userService.GetAll();
             if (!string.IsNullOrEmpty(searchString))
             {
-                sellers = sellers.Where(x=>x.Fullname.ToLower().Contains(searchString.ToLower())).ToList();
+                sellers = sellers.Where(x => x.Fullname.ToLower().Contains(searchString.ToLower())).ToList();
             }
             switch (sortByName)
             {
@@ -318,7 +318,7 @@ namespace LocalDropshipping.Web.Controllers
         [HttpGet]
         [Authorize]
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
-        public IActionResult Products([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter) 
+        public IActionResult Products([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
         {
             //Add ViewBag to save SortOrder of table
             ViewBag.CurrentSort = sortByName;
@@ -333,7 +333,7 @@ namespace LocalDropshipping.Web.Controllers
             }
 
             ViewBag.CurrentFilter = searchString;
-            List<Product> data= _productsService.GetAll();
+            List<Product> data = _productsService.GetAll();
             if (!string.IsNullOrEmpty(searchString))
             {
                 data = _productsService.GetProductsBySearch(searchString);
@@ -480,16 +480,27 @@ namespace LocalDropshipping.Web.Controllers
                 {
                     for (int variantNo = 1; variantNo <= model.VariantCounts; variantNo++)
                     {
+
+                        int variantId = Convert.ToInt32(form["variant-" + variantNo + "-variant-id"]);
+                        var newImagesUploaded = form.Files.Any(x => x.Name == $"variant-{variantNo}-updated-images");
+                        var newFeaturedImage = form.Files.Any(x => x.Name == $"variant-{variantNo}-updated-image");
+
+
+
+
                         product.Variants.Add(new ProductVariant
                         {
-                            ProductVariantId = Convert.ToInt32(form["variant-" + variantNo + "-variant-id"]),
+                            ProductVariantId = variantId,
                             VariantType = form["variant-type"],
                             Variant = form["variant-" + variantNo + "-value"],
                             VariantPrice = Convert.ToInt32(form["variant-" + variantNo + "-price"]),
                             Quantity = Convert.ToInt32(form["variant-" + variantNo + "-quantity"]),
-                            IsMainVariant = false
+                            IsMainVariant = false,
+                            Images = newImagesUploaded ? formFiles.GetFiles($"variant-{variantNo}-updated-images").ToArray().SaveTo("images/products", model.Name + " " + form["variant-type"]).Select(x => new ProductVariantImage { Link = x }).ToList() : new List<ProductVariantImage>(),
+                            FeatureImageLink = newFeaturedImage ? formFiles[$"variant-{variantNo}-updated-image"]!.SaveTo("images/products", model.Name + " " + form["variant-type"]) : ""
                         });
                     }
+
                     _productsService.Update(model.ProductId, product, false);
                     TempData["updated"] = "Product updated successfully";
                 }
@@ -574,36 +585,36 @@ namespace LocalDropshipping.Web.Controllers
 
         public IActionResult CategoryList([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
         {
-			//Add ViewBag to save SortOrder of table
-			ViewBag.CurrentSort = sortByName;
+            //Add ViewBag to save SortOrder of table
+            ViewBag.CurrentSort = sortByName;
             ViewBag.NameSortParm = string.IsNullOrEmpty(sortByName) ? "name_asc" : (sortByName == "name_asc" ? "name_desc" : "name_asc");
             if (searchString != null)
-			{
-				pagination.PageNumber = 1;
-			}
-			else
-			{
-				searchString = currentFilter;
-			}
+            {
+                pagination.PageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
 
-			ViewBag.CurrentFilter = searchString;
-			List<Category> category = _categoryService.GetAll();
-			if (!string.IsNullOrEmpty(searchString))
-			{
-				category =_categoryService.GetCatagoreyBySearch(searchString);
-                    //_productsService.GetProductsBySearch(searchString);
-			}
-			switch (sortByName)
-			{
-				case "name_desc":
-					category = category.OrderBy(s => s.Name).ToList();
-					break;
+            ViewBag.CurrentFilter = searchString;
+            List<Category> category = _categoryService.GetAll();
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                category = _categoryService.GetCatagoreyBySearch(searchString);
+                //_productsService.GetProductsBySearch(searchString);
+            }
+            switch (sortByName)
+            {
+                case "name_desc":
+                    category = category.OrderBy(s => s.Name).ToList();
+                    break;
 
-				default:
-					category = category.OrderBy(s => s.CategoryId).ToList();
-					break;
-			}
-			var count = category.Count();
+                default:
+                    category = category.OrderBy(s => s.CategoryId).ToList();
+                    break;
+            }
+            var count = category.Count();
             category = category.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
             return View(new PageResponse<List<Category>>(category, pagination.PageNumber, pagination.PageSize, count));
         }
