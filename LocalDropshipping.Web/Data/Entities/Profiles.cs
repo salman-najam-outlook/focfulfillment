@@ -33,7 +33,8 @@ namespace LocalDropshipping.Web.Data.Entities
 
         [StringLength(250, ErrorMessage = "Address cannot be longer than 250 characters.")]
         public string Address { get; set; }
-        
+        public string ImageLink { get; set; }   
+
         public virtual User? User { get; set; }
     }
 }

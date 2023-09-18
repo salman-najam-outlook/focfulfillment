@@ -1,4 +1,5 @@
 ﻿using LocalDropshipping.Web.Attributes;
+using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
 using LocalDropshipping.Web.Exceptions;
@@ -10,6 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 
@@ -26,8 +29,9 @@ namespace LocalDropshipping.Web.Controllers
         private readonly IProductVariantService _productVariantService;
         private readonly UserManager<User> _userManager;
         private readonly IConsumersService _consumerService;
+        private readonly LocalDropshippingContext _context;
 
-        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, IWishListService wishList, UserManager<User> userManager, IProductsService productsService, IProductVariantService productVariantService, IConsumersService consumersService)
+        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, IWishListService wishList, UserManager<User> userManager, IProductsService productsService, IProductVariantService productVariantService, IConsumersService consumersService,LocalDropshippingContext context)
         {
             _accountService = accountService;
             _profileService = profileService;
@@ -38,6 +42,7 @@ namespace LocalDropshipping.Web.Controllers
             _productVariantService = productVariantService;
             _userManager = userManager;
             _consumerService = consumersService;
+            _context = context;
         }
 
         public IActionResult Register()
@@ -169,6 +174,8 @@ namespace LocalDropshipping.Web.Controllers
 
             if (isUpdated)
             {
+                ViewBag.ShowSuccessMessageAndRedirect = true;
+
                 return RedirectToAction("UpdatePasswordMessage");
             }
             else
@@ -598,13 +605,53 @@ namespace LocalDropshipping.Web.Controllers
                 BankAccountTitle = userProfile.BankAccountTitle,
                 BankAccountNumberOrIBAN = userProfile.BankAccountNumberOrIBAN,
                 BankBranch = userProfile.BankBranch,
-                Address = userProfile.Address
+                Address = userProfile.Address,
+                ImageLink = userProfile.ImageLink
 
             };
 
             var userProfileList = new List<ProfilesDto> { userProfileDto };
 
             return View(userProfileList);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult Profile(IFormFile profileImage)
+        {
+            if (profileImage != null && profileImage.Length > 0)
+            {
+                var folderPath = Path.Combine("ProfileImages");
+
+                var uniqueFileName = profileImage.SaveTo(folderPath, profileImage.FileName);
+
+              
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                var sellerProfile = _context.Profiles.FirstOrDefault(p => p.UserId == userId);
+
+                if (sellerProfile != null)
+                {
+                    sellerProfile.ImageLink = "/ProfileImages/" + uniqueFileName;
+                }
+                else
+                {
+                    sellerProfile = new Profiles
+                    {
+                        UserId = userId,
+                        
+                        ImageLink = "/ProfileImages/" + uniqueFileName
+                    };
+
+                    _context.Profiles.Add(sellerProfile);
+                }
+
+                _context.SaveChanges();
+
+                return RedirectToAction("SellerDashboard");
+            }
+
+            return View("Profile");
         }
     }
 }
