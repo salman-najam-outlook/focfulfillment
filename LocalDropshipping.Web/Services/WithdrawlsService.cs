@@ -3,6 +3,7 @@ using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
 using LocalDropshipping.Web.Enums;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace LocalDropshipping.Web.Services
 {
@@ -15,12 +16,13 @@ namespace LocalDropshipping.Web.Services
             this.context = context;
         }
 
+
         public Withdrawals GetWithdrawalRequestsById(int withdrawalId)
         {
             return context.Withdrawals.FirstOrDefault(x => x.WithdrawalId == withdrawalId);
         }
 
-        public Withdrawals GetWithdrawalRequestsByUserId(int userId)
+        public Withdrawals GetWithdrawalRequestsByUserId(string userId)
         {
             return context.Withdrawals.FirstOrDefault(x => x.UserId == userId);
         }
@@ -31,8 +33,8 @@ namespace LocalDropshipping.Web.Services
             if (withdrawal != null)
             {
                 withdrawal.TransactionId = processDto.TransactionId;
-                withdrawal.ProcessedBy = processDto.ProcessedBy;
-                withdrawal.paymentStatus = PaymentStatus.UnPaid;
+                withdrawal.ProcessedBy = processDto.ProcessedBy.ToString();
+                //withdrawal.paymentStatus = PaymentStatus.UnPaid;
                 withdrawal.UpdatedDate = DateTime.Now;
 
                 context.SaveChanges();
@@ -49,10 +51,10 @@ namespace LocalDropshipping.Web.Services
                     AmountInPkr = withdrawal.AmountInPkr,
                     AccountTitle = withdrawal.AccountTitle,
                     AccountNumber = withdrawal.AccountNumber,
-                    paymentStatus = withdrawal.paymentStatus = PaymentStatus.Paid,
+                    //paymentStatus = withdrawal.paymentStatus = PaymentStatus.Paid,
 
                     CreatedDate = DateTime.Now,
-                    CreatedBy = 1,
+                    CreatedBy = "1",
                 };
                 context.Withdrawals.Add(withdrawals);
                 context.SaveChanges();
@@ -62,5 +64,18 @@ namespace LocalDropshipping.Web.Services
             return null;
 
         }
+
+        public List<Withdrawals?> GetAll()
+        {
+            //var userEmail = context.Users.Select(x=>x.Email).ToList();
+            var withdrawal = new List<Withdrawals?>();
+            withdrawal = context.Withdrawals.ToList();
+            if (withdrawal != null)
+            {
+                return withdrawal;
+            }
+            return new List<Withdrawals>();
+        }
+
     }
 }

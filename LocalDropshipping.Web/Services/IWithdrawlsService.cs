@@ -7,8 +7,10 @@ namespace LocalDropshipping.Web.Services
     {
         Withdrawals RequestWithdrawal(Withdrawals withdrawal);
         Withdrawals GetWithdrawalRequestsById(int withdrawalId);
-        Withdrawals GetWithdrawalRequestsByUserId(int userId);
+        Withdrawals GetWithdrawalRequestsByUserId(string userId);
         Withdrawals ProcessWidrawal(ProcessWidrawalDto processDto);
+
+        List<Withdrawals?> GetAll();
 
     }
 }

@@ -9,6 +9,8 @@ using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Packaging;
+using System.Security.Claims;
 
 namespace LocalDropshipping.Web.Controllers
 {
@@ -26,8 +28,10 @@ namespace LocalDropshipping.Web.Controllers
         private readonly IAccountService _accountService;
         private readonly IOrderService _orderService;
         private readonly IConsumerService _consumerService;
+        private readonly IWithdrawlsService _withdrawlsService;
+        private readonly IProfilesService _profilesService;
 
-        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService, IConsumerService consumerService)
+        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService, IConsumerService consumerService,IWithdrawlsService withdrawlsService,IProfilesService profilesService)
         {
             _service = service;
             _productsService = productsService;
@@ -38,6 +42,8 @@ namespace LocalDropshipping.Web.Controllers
             _categoryService = categoryService;
             _orderService = orderService;
             _consumerService = consumerService;
+            _withdrawlsService = withdrawlsService;
+            _profilesService = profilesService;
             CategoryService = _categoryService;
             _accountService = accountService;
             _orderService = orderService;
@@ -257,8 +263,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
 
-
-        [HttpGet]
+       [HttpGet]
         public IActionResult OrdersList()
         {
             try
@@ -363,6 +368,45 @@ namespace LocalDropshipping.Web.Controllers
             ViewBag.Categories = _categoryService.GetAll();
             return View(model);
         }
+ 
+        public IActionResult Withdrawal()
+        {
+            try
+            {
+                var withdrawals = _withdrawlsService.GetAll();
+                var profiles = _profilesService.GetAllProfiles();
+                var users = _userService.GetAll();
+
+                
+                var combinedData = profiles.Select(profile => new AddWithdrawalUserViewModel
+                {
+                    BankName = profile.BankName,
+                    BankAccountNumberOrIBAN = profile.BankAccountNumberOrIBAN,
+                }).ToList();
+
+                combinedData.AddRange(withdrawals.Select(withdrawal => new AddWithdrawalUserViewModel
+                {
+                    AmountInPkr = withdrawal.AmountInPkr,
+                    paymentStatus = withdrawal.paymentStatus,
+                    ProcessedBy = withdrawal.ProcessedBy,
+                    CreatedDate = withdrawal.CreatedDate,
+                    AccountTitle = withdrawal.AccountTitle,
+
+                }));
+
+                combinedData.AddRange(users.Select(userdata => new AddWithdrawalUserViewModel
+                {
+                    Email = userdata.Email,
+                }));
+
+                return View(combinedData);
+            }
+            catch (Exception ex)
+            {
+                return View(ex.Message);
+            }
+        }
+
 
 
         [HttpPost]
