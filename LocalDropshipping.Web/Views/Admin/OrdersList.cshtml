@@ -1,5 +1,6 @@
 ﻿@using LocalDropshipping.Web.Data.Entities;
-@model List<Order>;
+@using LocalDropshipping.Web.Helpers;
+@model PageResponse<List<Order>>;
 @{
     Layout = "_LayoutDashboard";
 }
@@ -26,7 +27,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var order in Model)
+                                        @foreach (var order in Model.Data)
                                         {
                                             <tr data-bs-toggle="offcanvas" href="#order-details" class="odd">
                                                 <td>@order.Id</td>
@@ -65,6 +66,34 @@
                                     </tbody>
                                 </table>
                             </div>
+                             <nav aria-label="Page navigation" class="custome-pagination mt-2">
+                    <ul class="pagination justify-content-center">
+                                    @if (Model.pageNumber > 1)
+                                    {
+                                <li class="page-item">
+                                    <a class="page-link" href="?pageNumber=@(Model.pageNumber - 1)&pageSize=@Model.pageSize" aria-label="Previous">
+                                        <i class="fa-solid fa-angles-left"></i>
+                                    </a>
+                                </li>
+                                    }
+
+                                    @for (int i = 1; i <= Math.Ceiling((double)Model.totalCount / Model.pageSize); i++)
+                                    {
+                                <li class="page-item @(i == Model.pageNumber ? "active" : "")">
+                                    <a class="page-link" href="?pageNumber=@i&pageSize=@Model.pageSize">@i</a>
+                                </li>
+                                    }
+
+                                    @if (Model.pageNumber < Math.Ceiling((double)Model.totalCount / Model.pageSize))
+                                    {
+                                <li class="page-item">
+                                    <a class="page-link" href="?pageNumber=@(Model.pageNumber + 1)&pageSize=@Model.pageSize" aria-label="Next">
+                                        <i class="fa-solid fa-angles-right"></i>
+                                    </a>
+                                </li>
+                                    }
+                    </ul>
+                </nav>
                         </div>
                     </div>
                 </div>

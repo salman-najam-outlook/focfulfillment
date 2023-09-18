@@ -2,10 +2,8 @@
 
 namespace LocalDropshipping.Web.Services
 {
-    public interface IOrderItemService
+    public interface IFocSettingService
     {
-        List<OrderItem> GetOrderItemsById(int orderId);
-
+        string GetShippingCost(string cost);
     }
 }
-
