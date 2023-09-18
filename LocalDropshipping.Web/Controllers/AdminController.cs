@@ -378,12 +378,27 @@ namespace LocalDropshipping.Web.Controllers
         public IActionResult AddUpdateProduct(ProductViewModel model)
         {
             ModelState.Remove("ProductId");
-            if (ModelState.IsValid)
+
+            // TODO: ValidateModel Here
+            if (model.HasVariants == 0)
             {
-                if (model.ProductId == 0)
+                // Prouct without variants
+
+            }
+            else
+            {
+                // Prouct with variants
+
+            }
+
+
+            var form = Request.Form;
+            var formFiles = form.Files;
+            if (model.ProductId == 0)
+            {
+                if (model.HasVariants == 0)
                 {
-                    var form = Request.Form;
-                    var formFiles = form.Files;
+                    // Product without variants
                     var featuredImage = formFiles["featuredImage"]!;
                     var featureImageLink = featuredImage.SaveTo("images/products", model.Name!);
 
@@ -409,8 +424,30 @@ namespace LocalDropshipping.Web.Controllers
                                 IsMainVariant = true,
                                 VariantPrice = model.Price,
                                 FeatureImageLink = featureImageLink,
+                                Images = otherImagesLinks.Select(imageLink => new ProductVariantImage { Link = imageLink }).ToList(),
+                                Videos = videoLinks.Select(videoLink => new ProductVariantVideo { Link = videoLink }).ToList(),
+                                Quantity = model.Quantity
                             }
-                        }
+                        },
+                    };
+
+                    _productsService.Add(product);
+                    TempData["ProductAdded"] = "Product added successfully";
+                    return RedirectToAction("Products");
+                }
+                else
+                {
+                    // Product with variants
+                    var product = new Product()
+                    {
+                        Name = model.Name,
+                        CategoryId = model.CategoryId,
+                        IsBestSelling = model.IsBestSelling,
+                        IsFeatured = model.IsFeatured,
+                        IsNewArravial = model.IsNewArravial,
+                        Description = model.Description,
+                        SKU = model.SKU,
+                        Variants = new List<ProductVariant>(),
                     };
 
                     for (int variantNo = 1; variantNo <= model.VariantCounts; variantNo++)
@@ -418,9 +455,11 @@ namespace LocalDropshipping.Web.Controllers
                         product.Variants.Add(new ProductVariant
                         {
                             VariantType = form["variant-type"],
-                            Variant = form["variant-1-value"],
+                            Variant = form["variant-" + variantNo + "-value"],
                             VariantPrice = Convert.ToInt32(form["variant-" + variantNo + "-price"]),
                             FeatureImageLink = formFiles["variant-" + variantNo + "-feature-image"]!.SaveTo("images/products", model.Name + " " + form["variant-type"]),
+                            Images = formFiles.GetFiles("variant-" + variantNo + "-images").ToArray().SaveTo("images/products", model.Name + " " + form["variant-type"]).Select(x => new ProductVariantImage { Link = x }).ToList(),
+                            Videos = formFiles.GetFiles("variant-" + variantNo + "-videos").ToArray().SaveTo("videos/products", model.Name + " " + form["variant-type"]).Select(x => new ProductVariantVideo { Link = x }).ToList(),
                             Quantity = Convert.ToInt32(form["variant-" + variantNo + "-quantity"]),
                             IsMainVariant = false
                         });
@@ -430,19 +469,59 @@ namespace LocalDropshipping.Web.Controllers
                     TempData["ProductAdded"] = "Product added successfully";
                     return RedirectToAction("Products");
                 }
+
+            }
+            else
+            {
+                var product = new Product();
+                product.Name = model.Name;
+                product.CategoryId = model.CategoryId;
+                product.IsBestSelling = model.IsBestSelling;
+                product.IsFeatured = model.IsFeatured;
+                product.IsNewArravial = model.IsNewArravial;
+                product.Description = model.Description;
+                product.SKU = model.SKU;
+                product.Variants = new List<ProductVariant>();
+
+                if (model.HasVariants == 1)
+                {
+                    for (int variantNo = 1; variantNo <= model.VariantCounts; variantNo++)
+                    {
+                        product.Variants.Add(new ProductVariant
+                        {
+                            ProductVariantId = Convert.ToInt32(form["variant-" + variantNo + "-variant-id"]),
+                            VariantType = form["variant-type"],
+                            Variant = form["variant-" + variantNo + "-value"],
+                            VariantPrice = Convert.ToInt32(form["variant-" + variantNo + "-price"]),
+                            Quantity = Convert.ToInt32(form["variant-" + variantNo + "-quantity"]),
+                            IsMainVariant = false
+                        });
+                    }
+                    _productsService.Update(model.ProductId, product, false);
+                    TempData["updated"] = "Product updated successfully";
+                }
                 else
                 {
-                    //_productsService.Update(model.ProductId, product);
-                    //TempData["updated"] = "Product updated successfully";
-                    //return RedirectToAction("Products");
+                    product.Variants.Add(new ProductVariant
+                    {
+                        ProductVariantId = model.MainVariantId,
+                        IsMainVariant = true,
+                        VariantPrice = model.Price,
+                        Quantity = model.Quantity
+                    });
+                    _productsService.Update(model.ProductId, product);
+                    TempData["updated"] = "Product updated successfully";
                 }
+
+                return RedirectToAction("Products");
             }
+
             ViewBag.Categories = _categoryService.GetAll();
             return View(model);
         }
 
 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
         public IActionResult DeleteProduct(int id)
@@ -457,6 +536,21 @@ namespace LocalDropshipping.Web.Controllers
                 Console.WriteLine(e.Message);
                 TempData["Message"] = "no";
             }
+            return RedirectToAction("Products");
+        }
+
+        [HttpGet]
+        [Authorize]
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        public IActionResult Product(int id)
+        {
+            Product? product = _productsService.GetById(id);
+            if (product != null)
+            {
+                return View(product);
+            }
+
+            TempData["Message"] = "Product does not exist.";
             return RedirectToAction("Products");
         }
 

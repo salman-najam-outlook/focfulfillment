@@ -72,17 +72,20 @@
                                                     <td>
                                                         <ul>
                                                             <li>
+                                                                <a asp-controller="Admin" asp-action="Product" asp-route-id="@product.ProductId">
+                                                                    <i class="ri-eye-line"></i>
+                                                                </a>
+                                                            </li>
+                                                            <li>
                                                                 <a asp-controller="Admin" asp-action="AddUpdateProduct" asp-route-id="@product.ProductId">
                                                                     <i class="ri-pencil-line"></i>
                                                                 </a>
                                                             </li>
 
                                                             <li>
-                                                                <form method="post" id="txtdelete" asp-controller="Admin" asp-action="Deleted" asp-route-id="@product.ProductId">
-                                                                    <button type="submit" class="btn btn-link">
-                                                                        <i class="ri-delete-bin-line"></i>
-                                                                    </button>
-                                                                </form>
+                                                                <a asp-controller="Admin" asp-action="DeleteProduct" asp-route-id="@product.ProductId">
+                                                                    <i class="ri-delete-bin-line"></i>
+                                                                </a>
                                                             </li>
                                                         </ul>
                                                     </td>

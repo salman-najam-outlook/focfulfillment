@@ -43,7 +43,7 @@ namespace LocalDropshipping.Web.Controllers.API
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteProduct(int id)
+        public IActionResult DeleteProductById(int id)
         {
             productService.Delete(id);
             return Ok();

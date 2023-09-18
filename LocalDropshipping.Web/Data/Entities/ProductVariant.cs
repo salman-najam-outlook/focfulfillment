@@ -1,13 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace LocalDropshipping.Web.Data.Entities
+﻿namespace LocalDropshipping.Web.Data.Entities
 {
     public class ProductVariant
     {
 #nullable disable
-        [Key]
-     
         public int ProductVariantId { get; set; }
         public int ProductId { get; set; }
         public string? VariantType { get; set; }
@@ -20,6 +15,7 @@ namespace LocalDropshipping.Web.Data.Entities
         public string CreatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public string UpdatedBy { get; set; }
-
+        public virtual List<ProductVariantImage> Images { get; set; }
+        public virtual List<ProductVariantVideo> Videos { get; set; }
     }
 }
