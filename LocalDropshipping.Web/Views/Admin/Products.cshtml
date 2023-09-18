@@ -103,7 +103,7 @@
                                 @if (Model.pageNumber > 1)
                                 {
                                     <li class="page-item">
-                                        <a class="page-link" href="?pageNumber=@(Model.pageNumber - 1)&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Previous">
+                                        <a class="page-link" href="?pageNumber=@(Model.pageNumber - 1)&pageSize=@Model.pageSize&sortProduct=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Previous">
                                             <i class="fa-solid fa-angles-left"></i>
                                         </a>
                                     </li>
@@ -112,14 +112,14 @@
                                 @for (int i = 1; i <= Math.Ceiling((double)Model.totalCount / Model.pageSize); i++)
                                 {
                                     <li class="page-item @(i == Model.pageNumber ? "active" : "")">
-                                        <a class="page-link" href="?pageNumber=@i&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter">@i</a>
+                                        <a class="page-link" href="?pageNumber=@i&pageSize=@Model.pageSize&sortProduct=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter">@i</a>
                                     </li>
                                 }
 
                                 @if (Model.pageNumber < Math.Ceiling((double)Model.totalCount / Model.pageSize))
                                 {
                                     <li class="page-item">
-                                        <a class="page-link" href="?pageNumber=@(Model.pageNumber + 1)&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Next">
+                                        <a class="page-link" href="?pageNumber=@(Model.pageNumber + 1)&pageSize=@Model.pageSize&sortProduct=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Next">
                                             <i class="fa-solid fa-angles-right"></i>
                                         </a>
                                     </li>

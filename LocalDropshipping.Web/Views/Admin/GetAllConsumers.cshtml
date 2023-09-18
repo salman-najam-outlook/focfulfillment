@@ -84,11 +84,24 @@
                                 </a>
                             </form>
                         </div>
+                        <div class="table-responsive dataTables_wrapper">
+                            <div id="table_id_filter" class="dataTables_filter">
+                                <form asp-controller="Admin" asp-action="GetAllConsumers" method="get">
+                                    <label style="display:flex; justify-content:end; align-items:center">
+                                        Search:
+                                        <input type="search" name="SearchString" class="" placeholder="">
+                                        <button class="btn btn-solid" style="padding: 7px 24px;" type="submit" id="button-addon2">
+                                            <i style="color:white" data-feather="search"></i>
+                                        </button>
+                                    </label>
+                                </form>
+                            </div>
+                        </div>
 
                         <table class="table all-package theme-table table-product" id="table_id">
                             <thead>
                                 <tr>
-                                    <th>Full Name</th>
+                                    <th>@Html.ActionLink("Name", "GetAllConsumers","Admin", new { sortByName = ViewBag.NameSortParm, searchString=ViewBag.CurrentFilter })</th>
                                     <th>Primary Number</th>
                                     <th>Secondary Number</th>
                                     <th>Options</th>
@@ -132,7 +145,7 @@
                             @if (Model.pageNumber > 1)
                             {
                                 <li class="page-item">
-                                    <a class="page-link" href="?pageNumber=@(Model.pageNumber - 1)&pageSize=@Model.pageSize" aria-label="Previous">
+                                    <a class="page-link" href="?pageNumber=@(Model.pageNumber - 1)&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Previous">
                                         <i class="fa-solid fa-angles-left"></i>
                                     </a>
                                 </li>
@@ -141,14 +154,14 @@
                             @for (int i = 1; i <= Math.Ceiling((double)Model.totalCount / Model.pageSize); i++)
                             {
                                 <li class="page-item @(i == Model.pageNumber ? "active" : "")">
-                                    <a class="page-link" href="?pageNumber=@i&pageSize=@Model.pageSize">@i</a>
+                                    <a class="page-link" href="?pageNumber=@i&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter">@i</a>
                                 </li>
                             }
 
                             @if (Model.pageNumber < Math.Ceiling((double)Model.totalCount / Model.pageSize))
                             {
                                 <li class="page-item">
-                                    <a class="page-link" href="?pageNumber=@(Model.pageNumber + 1)&pageSize=@Model.pageSize" aria-label="Next">
+                                    <a class="page-link" href="?pageNumber=@(Model.pageNumber + 1)&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Next">
                                         <i class="fa-solid fa-angles-right"></i>
                                     </a>
                                 </li>
