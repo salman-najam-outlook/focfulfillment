@@ -24,7 +24,7 @@ namespace LocalDropshipping.Web.Controllers.API
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public IActionResult GetById(string id)
         {
             return Ok(service.GetProfileById(id));
         }

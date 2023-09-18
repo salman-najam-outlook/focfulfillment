@@ -1,5 +1,7 @@
 ﻿using LocalDropshipping.Web.Attributes;
+using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
+using LocalDropshipping.Web.Dtos;
 using LocalDropshipping.Web.Exceptions;
 using LocalDropshipping.Web.Extensions;
 using LocalDropshipping.Web.Helpers;
@@ -10,6 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
@@ -30,6 +34,7 @@ namespace LocalDropshipping.Web.Controllers
         private readonly IConsumerService _consumerService;
         private readonly IOrderItemService _orderItemService;
         private readonly IFocSettingService _focSettingService;
+        private readonly LocalDropshippingContext _context;
 
         public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, UserManager<User> userManager, IWishListService wishList, IProductsService productsService, IProductVariantService productVariantService, IConsumerService consumerService, IOrderItemService orderItemService, IFocSettingService focSettingService)
         {
@@ -174,6 +179,8 @@ namespace LocalDropshipping.Web.Controllers
 
             if (isUpdated)
             {
+                ViewBag.ShowSuccessMessageAndRedirect = true;
+
                 return RedirectToAction("UpdatePasswordMessage");
             }
             else
@@ -605,6 +612,68 @@ namespace LocalDropshipping.Web.Controllers
                 throw new Exception(ex.Message);
             }
 
+        }
+
+        public IActionResult Profile()
+        {
+            var userId = _userManager.GetUserId(User);
+
+            var userProfile = _profileService.GetProfileById(userId);
+            var userProfileDto = new ProfilesDto
+            {
+                StoreName = userProfile.StoreName,
+                StoreURL = userProfile.StoreURL,
+                BankName = userProfile.BankName,
+                BankAccountTitle = userProfile.BankAccountTitle,
+                BankAccountNumberOrIBAN = userProfile.BankAccountNumberOrIBAN,
+                BankBranch = userProfile.BankBranch,
+                Address = userProfile.Address,
+                ImageLink = userProfile.ImageLink
+
+            };
+
+            var userProfileList = new List<ProfilesDto> { userProfileDto };
+
+            return View(userProfileList);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult Profile(IFormFile profileImage)
+        {
+            if (profileImage != null && profileImage.Length > 0)
+            {
+                var folderPath = Path.Combine("ProfileImages");
+
+                var uniqueFileName = profileImage.SaveTo(folderPath, profileImage.FileName);
+
+              
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                var sellerProfile = _context.Profiles.FirstOrDefault(p => p.UserId == userId);
+
+                if (sellerProfile != null)
+                {
+                    sellerProfile.ImageLink = "/ProfileImages/" + uniqueFileName;
+                }
+                else
+                {
+                    sellerProfile = new Profiles
+                    {
+                        UserId = userId,
+                        
+                        ImageLink = "/ProfileImages/" + uniqueFileName
+                    };
+
+                    _context.Profiles.Add(sellerProfile);
+                }
+
+                _context.SaveChanges();
+
+                return RedirectToAction("SellerDashboard");
+            }
+
+            return View("Profile");
         }
         private decimal ShippingCost()
         {

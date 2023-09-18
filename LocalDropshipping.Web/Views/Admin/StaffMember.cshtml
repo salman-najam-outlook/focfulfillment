@@ -67,18 +67,10 @@
             border-radius: 50%;
         }
 
-    .delete-button {
-        background-color: red; /* Rang */
-        color: #fff; /* Text rang */
-        padding: 10px 20px; /* Padding */
-        border: none; /* Border nahi hai */
-        cursor: pointer; /* Cursor pointer ho jaye, isse button clickable lagega */
-        border-radius: 5px; /* Border ke kone rounded ho jayenge */
+    .colorBtn {
+        color: red;
+        border: red;
     }
-
-        .delete-button:hover {
-            background-color: maroon; /* Hover ke samay rang change ho jayega */
-        }
 </style>
 
 <div class="page-body">
@@ -115,12 +107,11 @@
                                         <td>@user.PhoneNumber</td>
                                         <td>@user.Email</td>
                                         <td>
-                                            <form asp-controller="Admin" asp-action="ActivateUser" method="post">
-                                                <input type="hidden" name="userId" value="@user.Id" />
-                                                <ul>
+                                            <input type="hidden" name="userId" value="@user.Id" />
+                                            <ul>
 
-                                                    <li>
-                                                        <!-- Rounded switch -->
+                                                <li>
+                                                    <form asp-controller="Admin" asp-action="ActivateUser" method="post">
                                                         <label class="switch">
                                                             <input type="hidden" name="userId" value="@user.Id" />
                                                             <button type="submit" asp-action="ActivateUser" asp-controller="Admin">
@@ -129,15 +120,17 @@
                                                                 <span class="slider round"></span>
                                                             </button>
                                                         </label>
-                                                    </li>
-                                                    <li>
-                                                        <button class="delete-button" type="submit">
+                                                    </form>
+                                                </li>
+                                                <li>
+                                                    <form method="post" id="txtdelete" asp-controller="Admin" asp-action="DeleteUser" asp-route-id="@user.Id">
+                                                        <button type="submit" class="btn btn-link colorBtn">
                                                             <i class="ri-delete-bin-line"></i>
                                                         </button>
-                                                    </li>
-                                                </ul>
-                                            </form>
-                                        </td>
+                                                    </form>
+
+                                                </li>
+                                            </ul>
                                     </tr>
                                 }
                             </tbody>
