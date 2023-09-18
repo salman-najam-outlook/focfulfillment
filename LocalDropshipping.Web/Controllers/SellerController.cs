@@ -713,6 +713,11 @@ namespace LocalDropshipping.Web.Controllers
             }
             return View("Profile");
         }
+
+        public IActionResult FilterPage()
+        {
+            return View();
+        }
         private decimal ShippingCost()
         {
             string shippingCost = "Shipping Cost";

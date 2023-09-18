@@ -1,4 +1,5 @@
-﻿using LocalDropshipping.Web.Attributes;
+﻿using Humanizer;
+using LocalDropshipping.Web.Attributes;
 using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
@@ -320,7 +321,8 @@ namespace LocalDropshipping.Web.Controllers
                 List<Order> orders = _orderService.GetAll();
                 if (!string.IsNullOrEmpty(searchString))
                 {
-                    //orders = orders.Where(x => x.OrderStatus == Enum.Parse<OrderStatus>(searchString)).ToList();
+                    if(Enum.TryParse<OrderStatus>(searchString.ApplyCase(LetterCasing.Sentence), out OrderStatus status))
+                    orders = orders.Where(x => x.OrderStatus == status).ToList();
                 }
                 switch (sortOrder)
                 {
