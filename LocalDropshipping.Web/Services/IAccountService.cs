@@ -14,5 +14,7 @@ namespace LocalDropshipping.Web.Services
         Task<User> LoginAsync(string email, string password, bool rememberMe = false);
         Task<IdentityResult> RegisterAsync(User user, string password);
         Task<bool> SendContactEmailAsync(ContactUsViewModel contactUsViewModel);
+        Task<string> GeneratePasswordUpdateToken(string email);
+        Task<bool> UpdatePassword(string userId, string token, string newPassword);
     }
 }
