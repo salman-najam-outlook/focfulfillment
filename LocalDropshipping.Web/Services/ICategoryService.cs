@@ -14,6 +14,7 @@ namespace LocalDropshipping.Web.Services
 
         Category Delete(int CategoryId);
         Category Update(int CategoryId, CategoryDto categoryDto);
+        List<Category> GetCatagoreyBySearch(string searchString);
 
 
 

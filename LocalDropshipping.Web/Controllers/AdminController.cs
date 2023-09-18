@@ -245,10 +245,40 @@ namespace LocalDropshipping.Web.Controllers
         }
 
 
-        public IActionResult GetAllSellers([FromQuery] Pagination pagination)
+        public IActionResult GetAllSellers([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
         {
             SetRoleByCurrentUser();
+            ViewBag.CurrentSort = sortByName;
+            ViewBag.NameSortParm = string.IsNullOrEmpty(sortByName) ? "name_asc" : (sortByName == "name_asc" ? "name_desc" : "name_asc");
+            
+            if (searchString != null)
+            {
+                pagination.PageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
             var sellers = _userService.GetAll();
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                sellers = sellers.Where(x=>x.Fullname.ToLower().Contains(searchString.ToLower())).ToList();
+            }
+            switch (sortByName)
+            {
+                case "name_asc":
+                    sellers = sellers.OrderBy(s => s.Fullname).ToList();
+                    break;
+                case "name_desc":
+                    sellers = sellers.OrderByDescending(s => s.Fullname).ToList();
+                    break;
+
+                default:
+                    sellers = sellers.OrderBy(s => s.Id).ToList();
+                    break;
+            }
             var count = sellers.Count();
             sellers = sellers.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
             return View(new PageResponse<List<User>>(sellers, pagination.PageNumber, pagination.PageSize, count));
@@ -287,15 +317,40 @@ namespace LocalDropshipping.Web.Controllers
         [HttpGet]
         [Authorize]
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
-        public IActionResult Products([FromQuery] Pagination pagination) 
+        public IActionResult Products([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter) 
         {
-            List<Product> data = _productsService.GetAll();
+            //Add ViewBag to save SortOrder of table
+            ViewBag.CurrentSort = sortByName;
+            ViewBag.NameSortParm = string.IsNullOrEmpty(sortByName) ? "name_asc" : (sortByName == "name_asc" ? "name_desc" : "name_asc");
+            if (searchString != null)
+            {
+                pagination.PageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+            List<Product> data= _productsService.GetAll();
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                data = _productsService.GetProductsBySearch(searchString);
+            }
+            switch (sortByName)
+            {
+                case "name_desc":
+                    data = data.OrderBy(s => s.Name).ToList();
+                    break;
+
+                default:
+                    data = data.OrderBy(s => s.ProductId).ToList();
+                    break;
+            }
             var count = data.Count();
             data = data.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
             return View(new PageResponse<List<Product>>(data, pagination.PageNumber, pagination.PageSize, count));
         }
-
-
         [HttpGet]
         [Authorize]
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
@@ -419,10 +474,38 @@ namespace LocalDropshipping.Web.Controllers
             return currentUserEmail;
         }
 
-        public IActionResult CategoryList([FromQuery] Pagination pagination)
+        public IActionResult CategoryList([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
         {
-            var category = _categoryService.GetAll();
-            var count = category.Count();
+			//Add ViewBag to save SortOrder of table
+			ViewBag.CurrentSort = sortByName;
+            ViewBag.NameSortParm = string.IsNullOrEmpty(sortByName) ? "name_asc" : (sortByName == "name_asc" ? "name_desc" : "name_asc");
+            if (searchString != null)
+			{
+				pagination.PageNumber = 1;
+			}
+			else
+			{
+				searchString = currentFilter;
+			}
+
+			ViewBag.CurrentFilter = searchString;
+			List<Category> category = _categoryService.GetAll();
+			if (!string.IsNullOrEmpty(searchString))
+			{
+				category =_categoryService.GetCatagoreyBySearch(searchString);
+                    //_productsService.GetProductsBySearch(searchString);
+			}
+			switch (sortByName)
+			{
+				case "name_desc":
+					category = category.OrderBy(s => s.Name).ToList();
+					break;
+
+				default:
+					category = category.OrderBy(s => s.CategoryId).ToList();
+					break;
+			}
+			var count = category.Count();
             category = category.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
             return View(new PageResponse<List<Category>>(category, pagination.PageNumber, pagination.PageSize, count));
         }
