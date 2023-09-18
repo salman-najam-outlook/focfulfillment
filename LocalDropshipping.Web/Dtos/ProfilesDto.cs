@@ -12,7 +12,7 @@ namespace LocalDropshipping.Web.Dtos
         public string BankAccountNumberOrIBAN { get; set; }
         public string BankBranch { get; set; }
         public string Address { get; set; }
-
+        public string ImageLink { get; set; }       
 
         public string Userid { get; set; }
         internal Profiles ToEntity()

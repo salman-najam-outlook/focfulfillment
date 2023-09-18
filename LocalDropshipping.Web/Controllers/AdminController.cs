@@ -301,6 +301,7 @@ namespace LocalDropshipping.Web.Controllers
         {
             try
             {
+                SetRoleByCurrentUser();
                 List<Order> orders = _orderService.GetAll();
                 var count = orders.Count();
                 orders = orders.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
@@ -368,6 +369,7 @@ namespace LocalDropshipping.Web.Controllers
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
         public IActionResult AddUpdateProduct(int id = 0)
         {
+            SetRoleByCurrentUser();
             ViewBag.Categories = _categoryService.GetAll();
             var productVeiwModel = new ProductViewModel(_productsService.GetById(id));
             return View(productVeiwModel);
@@ -379,6 +381,7 @@ namespace LocalDropshipping.Web.Controllers
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
         public IActionResult AddUpdateProduct(ProductViewModel model)
         {
+            SetRoleByCurrentUser();
             ModelState.Remove("ProductId");
 
             // TODO: ValidateModel Here
@@ -530,6 +533,7 @@ namespace LocalDropshipping.Web.Controllers
         {
             try
             {
+                SetRoleByCurrentUser();
                 Product product = _productsService.Delete(id);
                 TempData["Message"] = "Product deleted successfully.";
             }
@@ -617,13 +621,14 @@ namespace LocalDropshipping.Web.Controllers
 
         public IActionResult AddNewCategory()
         {
-
+            SetRoleByCurrentUser();
             return View();
         }
 
         [HttpPost]
         public IActionResult AddNewCategory(Category categoryModel)
         {
+            SetRoleByCurrentUser();
 
             if (ModelState.IsValid)
             {
@@ -650,19 +655,22 @@ namespace LocalDropshipping.Web.Controllers
         [HttpPost]
         public IActionResult DeleteCategory(int id)
         {
+            SetRoleByCurrentUser();
             var user = _categoryService.Delete(id);
             SetRoleByCurrentUser();
             return View("CategoryList", _categoryService.GetAll());
         }
         [HttpGet]
-        public IActionResult UpdateCategory()
+        public IActionResult UpdateCategory()//int id
         {
+            SetRoleByCurrentUser();
             return View();
         }
 
         [HttpPost]
         public IActionResult UpdateCategory(int categoryId, CategoryDto categoryDto)
         {
+            SetRoleByCurrentUser();
             if (ModelState.IsValid)
             {
                 var createdBy = GetCurrentLoggedInUserEmail();
@@ -699,10 +707,17 @@ namespace LocalDropshipping.Web.Controllers
         [HttpPost]
         public IActionResult BlockOrUnblockConsumer(int userId)
         {
+            SetRoleByCurrentUser();
             var consumer = _consumerService.BlockOrUnblockConsumer(userId);
             var consumers = _consumerService.GetAllConsumer();
             SetRoleByCurrentUser();
             return View("GetAllConsumers", consumers);
+        }
+
+        public IActionResult Reports()
+        {
+            SetRoleByCurrentUser();
+            return View();
         }
     }
 }

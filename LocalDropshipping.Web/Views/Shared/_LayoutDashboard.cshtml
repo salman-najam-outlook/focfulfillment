@@ -270,12 +270,14 @@
                                     </a>
                                     <ul class="sidebar-submenu">
                                         <li>
-                                            <a asp-controller="Admin" asp-action="CategoryList">Categories List</a>
+                                            <a asp-controller="Admin" asp-action="AddNewCategory">Add Category</a>
                                         </li>
 
                                         <li>
-                                            <a asp-controller="Admin" asp-action="AddNewCategory">Add A New Category</a>
+                                            <a asp-controller="Admin" asp-action="CategoryList">Categories List</a>
                                         </li>
+
+
                                     </ul>
                                 </li>
 
@@ -286,11 +288,14 @@
                                     </a>
                                     <ul class="sidebar-submenu">
                                         <li>
-                                            <a asp-action="AddNewUser" asp-controller="Admin">Add A New User</a>
+                                            <a asp-action="AddNewUser" asp-controller="Admin">Add User</a>
                                         </li>
 
                                         <li>
-                                            <a asp-action="GetAllSellers" asp-controller="Admin">Sellers</a>
+                                            <a asp-action="GetAllSellers" asp-controller="Admin">Vendors</a> @* old value was Sellers *@
+                                        </li>
+                                        <li>
+                                            <a asp-action="GetAllConsumers" asp-controller="Admin">Consumers</a>
                                         </li>
                                         @if (isSuperAdmin)
                                         {
@@ -298,20 +303,18 @@
                                                 <a asp-action="StaffMember" asp-controller="Admin">Staff Members</a>
                                             </li>
                                         }
-                                        <li>
-                                            <a asp-action="GetAllConsumers" asp-controller="Admin">Get All Consumer</a>
-                                        </li>
+
 
                                     </ul>
                                 </li>
 
-                                <li class="sidebar-list">
-                                    <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                                        <i class="ri-user-3-line"></i>
-                                        <span>Roles</span>
-                                    </a>
+                                @*  <li class="sidebar-list">
+                                <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                                <i class="ri-user-3-line"></i>
+                                <span>Roles</span>
+                                </a>
 
-                                </li>
+                                </li> *@
 
 
 
@@ -342,7 +345,7 @@
                                 </li>
 
                                 <li class="sidebar-list">
-                                    <a class="sidebar-link sidebar-title link-nav" href="reports.html">
+                                    <a class="sidebar-link sidebar-title link-nav" asp-action="Reports" asp-controller="Admin">
                                         <i class="ri-file-chart-line"></i>
                                         <span>Reports</span>
                                     </a>
