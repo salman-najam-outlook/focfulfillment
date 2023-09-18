@@ -317,11 +317,13 @@ namespace LocalDropshipping.Web.Controllers
         [HttpGet]
         [Authorize]
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
-        public IActionResult Products([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter) 
+        public IActionResult Products([FromQuery] Pagination pagination, string searchString, string sortByName,string sortByPrice, string currentFilter) 
         {
             //Add ViewBag to save SortOrder of table
             ViewBag.CurrentSort = sortByName;
             ViewBag.NameSortParm = string.IsNullOrEmpty(sortByName) ? "name_asc" : (sortByName == "name_asc" ? "name_desc" : "name_asc");
+            ViewBag.PriceSortParm = string.IsNullOrEmpty(sortByPrice) ? "price_asc" : (sortByPrice == "price_asc" ? "price_desc" : "price_asc");
+
             if (searchString != null)
             {
                 pagination.PageNumber = 1;
@@ -339,10 +341,18 @@ namespace LocalDropshipping.Web.Controllers
             }
             switch (sortByName)
             {
-                case "name_desc":
+                case "name_asc":
                     data = data.OrderBy(s => s.Name).ToList();
                     break;
-
+                case "name_desc":
+                    data = data.OrderByDescending(s => s.Name).ToList();
+                    break;
+                case "price_asc":
+                    data = data.OrderBy(s => s.Variants.FirstOrDefault().VariantPrice).ToList();
+                    break;
+                case "price_desc":
+                    data = data.OrderByDescending(s => s.Name).ToList();
+                    break;
                 default:
                     data = data.OrderBy(s => s.ProductId).ToList();
                     break;
