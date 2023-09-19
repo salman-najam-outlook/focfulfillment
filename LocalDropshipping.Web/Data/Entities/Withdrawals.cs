@@ -6,8 +6,8 @@ namespace LocalDropshipping.Web.Data.Entities
     public class Withdrawals
     {
         [Key]
-        public int WithdrawalId { get; set; }
-        public string UserId { get; set; }
+        public int? WithdrawalId { get; set; }
+        public string? UserEmail { get; set; }
         public int AmountInPkr { get; set; }
         public string AccountTitle { get; set; }
         public string AccountNumber { get; set; }
@@ -18,6 +18,6 @@ namespace LocalDropshipping.Web.Data.Entities
         public string? CreatedBy { get; set; }
         public DateTime UpdatedDate { get; set; }
         public string? UpdateBy { get; set; }
-        public string? AddReason { get; set; }  
+        public string? Reason { get; set; }
     }
 }

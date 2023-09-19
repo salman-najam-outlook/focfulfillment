@@ -22,7 +22,7 @@
                                 <table class="table order-table">
                                     <thead>
                                         <tr>
-                                            <th scope="col">Vendor</th>
+                                            <th scope="col">Vendor/Seller</th>
                                             <th scope="col">AmountInPkr</th>
                                             <th scope="col">Payment Status</th>
                                             <th scope="col">Processed By</th>
@@ -37,7 +37,7 @@
                                         @foreach (var order in Model)
                                         {
                                             <tr>
-                                                <td>@order.Email</td>
+                                                <td>@order.UserEmail</td>
                                                 <td>@order.AmountInPkr</td>
                                                 <td>@order.paymentStatus</td>
                                                 <td>@order.ProcessedBy</td>
@@ -46,7 +46,13 @@
                                                 <td>@order.BankAccountNumberOrIBAN</td>
                                                 <td>@order.BankName</td>
                                                 <td>
-                                                    <button class="btn btn-primary btn-pay" data-bs-toggle="modal" data-bs-target="#payPopup" onclick="openPopup()" type="button">Pay</button>
+                                                    <button class="btn btn-primary btn-pay" 
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#payPopup" 
+                                                    data-withdrawal-id="@order.WithDrawalId"
+                                                    data-amount-in-pkr="@order.AmountInPkr"
+                                                    onclick="openPopup(this)" type="button"
+                                                    >Pay</button>
                                                 </td>
                                             </tr>
                                         }
@@ -57,43 +63,49 @@
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <div>
-                                                    <h5 class="modal-title w-100" id="deal_today">Deal Today</h5>
-                                                    <p class="mt-1 text-content">Recommended deals for you.</p>
-                                                </div>
+  
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="closePopup()" aria-label="Close">
                                                     <i class="fa-solid fa-xmark"></i>
                                                 </button>
                                             </div>
+
+                                            <form id="paymentForm" method="post" asp-action="Withdrawal" asp-controller="Admin">
+                                                <input type="hidden" name="WithdrawalId" id="WithdrawalIdHidden" />
                                             <div class="modal-body">
                                                 <div class="deal-offer-box">
-                                                    <form id="paymentForm">
                                                         <div class="form-group">
-                                                            <label for="transactionID">Payment Staus</label>
-                                                            <select class="form-control" id="transactionID">
-                                                                <option value="transaction1">Transaction 1</option>
-                                                                <option value="transaction2">Transaction 2</option>
-                                                                <option value="transaction3">Transaction 3</option>
+                                                            <label for="withdrawalId">WithdrawalID:</label>
+                                                            <input type="number" name="WithdrawalId" class="form-control" disabled id="withdrawalId" placeholder="Withdrawal Id">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="AmountInPkr">AmountInPkr:</label>
+                                                            <input type="number" name="AmountInPkr" class="form-control" disabled id="AmountInPkr" placeholder="Amount In Pkr">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="paymentStatus">Payment Staus</label>
+                                                            <select class="form-control" name="PaymentStatus" id="paymentStatus" onchange="updatePaymentStatus()">
+                                                                <option value="Unpaid">Unpaid</option>
+                                                                <option value="Paid">Paid</option>
                                                             </select>
                                                         </div>
                                                         <br />
                                                         <div class="form-group">
-                                                            <label for="recipientName">TransactionID:</label>
-                                                            <input type="number" class="form-control" id="recipientName" placeholder="TransactionID">
+                                                            <label for="TransactionId">TransactionID:</label>
+                                                            <input type="text" name="TransactionId" class="form-control" id="TransactionId" placeholder="TransactionID">
                                                         </div>
 
                                                         <div class="form-group">
-                                                            <label for="reason">Reason:</label>
-                                                            <textarea class="form-control" id="reason" name="reason" rows="4" placeholder="Reason"></textarea>
+                                                            <label for="Reason">Reason:</label>
+                                                            <textarea class="form-control" name="Reason" id="Reason" rows="4" placeholder="Reason"></textarea>
                                                         </div>
-
-                                                    </form>
+                                                       
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closePopup()">Close</button>
-                                                    <button type="button" class="btn btn-primary" onclick="confirmPayment()">Submit</button>
+                                                    <button type="submit" class="btn btn-primary" onclick="closePopup()">Submit</button>
                                                 </div>
-                                            </div>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -110,8 +122,18 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
-    function openPopup() {
+    function openPopup(button) {
+        var withdrawalId = button.getAttribute('data-withdrawal-id');
+        var amountInPkr = button.getAttribute('data-amount-in-pkr');
+
+        document.getElementById('WithdrawalIdHidden').value = withdrawalId;
+        document.getElementById('withdrawalId').value = withdrawalId;
+        document.getElementById('AmountInPkr').value = amountInPkr;
+
         document.getElementById('payPopup').style.display = 'block';
+
+        // Update Payment Status when opening the popup
+        updatePaymentStatus();
     }
 
     function closePopup() {
@@ -119,7 +141,7 @@
     }
 
     function confirmPayment() {
-        var recipientName = document.getElementById('recipientName').value;
+        //var recipientName = document.getElementById('recipientName').value;
         // You can use recipientName for further processing (e.g., sending payment).
 
         closePopup();

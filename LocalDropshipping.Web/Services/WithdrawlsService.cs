@@ -2,6 +2,7 @@
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
 using LocalDropshipping.Web.Enums;
+using LocalDropshipping.Web.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,9 +23,9 @@ namespace LocalDropshipping.Web.Services
             return context.Withdrawals.FirstOrDefault(x => x.WithdrawalId == withdrawalId);
         }
 
-        public Withdrawals GetWithdrawalRequestsByUserId(string userId)
+        public Withdrawals GetWithdrawalRequestsByUserEmail(string userEmail)
         {
-            return context.Withdrawals.FirstOrDefault(x => x.UserId == userId);
+            return context.Withdrawals.FirstOrDefault(x => x.UserEmail == userEmail);
         }
 
         public Withdrawals ProcessWidrawal(ProcessWidrawalDto processDto)
@@ -77,5 +78,30 @@ namespace LocalDropshipping.Web.Services
             return new List<Withdrawals>();
         }
 
+        public Withdrawals UpdateWithDrawal(PaymentViewModel withdrawal)
+        {
+            // Attach the entity to the context
+            var attachedWithdrawal = context.Withdrawals.Attach(new Withdrawals { WithdrawalId = withdrawal.WithdrawalId });
+
+            // Mark specific properties as modified
+            attachedWithdrawal.Entity.UpdateBy = withdrawal.UpdatedBy;
+            attachedWithdrawal.Entity.ProcessedBy = withdrawal.ProcessedBy;
+            attachedWithdrawal.Entity.paymentStatus = withdrawal.PaymentStatus;
+            attachedWithdrawal.Entity.Reason = withdrawal.Reason;
+            attachedWithdrawal.Entity.TransactionId = withdrawal.TransactionId;
+            attachedWithdrawal.Entity.UpdatedDate = DateTime.Now;
+
+            context.SaveChanges();
+
+            return attachedWithdrawal.Entity;
+        }
+
+        public bool UpdateWithpaymentStatus(PaymentStatus paymentStatus, int WithdrawalId)
+        {
+            var attachedWithdrawal = context.Withdrawals.Attach(new Withdrawals { WithdrawalId = WithdrawalId });
+            attachedWithdrawal.Entity.paymentStatus = paymentStatus;
+            context.SaveChanges();
+            return true;
+        }
     }
 }
