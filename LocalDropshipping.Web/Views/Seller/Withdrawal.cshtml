@@ -4,7 +4,7 @@
 @* @model List<Order>; *@
 @model PageResponse<List<withdrawalModel>>;
 @{
-
+    ViewBag.Title = "FOC Fulfillment - Withdrawals";
     Layout = "_LayoutSellerDashboard";
 }
 
@@ -40,9 +40,10 @@
                                 <tr>
                                     <td>@order.Id</td>
                                     <td>@order.OrderDate</td>
-                                    @* <td>@order.Name</td> *@
+                                    <td>@order.Name</td>
                                     <td>@order.OrderStatus</td>
-                                    <td>@order.GrandTotal</td>
+                                    @* <td>@order.GrandTotal</td> *@
+                                    <td>Rs.@order.GrandTotal.ToString("N0")/-</td>
                                 </tr>
 
                             }
