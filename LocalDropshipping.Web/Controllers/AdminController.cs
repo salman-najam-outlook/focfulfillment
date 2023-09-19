@@ -538,7 +538,7 @@ namespace LocalDropshipping.Web.Controllers
                                        paymentStatus = withdrawal.PaymentStatus,
                                        ProcessedBy = withdrawal.ProcessedBy,
                                        CreatedDate = withdrawal.CreatedDate,
-                                       AccountTitle = withdrawal.AccountTitle,
+                                       AccountTitle = profileData?.BankAccountTitle,
                                        BankAccountNumberOrIBAN = profileData?.BankAccountNumberOrIBAN, 
                                        BankName = profileData?.BankName, 
                                        Withdrawals = new List<Withdrawals> { withdrawal },

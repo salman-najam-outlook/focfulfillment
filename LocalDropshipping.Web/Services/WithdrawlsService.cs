@@ -46,26 +46,23 @@ namespace LocalDropshipping.Web.Services
             return withdrawal;
         }
 
-        public Withdrawals RequestWithdrawal(Withdrawals withdrawal)
+        public bool WithdrawalRequest(string email)
         {
-            if (withdrawal != null)
+            if (email != null)
             {
                 Withdrawals withdrawals = new Withdrawals
                 {
-                    AmountInPkr = withdrawal.AmountInPkr,
-                    AccountTitle = withdrawal.AccountTitle,
-                    AccountNumber = withdrawal.AccountNumber,
-                    //paymentStatus = withdrawal.paymentStatus = PaymentStatus.Paid,
-
+                    UserEmail = email,
+                    AmountInPkr = 5000,
+                    PaymentStatus = PaymentStatus.Processing,
                     CreatedDate = DateTime.Now,
-                    CreatedBy = "1",
+                    CreatedBy = email,
                 };
-                context.Withdrawals.Add(withdrawals);
-                context.SaveChanges();
-
-                return withdrawals;
+                context.Withdrawals.Update(withdrawals);
+                var result = context.SaveChanges();
+                if(result > 0) return true;
             }
-            return null;
+            return false;
 
         }
 
