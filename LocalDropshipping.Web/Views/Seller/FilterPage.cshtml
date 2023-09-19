@@ -1,24 +1,6 @@
 ﻿@using LocalDropshipping.Web.Data.Entities;
 @using static IEnumerable<LocalDropshipping.Web.Data.Entities.OrderItem>
 @model List<Product>;
-@* @using Newtonsoft.Json;
-@{
-	var data = Context.Session.GetString("cart");
-	int countCart = 0;
-	if (data == null)
-	{
-		countCart = 0;
-	}
-	else
-	{
-		var data2 = Context.Session.GetString("cart");
-		List<OrderItem> dataCart = JsonConvert.DeserializeObject<List<OrderItem>>(data2);
-		countCart = dataCart.Count();
-
-	}
-
-}
- *@
 @{
     Layout = null;
     ViewData["Title"] = "Product Listing";
@@ -86,7 +68,6 @@
                             <span class="text-white">1418 Riverwood Drive, CA 96052, US</span>
                         </div>
                     </div>
-
                     <div class="col-xxl-6 col-lg-9 d-lg-block d-none">
                         <div class="header-offer">
                             <div class="notification-slider slick-initialized slick-slider slick-vertical">
@@ -479,6 +460,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    
                                 </div>
                         </div>
                     </div>
@@ -612,7 +594,7 @@
                                                             <i class="fa fa-minus" aria-hidden="true"></i>
                                                         </button>
                                                         <input class="form-control input-number qty-input" type="text"
-                                                               name="quantity" value="0">
+                                                               name="quantity" value="0" disabled>
                                                         <button type="button" class="qty-right-plus bg-gray"
                                                                 data-type="plus" data-field="" data-id="@product.ProductId">
                                                             <i class="fa fa-plus" aria-hidden="true"></i>
@@ -694,7 +676,6 @@
             if (itemId > 0) {
                 var formData = new FormData();
                 formData.append("id", itemId)
-
                 $.ajax(
                     {
                         async: true,
@@ -738,6 +719,8 @@
                 }
             });
         });
+
+
     </script>
 </section>
 <footer class="footer-sm">
