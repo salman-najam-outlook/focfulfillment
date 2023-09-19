@@ -10,6 +10,7 @@ using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LocalDropshipping.Web.Controllers
@@ -54,7 +55,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AdminLogin(AdminLoginViewModel model)
+        public async Task<IActionResult> AdminLogin(AdminLoginViewModel model, string returnUrl)
         {
 
 
@@ -77,7 +78,8 @@ namespace LocalDropshipping.Web.Controllers
                     {
                         if (isActive)
                         {
-                            // Redirect to the admin dashboard if the user is an admin active
+                            if (!returnUrl.IsNullOrEmpty())
+                                return LocalRedirect(returnUrl);
                             return RedirectToAction("Dashboard", "Admin");
                         }
                         else
@@ -316,8 +318,7 @@ namespace LocalDropshipping.Web.Controllers
         #endregion
 
         [HttpGet]
-        [Authorize]
-        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin, "AdminLogin", "Admin")]
         public IActionResult Products([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
         {
             //Add ViewBag to save SortOrder of table
@@ -353,8 +354,7 @@ namespace LocalDropshipping.Web.Controllers
             return View(new PageResponse<List<Product>>(data, pagination.PageNumber, pagination.PageSize, count));
         }
         [HttpGet]
-        [Authorize]
-        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult AddUpdateProduct(int id = 0)
         {
             SetRoleByCurrentUser();
@@ -366,7 +366,7 @@ namespace LocalDropshipping.Web.Controllers
 
         [HttpPost]
         [Authorize]
-        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin), ]
         public IActionResult AddUpdateProduct(ProductViewModel model)
         {
             SetRoleByCurrentUser();
@@ -525,8 +525,7 @@ namespace LocalDropshipping.Web.Controllers
 
 
         [HttpGet]
-        [Authorize]
-        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin, "AdminLogin", "Admin")]
         public IActionResult DeleteProduct(int id)
         {
             try
@@ -544,14 +543,13 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize]
-        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin, "AdminLogin", "Admin")]
         public IActionResult Product(int id)
         {
             Product? product = _productsService.GetById(id);
             if (product != null)
             {
-                return View(product);
+                return View(new ProductViewModel(product));
             }
 
             TempData["Message"] = "Product does not exist.";
