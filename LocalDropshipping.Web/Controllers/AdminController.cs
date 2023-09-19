@@ -549,7 +549,7 @@ namespace LocalDropshipping.Web.Controllers
             Product? product = _productsService.GetById(id);
             if (product != null)
             {
-                return View(new ProductViewModel(product));
+                return View(product);
             }
 
             TempData["Message"] = "Product does not exist.";
