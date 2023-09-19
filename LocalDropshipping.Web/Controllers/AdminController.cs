@@ -10,6 +10,8 @@ using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Packaging;
+using System.Security.Claims;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LocalDropshipping.Web.Controllers
@@ -28,8 +30,10 @@ namespace LocalDropshipping.Web.Controllers
         private readonly IAccountService _accountService;
         private readonly IOrderService _orderService;
         private readonly IConsumerService _consumerService;
+        private readonly IWithdrawlsService _withdrawlsService;
+        private readonly IProfilesService _profilesService;
 
-        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService, IConsumerService consumerService)
+        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService, IConsumerService consumerService,IWithdrawlsService withdrawlsService,IProfilesService profilesService)
         {
             _service = service;
             _productsService = productsService;
@@ -40,6 +44,8 @@ namespace LocalDropshipping.Web.Controllers
             _categoryService = categoryService;
             _orderService = orderService;
             _consumerService = consumerService;
+            _withdrawlsService = withdrawlsService;
+            _profilesService = profilesService;
             CategoryService = _categoryService;
             _accountService = accountService;
             _orderService = orderService;
@@ -512,7 +518,61 @@ namespace LocalDropshipping.Web.Controllers
             ViewBag.Categories = _categoryService.GetAll();
             return View(model);
         }
+       
+        public IActionResult Withdrawal()
+        {
+            try
+            {
+                var withdrawals = _withdrawlsService.GetAll();
+                var profiles = _profilesService.GetAllProfiles();
 
+                var combinedData = from withdrawal in withdrawals
+                                   join profile in profiles
+                                   on withdrawal.UserEmail equals profile.User.Email into joinedData
+                                   from profileData in joinedData.DefaultIfEmpty() // Left join
+                                   select new AddWithdrawalUserViewModel
+                                   {
+                                       WithDrawalId = withdrawal.WithdrawalId,
+                                       UserEmail = withdrawal.UserEmail,
+                                       AmountInPkr = withdrawal.AmountInPkr,
+                                       paymentStatus = withdrawal.paymentStatus,
+                                       ProcessedBy = withdrawal.ProcessedBy,
+                                       CreatedDate = withdrawal.CreatedDate,
+                                       AccountTitle = withdrawal.AccountTitle,
+                                       BankAccountNumberOrIBAN = profileData?.BankAccountNumberOrIBAN, // Use null conditional operator
+                                       BankName = profileData?.BankName, // Use null conditional operator
+                                       Withdrawals = new List<Withdrawals> { withdrawal },
+                                       Profiles = profileData != null ? new List<Profiles> { profileData } : new List<Profiles>()
+                                   };
+
+                return View(combinedData.ToList());
+            }
+            catch (Exception ex)
+            {
+                return View(ex.Message);
+            }
+        }
+
+
+        [HttpPost]
+        public IActionResult Withdrawal(PaymentViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                var email = _userService.GetUserEmailById(userId);
+                model.UpdatedBy = email;
+                model.ProcessedBy = email;
+                model.UpdatedBy = email;
+                var result = _withdrawlsService.UpdateWithDrawal(model);
+                if (result != null) return RedirectToAction("Withdrawal");
+                return RedirectToAction("Withdrawal");
+            }
+            else
+            {
+                return View();
+            }
+        }
 
         [HttpGet]
         [Authorize]
