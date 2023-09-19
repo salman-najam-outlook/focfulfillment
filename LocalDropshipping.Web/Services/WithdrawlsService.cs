@@ -2,7 +2,9 @@
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
 using LocalDropshipping.Web.Enums;
+using LocalDropshipping.Web.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace LocalDropshipping.Web.Services
 {
@@ -15,14 +17,15 @@ namespace LocalDropshipping.Web.Services
             this.context = context;
         }
 
+
         public Withdrawals GetWithdrawalRequestsById(int withdrawalId)
         {
             return context.Withdrawals.FirstOrDefault(x => x.WithdrawalId == withdrawalId);
         }
 
-        public Withdrawals GetWithdrawalRequestsByUserId(int userId)
+        public Withdrawals GetWithdrawalRequestsByUserEmail(string userEmail)
         {
-            return context.Withdrawals.FirstOrDefault(x => x.UserId == userId);
+            return context.Withdrawals.FirstOrDefault(x => x.UserEmail == userEmail);
         }
 
         public Withdrawals ProcessWidrawal(ProcessWidrawalDto processDto)
@@ -31,8 +34,8 @@ namespace LocalDropshipping.Web.Services
             if (withdrawal != null)
             {
                 withdrawal.TransactionId = processDto.TransactionId;
-                withdrawal.ProcessedBy = processDto.ProcessedBy;
-                withdrawal.paymentStatus = PaymentStatus.UnPaid;
+                withdrawal.ProcessedBy = processDto.ProcessedBy.ToString();
+                //withdrawal.paymentStatus = PaymentStatus.UnPaid;
                 withdrawal.UpdatedDate = DateTime.Now;
 
                 context.SaveChanges();
@@ -49,10 +52,10 @@ namespace LocalDropshipping.Web.Services
                     AmountInPkr = withdrawal.AmountInPkr,
                     AccountTitle = withdrawal.AccountTitle,
                     AccountNumber = withdrawal.AccountNumber,
-                    paymentStatus = withdrawal.paymentStatus = PaymentStatus.Paid,
+                    //paymentStatus = withdrawal.paymentStatus = PaymentStatus.Paid,
 
                     CreatedDate = DateTime.Now,
-                    CreatedBy = 1,
+                    CreatedBy = "1",
                 };
                 context.Withdrawals.Add(withdrawals);
                 context.SaveChanges();
@@ -61,6 +64,44 @@ namespace LocalDropshipping.Web.Services
             }
             return null;
 
+        }
+
+        public List<Withdrawals?> GetAll()
+        {
+            //var userEmail = context.Users.Select(x=>x.Email).ToList();
+            var withdrawal = new List<Withdrawals?>();
+            withdrawal = context.Withdrawals.ToList();
+            if (withdrawal != null)
+            {
+                return withdrawal;
+            }
+            return new List<Withdrawals>();
+        }
+
+        public Withdrawals UpdateWithDrawal(PaymentViewModel withdrawal)
+        {
+            // Attach the entity to the context
+            var attachedWithdrawal = context.Withdrawals.Attach(new Withdrawals { WithdrawalId = withdrawal.WithdrawalId });
+
+            // Mark specific properties as modified
+            attachedWithdrawal.Entity.UpdateBy = withdrawal.UpdatedBy;
+            attachedWithdrawal.Entity.ProcessedBy = withdrawal.ProcessedBy;
+            attachedWithdrawal.Entity.paymentStatus = withdrawal.PaymentStatus;
+            attachedWithdrawal.Entity.Reason = withdrawal.Reason;
+            attachedWithdrawal.Entity.TransactionId = withdrawal.TransactionId;
+            attachedWithdrawal.Entity.UpdatedDate = DateTime.Now;
+
+            context.SaveChanges();
+
+            return attachedWithdrawal.Entity;
+        }
+
+        public bool UpdateWithpaymentStatus(PaymentStatus paymentStatus, int WithdrawalId)
+        {
+            var attachedWithdrawal = context.Withdrawals.Attach(new Withdrawals { WithdrawalId = WithdrawalId });
+            attachedWithdrawal.Entity.paymentStatus = paymentStatus;
+            context.SaveChanges();
+            return true;
         }
     }
 }

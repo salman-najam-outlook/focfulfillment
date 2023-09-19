@@ -36,8 +36,9 @@ namespace LocalDropshipping.Web.Controllers
         private readonly IFocSettingService _focSettingService;
         private readonly LocalDropshippingContext _context;
         private readonly ICategoryService _categoryService;
+        private readonly SignInManager<User> _signInManager;
 
-        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, UserManager<User> userManager, IWishListService wishList, IProductsService productsService, IProductVariantService productVariantService, IConsumerService consumerService, IOrderItemService orderItemService, IFocSettingService focSettingService,ICategoryService categoryService)
+        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, UserManager<User> userManager, IWishListService wishList, IProductsService productsService, IProductVariantService productVariantService, IConsumerService consumerService, IOrderItemService orderItemService, IFocSettingService focSettingService,SignInManager<User>signInManager, ICategoryService categoryService)
         {
             _accountService = accountService;
             _profileService = profileService;
@@ -50,6 +51,7 @@ namespace LocalDropshipping.Web.Controllers
             _consumerService = consumerService;
             _orderItemService = orderItemService;
             _focSettingService = focSettingService;
+            _signInManager = signInManager;
             _categoryService = categoryService;
         }
         public IActionResult Register()
@@ -143,7 +145,7 @@ namespace LocalDropshipping.Web.Controllers
                 {
                     Email = model.Email,
                     UserName = model.Email,
-                    Fullname = string.Join(" ", model.FirstName, model.LastName),
+                    Fullname = model.FullName,//string.Join(" ", model.FirstName, model.LastName),
                     IsSeller = true
                 };
 
@@ -400,6 +402,7 @@ namespace LocalDropshipping.Web.Controllers
                 var withdrawalModels = orders.Select(order => new withdrawalModel
                 {
                     Id = order.Id,
+                    Name = order.Name,
                     GrandTotal = order.GrandTotal,
                     OrderStatus = order.OrderStatus,
 
@@ -752,6 +755,19 @@ namespace LocalDropshipping.Web.Controllers
             }
             return View(products);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> SellerLogout()
+        {
+            await _signInManager.SignOutAsync();
+
+            return RedirectToAction("Login", "Seller");
+        }
+        public IActionResult Reports()
+        {
+            return View();
+        }
+
         private decimal ShippingCost()
         {
             string shippingCost = "Shipping Cost";

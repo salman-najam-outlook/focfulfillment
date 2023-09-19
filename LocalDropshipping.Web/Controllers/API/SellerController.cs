@@ -72,10 +72,11 @@ namespace LocalDropshipping.Web.Controllers.API
         {
             return Ok(withdrawalsService.GetWithdrawalRequestsById(id));
         }
-        [HttpGet("{id}")]
-        public IActionResult getWithrawalByUserId(int id)
+
+        [HttpGet("{email}")]
+        public IActionResult getWithrawalByUserId(string email)
         {
-            return Ok(withdrawalsService.GetWithdrawalRequestsByUserId(id));
+            return Ok(withdrawalsService.GetWithdrawalRequestsByUserEmail(email));
         }
 
         [HttpPost]
