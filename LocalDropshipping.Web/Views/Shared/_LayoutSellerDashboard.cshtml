@@ -15,7 +15,8 @@
     <meta name="keywords" content="Fastkart">
     <meta name="author" content="Fastkart">
     <link rel="icon" href="../assets/images/favicon/1.png" type="image/x-icon">
-    <title>Seller Dashboard</title>
+    @* <title>Seller Dashboard</title> *@
+    <title>@ViewBag.Title</title>
 
     <!-- Google font -->
     <link rel="preconnect" href="https://fonts.gstatic.com/">
@@ -113,7 +114,7 @@
                                     <i class="fa-solid fa-bars"></i>
                                 </span>
                             </button>
-                            <a href="index.html" class="web-logo nav-logo">
+                            <a href="Shop" class="web-logo nav-logo">
                                 <img src="../assets/images/logo/1.png" class="img-fluid blur-up lazyload" alt="">
                             </a>
 
@@ -121,7 +122,7 @@
 
                             <div class="header-nav col-lg-6">
                                 <div class="header-nav-left">
-                                    <a asp-controller="Seller" asp-action="SellerDashboard" class="text-content">
+                                    <a asp-action="Shop" asp-controller="Seller" class="text-content">
                                         <button class="dropdown-category" style="float: left;">
                                             <span>Shop</span>
                                         </button>
@@ -218,7 +219,7 @@
                                                 </div>
 
                                                 <div class="button-group">
-                                                    <a href="cart.html" class="btn btn-sm cart-button">View Cart</a>
+                                                    <a href="Cart" class="btn btn-sm cart-button">View Cart</a>
                                                     <a href="checkout.html" class="btn btn-sm cart-button theme-bg-color
                                                     text-white">Checkout</a>
                                                 </div>
@@ -237,15 +238,17 @@
                                             <ul class="user-box-name">
                                                 <li class="product-box-contain">
                                                     <i></i>
-                                                    <a href="login.html">Log In</a>
+                                                    @* <a href="login.html">Log In</a> *@
+                                                    @* <a asp-action="SellerLogout" asp-controller="Seller">Logout</a> *@
+                                                    <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="nav-link" id="pills-out-tab" role="tab">Logout</a>
                                                 </li>
 
                                                 <li class="product-box-contain">
-                                                    <a href="sign-up.html">Register</a>
+                                                    @* <a href="sign-up.html">Register</a> *@
                                                 </li>
 
                                                 <li class="product-box-contain">
-                                                    <a href="forgot.html">Forgot Password</a>
+                                                    <a href="ForgotPassword">Forgot Password</a>
                                                 </li>
                                             </ul>
                                         </div>
@@ -257,8 +260,6 @@
                 </div>
             </div>
         </div>
-
-
     </header>
     <!-- Header End -->
     <!-- Breadcrumb Section Start -->
@@ -298,17 +299,23 @@
 
 
                         <ul class="nav nav-pills user-nav-pills" id="pills-tab" role="tablist">
+                            @* <li class="nav-item" role="presentation">
+                            <a asp-action="SellerDashboard" asp-controller="Seller" class="nav-link active" id="pills-dashboard-tab"
+                            data-bs-target="#pills-dashboard" role="tab"
+                            aria-controls="pills-dashboard" aria-selected="true">
+                            <i data-feather="home"></i>
+                            DashBoard
+                            </a>
+                            </li>*@
                             <li class="nav-item" role="presentation">
-                                <a asp-action="SellerDashboard" asp-controller="Seller" class="nav-link active" id="pills-dashboard-tab"
-                                   data-bs-target="#pills-dashboard" role="tab"
-                                   aria-controls="pills-dashboard" aria-selected="true">
+                                <a asp-action="SellerDashboard" asp-controller="Seller" class="nav-link active" id="pills-dashboard-tab" role="tab" aria-controls="pills-dashboard" aria-selected="true">
                                     <i data-feather="home"></i>
                                     DashBoard
                                 </a>
                             </li>
 
                             <li class="nav-item" role="presentation">
-                                <a asp-controller="Seller" asp-action="SellerOrders" class="nav-link" id="pills-orders-tab" role="tab"
+                                <a asp-controller="Seller" asp-action="SellerOrders" class="nav-link " id="pills-orders-tab" role="tab"
                                    aria-controls="pills-product" aria-selected="false">
                                     <i data-feather="shopping-bag"></i> Orders
                                 </a>
@@ -330,31 +337,54 @@
 
 
                             <li class="nav-item" role="presentation">
-                                <a asp-controller="Seller" asp-action="Reports" class="nav-link" id="pills-product-tab" data-bs-toggle="pill"
-                                   data-bs-target="#pills-product" role="tab" aria-controls="pills-product" aria-selected="false">
-                                    <i data-feather="shopping-bag"></i> Reports
-                                </a>
+                                @*        <a asp-controller="Seller" asp-action="Reports" class="nav-link" id="pills-report-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-report" role="tab" aria-controls="pills-report" aria-selected="false">
+                                <i data-feather="shopping-bag"></i> Reports
+                                </a> *@
+                                <form asp-action="Reports" asp-controller="Seller">
+                                    <button asp-controller="Seller" asp-action="Reports" class="nav-link" id="pills-report-tab" data-bs-toggle="pill"
+                                            data-bs-target="#pills-report" role="tab" aria-controls="pills-report" aria-selected="false" type="submit">
+                                        <i data-feather="shopping-bag"></i>
+                                        Reports
+                                    </button>
+                                </form>
+
+
                             </li>
 
-
+                            
                             <li class="nav-item" role="presentation">
 
-                                <a asp-action="Profile" asp-controller="Seller" class="nav-link" id="pills-profile-tab" data-bs-target="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                                    Profile
-                                </a>
+                            <a asp-action="Profile" asp-controller="Seller" class="nav-link" id="pills-profile-tab" data-bs-target="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            Profile
+                            </a>
 
                             </li>
+                           
 
 
 
+                            @* <form asp-action="SellerLogout" asp-controller="Seller"> *@
+
+
+                            @* <a data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                            href="javascript:void(0)">
+                            <i data-feather="log-out"></i>
+                            <span>Log out</span>
+                            </a> *@
+
+                            
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="pills-out-tab" data-bs-toggle="pill"
-                                        data-bs-target="#pills-out" type="button" role="tab" aria-selected="false">
-                                    <i data-feather="log-out"></i>
-                                    Log Out
-                                </button>
+                            <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="nav-link" id="pills-out-tab" role="tab" aria-selected="false">
+                            <i data-feather="log-out"></i>
+                            Log Out
+                            </a>
                             </li>
+                           
+
+                            @* </form> *@
+
                         </ul>
                     </div>
                 </div>
@@ -1120,6 +1150,28 @@
         </div>
     </div>
     <!-- Edit Profile Modal End -->
+    <!-- Log Out Modal Start -->
+
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+                    <p>Are you sure you want to log out?</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="button-box">
+                        <form asp-action="SellerLogout" asp-controller="Seller">
+                            <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+                            <button type="submit" class="btn  btn--yes btn-primary">Yes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Out Modal End-->
     <!-- latest jquery-->
     <script src="../assets/js/jquery-3.6.0.min.js"></script>
 
@@ -1154,8 +1206,22 @@
 
     <!-- thme setting js -->
     <script src="../assets/js/theme-setting.js"></script>
-</body>
+@*     <script>
+        // Get all navigation links
+        const navLinks = document.querySelectorAll('.nav-link');
 
+        // Add click event listener to each navigation link
+        navLinks.forEach(function (link) {
+            link.addEventListener('click', function () {
+                // Remove 'active' class from all links
+                navLinks.forEach(function (navLink) {
+                    navLink.classList.remove('active');
+                });
 
-<!-- Mirrored from themes.pixelstrap.com/fastkart/front-end/seller-dashboard.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 24 Aug 2023 10:49:47 GMT -->
+                // Add 'active' class to the clicked link
+                this.classList.add('active');
+            });
+        });
+    </script> *@
+    </body>
 </html>

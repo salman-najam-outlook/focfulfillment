@@ -2,13 +2,14 @@
 @using LocalDropshipping.Web.Helpers;
 @model PageResponse<List<AddProductVariantViewModel>>
 @{
+    ViewBag.Title = "FOC Fulfillment - WishList";
     Layout = "_LayoutSellerDashboard";
 }
 <div class="row g-sm-3 g-2">
     @if (Model != null && Model.totalCount > 0)
     {
         @foreach (var wishListItem in Model.Data)
-        { 
+        {
             <div class="col-xxl-2 col-lg-3 col-md-4 col-6 product-box-contain">
                 <div class="product-box-3 h-100">
                     <div class="product-header">
@@ -61,9 +62,10 @@
     }
     else
     {
-        <p>No products to display.</p>
+        <h3>No items in you Wishlist to display</h3>
+        @*  <p>No products to display.</p> *@
     }
-    @if(Model!= null && Model.totalCount > 0)
+    @if (Model != null && Model.totalCount > 0)
     {
         <div class="mb-2">
             <nav aria-label="Page navigation" class="custome-pagination">
@@ -96,7 +98,7 @@
             </nav>
         </div>
     }
-    
+
 </div>
 
 <!-- Location Modal Start -->

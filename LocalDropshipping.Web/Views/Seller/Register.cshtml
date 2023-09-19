@@ -1,6 +1,7 @@
 ﻿@model SignupViewModel
 
 @{
+    ViewBag.Title = "FOC Fulfillment - Register";
     Layout = null;
 }
 
@@ -160,7 +161,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="navbar-top">
-                            <a href="index.html" class="web-logo nav-logo">
+                            <a href="Shop" class="web-logo nav-logo">
                                 <img src="~/assets/images/logo/1.png" class="img-fluid blur-up lazyload" alt="">
                             </a>
                         </div>
@@ -208,22 +209,19 @@
 
                         <div class="input-box">
                             <form asp-action="register" class="row g-4">
+
                                 <div class="col-12">
                                     <div class="form-floating theme-form-floating">
-                                        <input asp-for="FirstName" class="form-control" placeholder="First Name" />
-                                        <label>First Name</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-floating theme-form-floating">
-                                        <input asp-for="LastName" class="form-control" placeholder="Last Name" />
-                                        <label>Last Name</label>
+                                        <input asp-for="FullName" class="form-control" placeholder="Full Name" />
+                                        <label>Full Name</label>
+                                        <span asp-validation-for="FullName" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-floating theme-form-floating">
                                         <input asp-for="Email" class="form-control" placeholder="Email" />
                                         <label>Email</label>
+                                        <span asp-validation-for="Email" class="text-danger"></span>
                                     </div>
                                 </div>
 
@@ -231,13 +229,7 @@
                                     <div class="form-floating theme-form-floating">
                                         <input asp-for="Password" class="form-control" placeholder="Password" />
                                         <label>Password</label>
-                                    </div>
-                                </div>
-
-                                <div class="col-12">
-                                    <div class="form-floating theme-form-floating">
-                                        <input asp-for="ConfirmPassword" placeholder="Confirm Password" class="form-control" />
-                                        <label>Confirm Password</label>
+                                        <span asp-validation-for="Password" class="text-danger"></span>
                                     </div>
                                 </div>
 
@@ -254,10 +246,10 @@
                                     </div>
                                 </div>
                                 <div class="validation-summary-errors col-12">
-                                    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                                    @* @Html.ValidationSummary(false, "", new { @class = "text-danger" }) *@
                                 </div>
                                 <div class="col-12">
-                                    <button class="btn btn-animation w-100" type="submit">Register</button>
+                                    <button class="btn btn-animation w-100" type="submit" id="registerButton" disabled>Register</button>
                                 </div>
                             </form>
                         </div>
@@ -580,3 +572,19 @@
 
 </body>
 </html>
+<script>
+  
+    document.addEventListener("DOMContentLoaded", function () {
+        debugger;
+        var rememberCheckbox = document.getElementById("flexCheckDefault");
+        var registerButton = document.getElementById("registerButton");
+
+        rememberCheckbox.addEventListener("change", function () {
+            if (rememberCheckbox.checked) {
+                registerButton.disabled = false;
+            } else {
+                registerButton.disabled = true;
+            }
+        });
+    });
+</script>
