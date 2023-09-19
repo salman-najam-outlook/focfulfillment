@@ -37,8 +37,9 @@ namespace LocalDropshipping.Web.Controllers
         private readonly LocalDropshippingContext _context;
         private readonly ICategoryService _categoryService;
         private readonly SignInManager<User> _signInManager;
+        private readonly IWithdrawlsService _withdrawlsService;
 
-        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, UserManager<User> userManager, IWishListService wishList, IProductsService productsService, IProductVariantService productVariantService, IConsumerService consumerService, IOrderItemService orderItemService, IFocSettingService focSettingService,SignInManager<User>signInManager, ICategoryService categoryService)
+        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, UserManager<User> userManager, IWishListService wishList, IProductsService productsService, IProductVariantService productVariantService, IConsumerService consumerService, IOrderItemService orderItemService, IFocSettingService focSettingService,SignInManager<User>signInManager,ICategoryService categoryService,IWithdrawlsService withdrawlsService)
         {
             _accountService = accountService;
             _profileService = profileService;
@@ -53,6 +54,7 @@ namespace LocalDropshipping.Web.Controllers
             _focSettingService = focSettingService;
             _signInManager = signInManager;
             _categoryService = categoryService;
+            _withdrawlsService = withdrawlsService;
         }
         public IActionResult Register()
         {
@@ -755,6 +757,18 @@ namespace LocalDropshipping.Web.Controllers
             }
             return View(products);
         }
+
+        public IActionResult WithdrawalRequest()
+        {
+            var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
+            var email = _userService.GetUserEmailById(userId);
+            if (email != null)
+            {
+               var result =  _withdrawlsService.WithdrawalRequest(email);
+                if (result) return RedirectToAction("Withdrawal"); 
+            }
+            return RedirectToAction("Withdrawal");
+        } 
 
         [HttpPost]
         public async Task<IActionResult> SellerLogout()
