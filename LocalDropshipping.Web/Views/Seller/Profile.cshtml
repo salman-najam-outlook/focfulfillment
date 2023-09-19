@@ -4,6 +4,7 @@
 @using LocalDropshipping.Web.Dtos;
 @model List<ProfilesDto>
 @{
+    ViewBag.Title = "FOC Fulfillment - Profile";
     Layout = "_LayoutSellerDashboard";
 }
 
@@ -22,8 +23,6 @@
 
         <div class="profile-tab dashboard-bg-box">
             <div class="dashboard-title dashboard-flex">
-                <h3>Profile</h3>
-
             </div>
             <ul>
                 @foreach (var profile in Model)
@@ -49,20 +48,12 @@
                         <h5>@profile.BankAccountNumberOrIBAN</h5>
                     </li>
                     <li>
-                        <h5>Branch Address:</h5>
+                        <h5>Bank Branch Address:</h5>
                         <h5>@profile.BankBranch</h5>
                     </li>
                     <li>
-                        <h5>Address:</h5>
+                        <h5>House/Office Address:</h5>
                         <h5>@profile.Address</h5>
-                    </li>
-                    <li>
-                        <h5>ImageLink:</h5>
-                        @if (!string.IsNullOrEmpty(profile.ImageLink))
-                        {
-                            <img src="@profile.ImageLink" alt="Profile Image" />
-                        }
-                        @* <h5>@profile.ImageLink</h5> *@
                     </li>
                 }
             </ul>
@@ -78,12 +69,8 @@
     <div class="dashboard-title dashboard-flex">
         @* <h4>Upload Image</h4> *@
         <form asp-action="Profile" asp-controller="Seller" method="post" enctype="multipart/form-data">
-            @*  <label for="formFileMultiple" class="form-label"></label>
-            <input class="form-control form-choose" type="file" accept="image/*" name="profileImage">
-            <button class="btn btn-animation w-50 justify-content-center" type="submit">
-            Upload
-            </button> *@
-            <div class="row">
+
+@*             <div class="row">
                 <div class="mb-4 row align-items-center">
                     <label for="formFileMultiple" class="col-sm-3 col-form-label form-label-title">Images</label>
                     <div class="col-sm-9">
@@ -99,7 +86,7 @@
                     </div>
                 </div>
 
-            </div>
+            </div> *@
             <a style="color:#0DA487" asp-action="UpdateSellerPassword" asp-controller="Seller">Want to change your password?</a>
         </form>
 

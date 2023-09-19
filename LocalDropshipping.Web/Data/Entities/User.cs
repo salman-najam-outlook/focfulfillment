@@ -6,6 +6,7 @@ namespace LocalDropshipping.Web.Data.Entities
     public class User : IdentityUser
     {
         public string? Fullname { get; set; }
+        public string? Email { get; set; }
         public bool IsSeller { get; set; }
         public bool IsAdmin { get; set; }
         public bool IsSuperAdmin { get; set; }

@@ -173,6 +173,10 @@ namespace LocalDropshipping.Web.Services
             return user;
         }
 
-
+        public string GetUserEmailById(string userId)
+        {
+            var user = _context.Users.FirstOrDefault(x => x.Id == userId);
+            return user.Email.ToString();
+        }
     }
 }

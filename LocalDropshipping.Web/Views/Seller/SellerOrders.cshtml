@@ -2,6 +2,7 @@
 @using LocalDropshipping.Web.Helpers;
 @model PageResponse<List<Order>>;
 @{
+    ViewBag.Title = "FOC Fulfillment - Seller Orders";
 
     Layout = "_LayoutSellerDashboard";
 }
@@ -11,7 +12,7 @@
     <div class="tab-pane fade active show" id="pills-order" role="tabpanel" aria-labelledby="pills-order-tab">
         <div class="dashboard-order">
             <div class="title">
-                <h2>All Order</h2>
+                <h2>All Orders</h2>
                 <span class="title-leaf title-leaf-gray">
                     <svg class="icon-width bg-gray">
                         <use xlink:href="https://themes.pixelstrap.com/fastkart/assets/svg/leaf.svg#leaf"></use>
@@ -38,9 +39,10 @@
                                 <tr>
                                     <td>@order.Id</td>
                                     <td>@order.OrderDate</td>
-                                   @*  <td>@order.Name</td> *@
+                                    <td>@order.Name</td>
                                     <td>@order.OrderStatus</td>
-                                    <td>@order.GrandTotal</td>
+                                    @* <td>@order.GrandTotal</td> *@
+                                    <td>Rs.@order.GrandTotal.ToString("N0")/-</td>
                                 </tr>
                             }
                         </tbody>
