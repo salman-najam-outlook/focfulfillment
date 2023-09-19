@@ -127,7 +127,7 @@
                         </div>
 
                         <div class="input-box">
-                            <form asp-action="Login" class="row g-4">
+                            <form asp-action="Login" asp-route-returnUrl="@Context.Request.Query["ReturnUrl"]" class="row g-4">
                                 <div class="col-12">
                                     <div class="form-floating theme-form-floating log-in-form">
                                         <input asp-for="Email" class="form-control" id="email" placeholder="Email Address">

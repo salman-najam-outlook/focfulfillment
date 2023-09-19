@@ -117,13 +117,19 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     var user = await _accountService.LoginAsync(model.Email, model.Password);
+                   
+                    if(!String.IsNullOrEmpty(returnUrl))
+                    {
+                        return LocalRedirect(returnUrl);
+                    }
+
                     return RedirectToAction("Shop", "Seller");
                 }
             }
@@ -415,6 +421,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult SellerDashboard()
         {
             try
