@@ -10,7 +10,7 @@ namespace LocalDropshipping.Web.Services
         Withdrawals RequestWithdrawal(Withdrawals withdrawal);
         Withdrawals GetWithdrawalRequestsById(int withdrawalId);
         Withdrawals GetWithdrawalRequestsByUserEmail(string userEmail);
-        Withdrawals ProcessWidrawal(ProcessWidrawalDto processDto);
+        Withdrawals ProcessWithdrawal(ProcessWidrawalDto processDto);
         List<Withdrawals?> GetAll();
         Withdrawals UpdateWithDrawal(PaymentViewModel withdrawal);
         bool UpdateWithpaymentStatus(PaymentStatus paymentStatus,int WithdrawalId);

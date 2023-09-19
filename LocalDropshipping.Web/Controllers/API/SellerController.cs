@@ -82,7 +82,7 @@ namespace LocalDropshipping.Web.Controllers.API
         [HttpPost]
         public IActionResult ProcessWithdrawal(ProcessWidrawalDto processDto)
         {
-            var withdrawal = withdrawalsService.ProcessWidrawal(processDto);
+            var withdrawal = withdrawalsService.ProcessWithdrawal(processDto);
             if (withdrawal != null)
             {
                 return Ok(withdrawal);

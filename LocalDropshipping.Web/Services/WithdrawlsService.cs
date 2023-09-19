@@ -28,7 +28,7 @@ namespace LocalDropshipping.Web.Services
             return context.Withdrawals.FirstOrDefault(x => x.UserEmail == userEmail);
         }
 
-        public Withdrawals ProcessWidrawal(ProcessWidrawalDto processDto)
+        public Withdrawals ProcessWithdrawal(ProcessWidrawalDto processDto)
         {
             var withdrawal = context.Withdrawals.FirstOrDefault(x => x.WithdrawalId == processDto.WithdrawalId);
             if (withdrawal != null)
@@ -80,13 +80,11 @@ namespace LocalDropshipping.Web.Services
 
         public Withdrawals UpdateWithDrawal(PaymentViewModel withdrawal)
         {
-            // Attach the entity to the context
             var attachedWithdrawal = context.Withdrawals.Attach(new Withdrawals { WithdrawalId = withdrawal.WithdrawalId });
-
-            // Mark specific properties as modified
+           
             attachedWithdrawal.Entity.UpdateBy = withdrawal.UpdatedBy;
             attachedWithdrawal.Entity.ProcessedBy = withdrawal.ProcessedBy;
-            attachedWithdrawal.Entity.paymentStatus = withdrawal.PaymentStatus;
+            attachedWithdrawal.Entity.PaymentStatus = withdrawal.PaymentStatus.ToString() == "Paid" ? PaymentStatus.Paid : PaymentStatus.UnPaid;
             attachedWithdrawal.Entity.Reason = withdrawal.Reason;
             attachedWithdrawal.Entity.TransactionId = withdrawal.TransactionId;
             attachedWithdrawal.Entity.UpdatedDate = DateTime.Now;
@@ -95,11 +93,10 @@ namespace LocalDropshipping.Web.Services
 
             return attachedWithdrawal.Entity;
         }
-
         public bool UpdateWithpaymentStatus(PaymentStatus paymentStatus, int WithdrawalId)
         {
             var attachedWithdrawal = context.Withdrawals.Attach(new Withdrawals { WithdrawalId = WithdrawalId });
-            attachedWithdrawal.Entity.paymentStatus = paymentStatus;
+            attachedWithdrawal.Entity.PaymentStatus = paymentStatus;
             context.SaveChanges();
             return true;
         }

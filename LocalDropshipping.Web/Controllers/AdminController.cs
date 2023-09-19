@@ -519,7 +519,7 @@ namespace LocalDropshipping.Web.Controllers
             return View(model);
         }
        
-        public IActionResult Withdrawal()
+        public IActionResult Withdrawal([FromQuery] Pagination pagination)
         {
             try
             {
@@ -529,23 +529,24 @@ namespace LocalDropshipping.Web.Controllers
                 var combinedData = from withdrawal in withdrawals
                                    join profile in profiles
                                    on withdrawal.UserEmail equals profile.User.Email into joinedData
-                                   from profileData in joinedData.DefaultIfEmpty() // Left join
+                                   from profileData in joinedData.DefaultIfEmpty() 
                                    select new AddWithdrawalUserViewModel
                                    {
                                        WithDrawalId = withdrawal.WithdrawalId,
                                        UserEmail = withdrawal.UserEmail,
                                        AmountInPkr = withdrawal.AmountInPkr,
-                                       paymentStatus = withdrawal.paymentStatus,
+                                       paymentStatus = withdrawal.PaymentStatus,
                                        ProcessedBy = withdrawal.ProcessedBy,
                                        CreatedDate = withdrawal.CreatedDate,
                                        AccountTitle = withdrawal.AccountTitle,
-                                       BankAccountNumberOrIBAN = profileData?.BankAccountNumberOrIBAN, // Use null conditional operator
-                                       BankName = profileData?.BankName, // Use null conditional operator
+                                       BankAccountNumberOrIBAN = profileData?.BankAccountNumberOrIBAN, 
+                                       BankName = profileData?.BankName, 
                                        Withdrawals = new List<Withdrawals> { withdrawal },
                                        Profiles = profileData != null ? new List<Profiles> { profileData } : new List<Profiles>()
                                    };
-
-                return View(combinedData.ToList());
+                var count = combinedData.Count();
+                combinedData = combinedData.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+                return View(new PageResponse<List<AddWithdrawalUserViewModel>>(combinedData.ToList(), pagination.PageNumber, pagination.PageSize, count));
             }
             catch (Exception ex)
             {

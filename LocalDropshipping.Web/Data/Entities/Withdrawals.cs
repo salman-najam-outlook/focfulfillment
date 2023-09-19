@@ -11,7 +11,7 @@ namespace LocalDropshipping.Web.Data.Entities
         public int AmountInPkr { get; set; }
         public string AccountTitle { get; set; }
         public string AccountNumber { get; set; }
-        public PaymentStatus paymentStatus { get; set; }
+        public PaymentStatus PaymentStatus { get; set; }
         public string? TransactionId { get; set; }
         public string? ProcessedBy { get; set; }
         public DateTime CreatedDate { get; set; }
