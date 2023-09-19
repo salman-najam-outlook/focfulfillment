@@ -1,4 +1,5 @@
-﻿using LocalDropshipping.Web.Attributes;
+﻿using Humanizer;
+using LocalDropshipping.Web.Attributes;
 using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
@@ -10,6 +11,8 @@ using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Packaging;
+using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -29,8 +32,10 @@ namespace LocalDropshipping.Web.Controllers
         private readonly IAccountService _accountService;
         private readonly IOrderService _orderService;
         private readonly IConsumerService _consumerService;
+        private readonly IWithdrawlsService _withdrawlsService;
+        private readonly IProfilesService _profilesService;
 
-        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService, IConsumerService consumerService)
+        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService, IConsumerService consumerService,IWithdrawlsService withdrawlsService,IProfilesService profilesService)
         {
             _service = service;
             _productsService = productsService;
@@ -41,6 +46,8 @@ namespace LocalDropshipping.Web.Controllers
             _categoryService = categoryService;
             _orderService = orderService;
             _consumerService = consumerService;
+            _withdrawlsService = withdrawlsService;
+            _profilesService = profilesService;
             CategoryService = _categoryService;
             _accountService = accountService;
             _orderService = orderService;
@@ -266,7 +273,8 @@ namespace LocalDropshipping.Web.Controllers
             var sellers = _userService.GetAll();
             if (!string.IsNullOrEmpty(searchString))
             {
-                sellers = sellers.Where(x => x.Fullname.ToLower().Contains(searchString.ToLower())).ToList();
+                sellers = sellers.Where(x => x.Fullname.ToLower().Contains(searchString.ToLower())
+                || x.Email.ToLower().Contains(searchString.ToLower())).ToList();
             }
             switch (sortByName)
             {
@@ -299,12 +307,57 @@ namespace LocalDropshipping.Web.Controllers
 
 
         [HttpGet]
-        public IActionResult OrdersList([FromQuery] Pagination pagination)
+        public IActionResult OrdersList([FromQuery] Pagination pagination, string searchString, string sortOrder, string currentFilter)
         {
             try
             {
                 SetRoleByCurrentUser();
+                ViewBag.CurrentSort = sortOrder;
+                ViewBag.NameSortParm = string.IsNullOrEmpty(sortOrder) ? "name_asc" : (sortOrder == "name_asc" ? "name_desc" : "name_asc");
+                ViewBag.PriceSortParm = string.IsNullOrEmpty(sortOrder) ? "price_asc" : (sortOrder == "price_asc" ? "price_desc" : "price_asc");
+                ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+                if (searchString != null)
+                {
+                    pagination.PageNumber = 1;
+                }
+                else
+                {
+                    searchString = currentFilter;
+                }
+
+                ViewBag.CurrentFilter = searchString;
                 List<Order> orders = _orderService.GetAll();
+                if (!string.IsNullOrEmpty(searchString))
+                {
+                    if(Enum.TryParse<OrderStatus>(searchString.ApplyCase(LetterCasing.Sentence), out OrderStatus status))
+                    orders = orders.Where(x => x.OrderStatus == status).ToList();
+                }
+                switch (sortOrder)
+                {
+                    case "name_asc":
+                        orders = orders.OrderBy(s => s.OrderStatus).ToList();
+                        break;
+                    case "name_desc":
+                        orders = orders.OrderByDescending(s => s.OrderStatus).ToList();
+                        break;
+                    case "Date":
+                        orders = orders.OrderBy(s => s.OrderDate).ToList();
+                        break;
+                    case "date_desc":
+                        orders = orders.OrderByDescending(s => s.OrderDate).ToList();
+                        break;
+                    case "price_asc":
+                        orders = orders.OrderBy(s => s.GrandTotal).ToList();
+                        break;
+                    case "price_desc":
+                        orders = orders.OrderByDescending(s => s.GrandTotal).ToList();
+                        break;
+
+                    default:
+                        orders = orders.OrderBy(s => s.Id).ToList();
+                        break;
+                }
+                
                 var count = orders.Count();
                 orders = orders.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
                 return View(new PageResponse<List<Order>>(orders, pagination.PageNumber, pagination.PageSize, count));
@@ -322,8 +375,10 @@ namespace LocalDropshipping.Web.Controllers
         public IActionResult Products([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
         {
             //Add ViewBag to save SortOrder of table
-            ViewBag.CurrentSort = sortByName;
-            ViewBag.NameSortParm = string.IsNullOrEmpty(sortByName) ? "name_asc" : (sortByName == "name_asc" ? "name_desc" : "name_asc");
+            ViewBag.CurrentSort = sortProduct;
+            ViewBag.NameSortParm = string.IsNullOrEmpty(sortProduct) ? "name_asc" : (sortProduct == "name_asc" ? "name_desc" : "name_asc");
+            ViewBag.PriceSortParm = string.IsNullOrEmpty(sortProduct) ? "price_asc" : (sortProduct == "price_asc" ? "price_desc" : "price_asc");
+
             if (searchString != null)
             {
                 pagination.PageNumber = 1;
@@ -337,14 +392,24 @@ namespace LocalDropshipping.Web.Controllers
             List<Product> data = _productsService.GetAll();
             if (!string.IsNullOrEmpty(searchString))
             {
-                data = _productsService.GetProductsBySearch(searchString);
+                data = data.Where(x => x.Name.ToLower().Contains(searchString.ToLower()) ||
+                x.Description.ToLower().Contains(searchString.ToLower()) ||
+                 x.Category.Name.ToLower().Contains(searchString.ToLower())).ToList();
             }
-            switch (sortByName)
+            switch (sortProduct)
             {
-                case "name_desc":
+                case "name_asc":
                     data = data.OrderBy(s => s.Name).ToList();
                     break;
-
+                case "name_desc":
+                    data = data.OrderByDescending(s => s.Name).ToList();
+                    break;
+                case "price_asc":
+                    data = data.OrderBy(s => s.Variants.FirstOrDefault().VariantPrice).ToList();
+                    break;
+                case "price_desc":
+                    data = data.OrderByDescending(s => s.Variants.FirstOrDefault().VariantPrice).ToList();
+                    break;
                 default:
                     data = data.OrderBy(s => s.ProductId).ToList();
                     break;
@@ -522,7 +587,61 @@ namespace LocalDropshipping.Web.Controllers
             ViewBag.Categories = _categoryService.GetAll();
             return View(model);
         }
+       
+        public IActionResult Withdrawal([FromQuery] Pagination pagination)
+        {
+            try
+            {
+                var withdrawals = _withdrawlsService.GetAll();
+                var profiles = _profilesService.GetAllProfiles();
 
+                var combinedData = from withdrawal in withdrawals
+                                   join profile in profiles
+                                   on withdrawal.UserEmail equals profile.User.Email into joinedData
+                                   from profileData in joinedData.DefaultIfEmpty() 
+                                   select new AddWithdrawalUserViewModel
+                                   {
+                                       WithDrawalId = withdrawal.WithdrawalId,
+                                       UserEmail = withdrawal.UserEmail,
+                                       AmountInPkr = withdrawal.AmountInPkr,
+                                       paymentStatus = withdrawal.PaymentStatus,
+                                       ProcessedBy = withdrawal.ProcessedBy,
+                                       CreatedDate = withdrawal.CreatedDate,
+                                       AccountTitle = profileData?.BankAccountTitle,
+                                       BankAccountNumberOrIBAN = profileData?.BankAccountNumberOrIBAN, 
+                                       BankName = profileData?.BankName, 
+                                       Withdrawals = new List<Withdrawals> { withdrawal },
+                                       Profiles = profileData != null ? new List<Profiles> { profileData } : new List<Profiles>()
+                                   };
+                var count = combinedData.Count();
+                combinedData = combinedData.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+                return View(new PageResponse<List<AddWithdrawalUserViewModel>>(combinedData.ToList(), pagination.PageNumber, pagination.PageSize, count));
+            }
+            catch (Exception ex)
+            {
+                return View(ex.Message);
+            }
+        }
+
+
+        [HttpPost]
+        public IActionResult Withdrawal(PaymentViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                var email = _userService.GetUserEmailById(userId);
+                model.UpdatedBy = email;
+                model.ProcessedBy = email;
+                var result = _withdrawlsService.UpdateWithdrawal(model);
+                if (result != null) return RedirectToAction("Withdrawal");
+                return RedirectToAction("Withdrawal");
+            }
+            else
+            {
+                return View();
+            }
+        }
 
         [HttpGet]
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin, "AdminLogin", "Admin")]
@@ -582,7 +701,6 @@ namespace LocalDropshipping.Web.Controllers
 
         public IActionResult CategoryList([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
         {
-            //Add ViewBag to save SortOrder of table
             ViewBag.CurrentSort = sortByName;
             ViewBag.NameSortParm = string.IsNullOrEmpty(sortByName) ? "name_asc" : (sortByName == "name_asc" ? "name_desc" : "name_asc");
             if (searchString != null)
@@ -598,13 +716,15 @@ namespace LocalDropshipping.Web.Controllers
             List<Category> category = _categoryService.GetAll();
             if (!string.IsNullOrEmpty(searchString))
             {
-                category = _categoryService.GetCatagoreyBySearch(searchString);
-                //_productsService.GetProductsBySearch(searchString);
+                category = category.Where(c => c.Name.ToLower().Contains(searchString.ToLower())).ToList();
             }
             switch (sortByName)
             {
-                case "name_desc":
+                case "name_asc":
                     category = category.OrderBy(s => s.Name).ToList();
+                    break;
+                case "name_desc":
+                    category = category.OrderByDescending(s => s.Name).ToList();
                     break;
 
                 default:
@@ -692,10 +812,40 @@ namespace LocalDropshipping.Web.Controllers
             return View();
         }
 
-        public IActionResult GetAllConsumers([FromQuery] Pagination pagination)
+        public IActionResult GetAllConsumers([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
         {
             SetRoleByCurrentUser();
+            ViewBag.CurrentSort = sortByName;
+            ViewBag.NameSortParm = string.IsNullOrEmpty(sortByName) ? "name_asc" : (sortByName == "name_asc" ? "name_desc" : "name_asc");
+            if (searchString != null)
+            {
+                pagination.PageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+            ViewBag.CurrentFilter = searchString;
             var consumers = _consumerService.GetAllConsumer();
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                consumers = consumers.Where(c => c.FullName.ToLower().Contains(searchString.ToLower())
+                || c.PrimaryPhoneNumber.Contains(searchString)
+                || c.PrimaryPhoneNumber.Contains(searchString)).ToList();
+            }
+            switch (sortByName)
+            {
+                case "name_asc":
+                    consumers = consumers.OrderBy(s => s.FullName).ToList();
+                    break;
+                case "name_desc":
+                    consumers = consumers.OrderByDescending(s => s.FullName).ToList();
+                    break;
+
+                default:
+                    consumers = consumers.ToList();
+                    break;
+            }
             var count = consumers.Count();
             consumers = consumers.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
             return View(new PageResponse<List<Consumer>>(consumers, pagination.PageNumber, pagination.PageSize, count));

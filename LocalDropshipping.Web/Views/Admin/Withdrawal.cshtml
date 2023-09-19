@@ -1,0 +1,172 @@
+﻿@using LocalDropshipping.Web.Data.Entities;
+@using LocalDropshipping.Web.Helpers;
+@model PageResponse<List<AddWithdrawalUserViewModel>>
+
+@{
+    Layout = "_LayoutDashboard";
+}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="tab-pane fade active show" id="pills-order" role="tabpanel" aria-labelledby="pills-order-tab">
+                    <div class="dashboard-order">
+                        <div class="title">
+                            <h2>All Withdrawals</h2>
+                            <span class="title-leaf title-leaf-gray"></span>
+                        </div>
+
+                        <div class="order-tab dashboard-bg-box">
+                            <div class="table-responsive">
+                                <table class="table order-table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Vendor/Seller</th>
+                                            <th scope="col">AmountInPkr</th>
+                                            <th scope="col">Payment Status</th>
+                                            <th scope="col">Processed By</th>
+                                            <th scope="col">CreatedDate</th>
+                                            <th scope="col">Account Title</th>
+                                            <th scope="col">Account no</th>
+                                            <th scope="col">Bank Name</th>
+                                            <th scope="col">Option</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var order in Model.Data)
+                                        {
+                                            <tr>
+                                                <td>@order.UserEmail</td>
+                                                <td>@order.AmountInPkr</td>
+                                                <td>@order.paymentStatus</td>
+                                                <td>@order.ProcessedBy</td>
+                                                <td>@order.CreatedDate</td>
+                                                <td>@order.AccountTitle</td>
+                                                <td>@order.BankAccountNumberOrIBAN</td>
+                                                <td>@order.BankName</td>
+                                                <td>
+                                                    <button class="btn btn-primary btn-pay" 
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#payPopup" 
+                                                    data-withdrawal-id="@order.WithDrawalId"
+                                                    data-amount-in-pkr="@order.AmountInPkr"
+                                                    onclick="openPopup(this)" type="button"
+                                                    >Pay</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+                                <div id="payPopup" class="modal" style="display: none;">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+  
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="closePopup()" aria-label="Close">
+                                                    <i class="fa-solid fa-xmark"></i>
+                                                </button>
+                                            </div>
+
+                                            <form id="paymentForm" method="post" asp-action="Withdrawal" asp-controller="Admin">
+                                                <input type="hidden" name="WithdrawalId" id="WithdrawalIdHidden" />
+                                            <div class="modal-body">
+                                                <div class="deal-offer-box">
+                                                        <div class="form-group">
+                                                            <label for="withdrawalId">WithdrawalID:</label>
+                                                            <input type="number" name="WithdrawalId" class="form-control" disabled id="withdrawalId" placeholder="Withdrawal Id">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="AmountInPkr">AmountInPkr:</label>
+                                                            <input type="number" name="AmountInPkr" class="form-control" disabled id="AmountInPkr" placeholder="Amount In Pkr">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="PaymentStatus">Payment Staus</label>
+                                                            <select class="form-control" name="PaymentStatus" id="PaymentStatus">
+                                                                <option value="Unpaid">Unpaid</option>
+                                                                <option value="Paid">Paid</option>
+                                                            </select>
+                                                        </div>
+                                                        <br />
+                                                        <div class="form-group">
+                                                            <label for="TransactionId">TransactionID:</label>
+                                                            <input type="text" name="TransactionId" class="form-control" id="TransactionId" placeholder="TransactionID">
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label for="Reason">Reason:</label>
+                                                            <textarea class="form-control" name="Reason" id="Reason" rows="4" placeholder="Reason"></textarea>
+                                                        </div>
+                                                       
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closePopup()">Close</button>
+                                                    <button type="submit" class="btn btn-primary" onclick="closePopup()">Submit</button>
+                                                </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <nav aria-label="Page navigation" class="custome-pagination mt-2">
+                            <ul class="pagination justify-content-center">
+                                @if (Model.pageNumber > 1)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="?pageNumber=@(Model.pageNumber - 1)&pageSize=@Model.pageSize" aria-label="Previous">
+                                            <i class="fa-solid fa-angles-left"></i>
+                                        </a>
+                                    </li>
+                                }
+
+                                @for (int i = 1; i <= Math.Ceiling((double)Model.totalCount / Model.pageSize); i++)
+                                {
+                                    <li class="page-item @(i == Model.pageNumber ? "active" : "")">
+                                        <a class="page-link" href="?pageNumber=@i&pageSize=@Model.pageSize">@i</a>
+                                    </li>
+                                }
+
+                                @if (Model.pageNumber < Math.Ceiling((double)Model.totalCount / Model.pageSize))
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="?pageNumber=@(Model.pageNumber + 1)&pageSize=@Model.pageSize" aria-label="Next">
+                                            <i class="fa-solid fa-angles-right"></i>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    function openPopup(button) {
+        var withdrawalId = button.getAttribute('data-withdrawal-id');
+        var amountInPkr = button.getAttribute('data-amount-in-pkr');
+
+        document.getElementById('WithdrawalIdHidden').value = withdrawalId;
+        document.getElementById('withdrawalId').value = withdrawalId;
+        document.getElementById('AmountInPkr').value = amountInPkr;
+
+        document.getElementById('payPopup').style.display = 'block';
+
+    }
+
+    function closePopup() {
+        document.getElementById('payPopup').style.display = 'none';
+    }
+
+    function confirmPayment() {
+        closePopup();
+    }
+</script>

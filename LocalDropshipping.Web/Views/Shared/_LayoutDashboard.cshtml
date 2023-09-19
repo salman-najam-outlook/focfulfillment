@@ -9,9 +9,6 @@
 
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-
-
-<!-- Mirrored from themes.pixelstrap.com/fastkart/back-end/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 24 Aug 2023 10:52:07 GMT -->
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,7 +21,8 @@
     <link rel="icon" src="~/backend-assets/images/favicon.png" type="image/x-icon">
 
     <link rel="shortcut icon" src="~/backend-assets/images/favicon.png" type="image/x-icon">
-    <title>Fastkart - Dashboard</title>
+    @* <title>Fastkart - Dashboard</title> *@
+    <title>@ViewBag.Title</title>
 
     <!-- Google font-->
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
@@ -67,7 +65,7 @@
     <link rel="stylesheet" type="text/css" href="~/backend-assets/css/style.css">
 
    <!-- Template css -->
-    <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
+    @* <link rel="stylesheet" type="text/css" href="../assets/css/style.css"> *@
 
 </head>
 
@@ -257,7 +255,7 @@
                                     </ul>
                                 </li>
                                 <li class="sidebar-list">
-                                    <a class="sidebar-link sidebar-title link-nav" asp-controller="Admin" asp-action="Withdrawls">
+                                    <a class="sidebar-link sidebar-title link-nav" asp-controller="Admin" asp-action="Withdrawal">
                                         <i class="ri-home-line"></i>
                                         <span>Withdrawls</span>
                                     </a>

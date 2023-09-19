@@ -2,6 +2,8 @@
 @using LocalDropshipping.Web.Helpers;
 @model PageResponse<List<Product>>;
 @{
+    ViewBag.Title = "FOC Fulfillment - Products";
+
     Layout = "_LayoutDashboard";
 
 }
@@ -49,11 +51,13 @@
                                             <tr>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Product Image</th>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">
-                                                    @Html.ActionLink("Name", "Products","Admin", new { sortByName = ViewBag.NameSortParm })
+                                                    @Html.ActionLink("Name", "Products","Admin", new { sortProduct = ViewBag.NameSortParm })
                                                 </th>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Category</th>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Current Qty</th>
-                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Price</th>
+                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">
+                                                    @Html.ActionLink("Price", "Products","Admin", new { sortProduct = ViewBag.PriceSortParm })
+                                                </th>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Action</th>
                                             </tr>
                                         </thead>
@@ -101,7 +105,7 @@
                                 @if (Model.pageNumber > 1)
                                 {
                                     <li class="page-item">
-                                        <a class="page-link" href="?pageNumber=@(Model.pageNumber - 1)&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Previous">
+                                        <a class="page-link" href="?pageNumber=@(Model.pageNumber - 1)&pageSize=@Model.pageSize&sortProduct=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Previous">
                                             <i class="fa-solid fa-angles-left"></i>
                                         </a>
                                     </li>
@@ -110,14 +114,14 @@
                                 @for (int i = 1; i <= Math.Ceiling((double)Model.totalCount / Model.pageSize); i++)
                                 {
                                     <li class="page-item @(i == Model.pageNumber ? "active" : "")">
-                                        <a class="page-link" href="?pageNumber=@i&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter">@i</a>
+                                        <a class="page-link" href="?pageNumber=@i&pageSize=@Model.pageSize&sortProduct=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter">@i</a>
                                     </li>
                                 }
 
                                 @if (Model.pageNumber < Math.Ceiling((double)Model.totalCount / Model.pageSize))
                                 {
                                     <li class="page-item">
-                                        <a class="page-link" href="?pageNumber=@(Model.pageNumber + 1)&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Next">
+                                        <a class="page-link" href="?pageNumber=@(Model.pageNumber + 1)&pageSize=@Model.pageSize&sortProduct=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Next">
                                             <i class="fa-solid fa-angles-right"></i>
                                         </a>
                                     </li>

@@ -18,6 +18,7 @@ namespace LocalDropshipping.Web.Services
         Task UpdateUserAsync(User user);
         
         Task<bool> IsCurrentUserAdminAsync(ClaimsPrincipal user);
+        string GetUserEmailById(string userId);
 
     }
 }

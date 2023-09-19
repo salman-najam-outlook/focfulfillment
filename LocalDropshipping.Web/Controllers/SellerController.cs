@@ -35,8 +35,11 @@ namespace LocalDropshipping.Web.Controllers
         private readonly IOrderItemService _orderItemService;
         private readonly IFocSettingService _focSettingService;
         private readonly LocalDropshippingContext _context;
+        private readonly ICategoryService _categoryService;
+        private readonly SignInManager<User> _signInManager;
+        private readonly IWithdrawlsService _withdrawlsService;
 
-        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, UserManager<User> userManager, IWishListService wishList, IProductsService productsService, IProductVariantService productVariantService, IConsumerService consumerService, IOrderItemService orderItemService, IFocSettingService focSettingService)
+        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, UserManager<User> userManager, IWishListService wishList, IProductsService productsService, IProductVariantService productVariantService, IConsumerService consumerService, IOrderItemService orderItemService, IFocSettingService focSettingService,SignInManager<User>signInManager,ICategoryService categoryService,IWithdrawlsService withdrawlsService)
         {
             _accountService = accountService;
             _profileService = profileService;
@@ -49,6 +52,9 @@ namespace LocalDropshipping.Web.Controllers
             _consumerService = consumerService;
             _orderItemService = orderItemService;
             _focSettingService = focSettingService;
+            _signInManager = signInManager;
+            _categoryService = categoryService;
+            _withdrawlsService = withdrawlsService;
         }
         public IActionResult Register()
         {
@@ -141,7 +147,7 @@ namespace LocalDropshipping.Web.Controllers
                 {
                     Email = model.Email,
                     UserName = model.Email,
-                    Fullname = string.Join(" ", model.FirstName, model.LastName),
+                    Fullname = model.FullName,//string.Join(" ", model.FirstName, model.LastName),
                     IsSeller = true
                 };
 
@@ -238,6 +244,7 @@ namespace LocalDropshipping.Web.Controllers
         [TypeFilter(typeof(CustomAuthorizationFilter))]
         public IActionResult Shop()
         {
+            ViewBag.categories = _categoryService.GetAll();
             ViewBag.products = _productsService.GetAll();
             var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
             ViewBag.total = TotalCost();
@@ -397,6 +404,7 @@ namespace LocalDropshipping.Web.Controllers
                 var withdrawalModels = orders.Select(order => new withdrawalModel
                 {
                     Id = order.Id,
+                    Name = order.Name,
                     GrandTotal = order.GrandTotal,
                     OrderStatus = order.OrderStatus,
 
@@ -713,6 +721,67 @@ namespace LocalDropshipping.Web.Controllers
             }
             return View("Profile");
         }
+
+        public IActionResult FilterPage([FromQuery] string searchString,string sortProduct)
+        {
+           ViewBag.categories = _categoryService.GetAll();
+            ViewBag.Currentfilter = searchString;
+            ViewBag.NameSortParmAz = "name_asc";
+            ViewBag.NameSortParmZa = "name_desc";
+            ViewBag.PriceSortParmAsc = "price_asc";
+            ViewBag.PriceSortParmDesc = "price_desc";
+            List<Product> products = _productsService.GetAll();
+			if (!string.IsNullOrEmpty(searchString))
+			{
+				products = products.Where(x => x.Name.ToLower().Contains(searchString.ToLower()) ||
+				x.Description.ToLower().Contains(searchString.ToLower()) ||
+				 x.Category.Name.ToLower().Contains(searchString.ToLower())).ToList();
+			}
+            switch (sortProduct)
+            {
+                case "name_asc":
+                    products = products.OrderBy(s => s.Name).ToList();
+                    break;
+                case "name_desc":
+                    products = products.OrderByDescending(s => s.Name).ToList();
+                    break;
+                case "price_asc":
+                    products = products.OrderBy(s => s.Variants.FirstOrDefault().VariantPrice).ToList();
+                    break;
+                case "price_desc":
+                    products = products.OrderByDescending(s => s.Variants.FirstOrDefault().VariantPrice).ToList();
+                    break;
+                default:
+                    products = products.OrderBy(s => s.ProductId).ToList();
+                    break;
+            }
+            return View(products);
+        }
+
+        public IActionResult WithdrawalRequest()
+        {
+            var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
+            var email = _userService.GetUserEmailById(userId);
+            if (email != null)
+            {
+               var result =  _withdrawlsService.WithdrawalRequest(email);
+                if (result) return RedirectToAction("Withdrawal"); 
+            }
+            return RedirectToAction("Withdrawal");
+        } 
+
+        [HttpPost]
+        public async Task<IActionResult> SellerLogout()
+        {
+            await _signInManager.SignOutAsync();
+
+            return RedirectToAction("Login", "Seller");
+        }
+        public IActionResult Reports()
+        {
+            return View();
+        }
+
         private decimal ShippingCost()
         {
             string shippingCost = "Shipping Cost";
