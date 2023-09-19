@@ -3,8 +3,11 @@ using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
 using LocalDropshipping.Web.Enums;
 using LocalDropshipping.Web.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using System;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace LocalDropshipping.Web.Services
 {
@@ -77,22 +80,23 @@ namespace LocalDropshipping.Web.Services
             }
             return new List<Withdrawals>();
         }
-
-        public Withdrawals UpdateWithDrawal(PaymentViewModel withdrawal)
+        public Withdrawals UpdateWithdrawal(PaymentViewModel withdrawal)
         {
-            var attachedWithdrawal = context.Withdrawals.Attach(new Withdrawals { WithdrawalId = withdrawal.WithdrawalId });
-           
-            attachedWithdrawal.Entity.UpdateBy = withdrawal.UpdatedBy;
-            attachedWithdrawal.Entity.ProcessedBy = withdrawal.ProcessedBy;
-            attachedWithdrawal.Entity.PaymentStatus = withdrawal.PaymentStatus.ToString() == "Paid" ? PaymentStatus.Paid : PaymentStatus.UnPaid;
-            attachedWithdrawal.Entity.Reason = withdrawal.Reason;
-            attachedWithdrawal.Entity.TransactionId = withdrawal.TransactionId;
-            attachedWithdrawal.Entity.UpdatedDate = DateTime.Now;
+            Withdrawals result = (from p in context.Withdrawals
+                             where p.WithdrawalId == withdrawal.WithdrawalId
+                                  select p).SingleOrDefault();
+
+            result.UpdateBy = withdrawal.UpdatedBy;
+            result.ProcessedBy = withdrawal.ProcessedBy;
+            result.PaymentStatus = withdrawal.PaymentStatus;
+            result.TransactionId = withdrawal.TransactionId;
+            result.UpdatedDate = DateTime.Now;
 
             context.SaveChanges();
 
-            return attachedWithdrawal.Entity;
+            return result;
         }
+
         public bool UpdateWithpaymentStatus(PaymentStatus paymentStatus, int WithdrawalId)
         {
             var attachedWithdrawal = context.Withdrawals.Attach(new Withdrawals { WithdrawalId = WithdrawalId });

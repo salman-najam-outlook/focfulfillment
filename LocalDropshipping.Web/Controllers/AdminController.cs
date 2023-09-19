@@ -564,8 +564,7 @@ namespace LocalDropshipping.Web.Controllers
                 var email = _userService.GetUserEmailById(userId);
                 model.UpdatedBy = email;
                 model.ProcessedBy = email;
-                model.UpdatedBy = email;
-                var result = _withdrawlsService.UpdateWithDrawal(model);
+                var result = _withdrawlsService.UpdateWithdrawal(model);
                 if (result != null) return RedirectToAction("Withdrawal");
                 return RedirectToAction("Withdrawal");
             }
