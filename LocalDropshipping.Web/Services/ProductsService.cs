@@ -53,6 +53,8 @@ namespace LocalDropshipping.Web.Services
                 .Include(x => x.Category)
                 .Include(x => x.Variants)
                 .ThenInclude(x => x.Images)
+                .Include(x => x.Variants)
+                .ThenInclude(x => x.Videos)
                 .FirstOrDefault(p => p.ProductId == productId && !p.IsDeleted);
         }
 
@@ -116,6 +118,13 @@ namespace LocalDropshipping.Web.Services
                                 exVariant.Images.DeleteAllFromServer(_webHostEnvironment.ContentRootPath);
                                 exVariant.Images.RemoveAll(_ => true);
                                 exVariant.Images.AddRange(variant.Images);
+                            }
+
+                            if (variant.Videos.Any())
+                            {
+                                exVariant.Videos.DeleteAllFromServer(_webHostEnvironment.ContentRootPath);
+                                exVariant.Videos.RemoveAll(_ => true);
+                                exVariant.Videos.AddRange(variant.Videos);
                             }
 
                             if (!variant.FeatureImageLink.IsNullOrEmpty())

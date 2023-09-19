@@ -203,7 +203,7 @@
                                             <div class="mb-1 row align-items-center">
                                                 <label class="col-sm-3 col-form-label form-label-title">
                                                     Quantity
-                                                </label> 
+                                                </label>
                                                 <div class="col-sm-9">
                                                     <div class="bs-example">
                                                         <input type="number" class="form-control variantQuantity" placeholder="10" name="variant-@variantNo-quantity" value="@variant.Quantity" />
@@ -217,11 +217,18 @@
                                                 </label>
                                                 <div class="col-sm-9">
                                                     <ul class="d-flex align-items-center gap-3">
-                                                        <li><img style="border-radius: 10px; width= 100px; height: 100px; background-size: cover;" src="@variant.FeatureImageLink" /></li>
+                                                        @if (variant.FeatureImageLink == null || variant.FeatureImageLink == "")
+                                                        {
+                                                            <p class="noImagesText">No Feature image uploaded yet.</p>
+                                                        }
+                                                        else
+                                                        {
+                                                            <li><img style="border-radius: 10px; height: 100px; background-size: cover;" src="@variant.FeatureImageLink" /></li>
+                                                        }
                                                         <li>
                                                             <a class="btn btn-primary ml-auto" style="float: right;" onclick="javascript:document.getElementById('variant-@variantNo-updated-image').click()">
-                                                                <span>Update</span>
-                                                                <input type="file" id="variant-@variantNo-updated-image" name="variant-@variantNo-updated-image" class="d-none"/>
+                                                                <span>Upload</span>
+                                                                <input type="file" id="variant-@variantNo-updated-image" name="variant-@variantNo-updated-image" onchange="updateFeatureImage(event)" class="d-none" />
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -233,21 +240,48 @@
                                                     Images
                                                 </label>
                                                 <div class="col-sm-9">
-                                                    <ul class="d-flex align-items-center gap-3">
+                                                    <ul class="d-flex align-items-center gap-3 variant-images flex-wrap">
+                                                        @if (variant.Images.Count == 0)
+                                                        {
+                                                            <p class="noImagesText">No Images uploaded yet.</p>
+                                                        }
                                                         @foreach (var image in variant.Images)
                                                         {
-                                                            <li><img style="border-radius: 10px; width= 100px; height: 100px; background-size: cover;" src="@image" /></li>
+                                                            <li class="variant-image"><img style="border-radius: 10px; height: 100px; background-size: cover;" src="@image" /></li>
                                                         }
                                                         <li>
                                                             <a class="btn btn-primary ml-auto" style="float: right;" onclick="javascript:document.getElementById('variant-@variantNo-updated-images').click()">
-                                                                <span>Update</span>
-                                                                <input type="file" id="variant-@variantNo-updated-images" name="variant-@variantNo-updated-images" class="d-none" multiple/>
+                                                                <span>Upload</span>
+                                                                <input type="file" id="variant-@variantNo-updated-images" name="variant-@variantNo-updated-images" class="d-none" onchange="updateImages(event)" multiple />
                                                             </a>
                                                         </li>
                                                     </ul>
                                                 </div>
                                             </div>
-                                            
+
+                                            <div class="mb-1 row align-items-center">
+                                                <label class="col-sm-3 col-form-label form-label-title">
+                                                    Videos
+                                                </label>
+                                                <div class="col-sm-9">
+                                                    <ul class="d-flex align-items-center gap-3 variant-videos flex-wrap">
+                                                        @if (variant.Videos.Count == 0)
+                                                        {
+                                                            <p class="noVideossText">No Videos uploaded yet.</p>
+                                                        }
+                                                        @foreach (var video in variant.Videos)
+                                                        {
+                                                            <li class="variant-videos"><video style="border-radius: 10px; height: 100px; background-size: cover;" src="@video" autoplay></video></li>
+                                                        }
+                                                        <li>
+                                                            <a class="btn btn-primary ml-auto" style="float: right;" onclick="javascript:document.getElementById('variant-@variantNo-updated-videos').click()">
+                                                                <span>Upload</span>
+                                                                <input type="file" id="variant-@variantNo-updated-videos" name="variant-@variantNo-updated-videos" class="d-none" onchange="updateVideos(event)" multiple />
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
 
                                         }
                                     }
@@ -444,71 +478,121 @@
         let variantNumber = +($("#variantCounts").val()) + 1;
         $("#variantCounts").val(variantNumber)
         let html = `                                                                <p></p>
-                                                                                    <div class="mb-1 row align-items-center">
-                                                                                        <label class="col-sm-3 col-form-label form-label-title">
-                                                                                            Variant
-                                                                                        </label>
-                                                                                        <div class="col-sm-9">
-                                                                                            <div class="bs-example">
-                                                                                                    <input type="text" class="form-control" name="variant-${variantNumber}-value" placeholder="e.g., Black">
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
+                                                                                                            <div class="mb-1 row align-items-center">
+                                                                                                                <label class="col-sm-3 col-form-label form-label-title">
+                                                                                                                    Variant
+                                                                                                                </label>
+                                                                                                                <div class="col-sm-9">
+                                                                                                                    <div class="bs-example">
+                                                                                                                            <input type="text" class="form-control" name="variant-${variantNumber}-value" placeholder="e.g., Black">
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
 
 
 
-                                                                                    <div class="mb-1 row align-items-center">
-                                                                                        <label class="col-sm-3 col-form-label form-label-title">
-                                                                                            Price
-                                                                                        </label>
-                                                                                        <div class="col-sm-9">
-                                                                                            <div class="bs-example">
-                                                                                                    <input type="number" class="form-control" name="variant-${variantNumber}-price" placeholder="1250"/>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
+                                                                                                            <div class="mb-1 row align-items-center">
+                                                                                                                <label class="col-sm-3 col-form-label form-label-title">
+                                                                                                                    Price
+                                                                                                                </label>
+                                                                                                                <div class="col-sm-9">
+                                                                                                                    <div class="bs-example">
+                                                                                                                            <input type="number" class="form-control" name="variant-${variantNumber}-price" placeholder="1250"/>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
 
-                                                                                    <div class="mb-1 row align-items-center">
-                                                                                        <label class="col-sm-3 col-form-label form-label-title">
-                                                                                            Quantity
-                                                                                        </label>
-                                                                                        <div class="col-sm-9">
-                                                                                            <div class="bs-example">
-                                                                                                    <input type="number" class="form-control" name="variant-${variantNumber}-quantity" placeholder="10" />
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
+                                                                                                            <div class="mb-1 row align-items-center">
+                                                                                                                <label class="col-sm-3 col-form-label form-label-title">
+                                                                                                                    Quantity
+                                                                                                                </label>
+                                                                                                                <div class="col-sm-9">
+                                                                                                                    <div class="bs-example">
+                                                                                                                            <input type="number" class="form-control" name="variant-${variantNumber}-quantity" placeholder="10" />
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
 
-                                                                                        <div class="mb-1 row align-items-center">
-                                                                                            <label class="col-sm-3 col-form-label form-label-title">
-                                                                                                Featured Image
-                                                                                            </label>
-                                                                                            <div class="col-sm-9">
-                                                                                                <div class="bs-example">
-                                                                                                        <input type="file" class="form-control" name="variant-${variantNumber}-feature-image" />
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div class="mb-1 row align-items-center">
-                                                                                            <label class="col-sm-3 col-form-label form-label-title">
-                                                                                                Images
-                                                                                            </label>
-                                                                                            <div class="col-sm-9">
-                                                                                                <div class="bs-example">
-                                                                                                        <input type="file" class="form-control" name="variant-${variantNumber}-images" multiple/>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                            <div class="mb-4 row align-items-center">
-                                                                                        <label class="col-sm-3 col-form-label form-label-title">
-                                                                                            Videos
-                                                                                        </label>
-                                                                                        <div class="col-sm-9">
-                                                                                                <input type="file" name="variant-${variantNumber}-videos" class="form-control" multiple />
-                                                                                        </div>
-                                                                                    </div>`;
+                                                                                                                <div class="mb-1 row align-items-center">
+                                                                                                                    <label class="col-sm-3 col-form-label form-label-title">
+                                                                                                                        Featured Image
+                                                                                                                    </label>
+                                                                                                                    <div class="col-sm-9">
+                                                                                                                        <div class="bs-example">
+                                                                                                                                <input type="file" class="form-control" name="variant-${variantNumber}-feature-image" />
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                                <div class="mb-1 row align-items-center">
+                                                                                                                    <label class="col-sm-3 col-form-label form-label-title">
+                                                                                                                        Images
+                                                                                                                    </label>
+                                                                                                                    <div class="col-sm-9">
+                                                                                                                        <div class="bs-example">
+                                                                                                                                <input type="file" class="form-control" name="variant-${variantNumber}-images" multiple/>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                                    <div class="mb-4 row align-items-center">
+                                                                                                                <label class="col-sm-3 col-form-label form-label-title">
+                                                                                                                    Videos
+                                                                                                                </label>
+                                                                                                                <div class="col-sm-9">
+                                                                                                                        <input type="file" name="variant-${variantNumber}-videos" class="form-control" multiple />
+                                                                                                                </div>
+                                                                                                            </div>`;
 
         $(html).insertBefore($(e.target));
+    }
+
+    function updateImages(e) {
+        let files = $(e.target).prop('files')
+        if (files.length > 0) {
+            let prevall = $(e.target).parents("li").prevAll().replaceWith("");
+            for (var i = 0; i < files.length; i++) {
+                let file = files[i];
+                let reader = new FileReader();
+                reader.onloadend = function () {
+                    let html = `<li class="variant-image"><img style="border-radius: 10px; height: 100px; background-size: cover;" src="${reader.result}" /></li>`
+                    $(html).insertBefore($(e.target).parents("li"));
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+    }
+
+    function updateVideos(e) {
+        let files = $(e.target).prop('files')
+        if (files.length > 0) {
+            let prevall = $(e.target).parents("li").prevAll().replaceWith("");
+            for (var i = 0; i < files.length; i++) {
+                let file = files[i];
+                let reader = new FileReader();
+                reader.onloadend = function () {
+                    let html = `<li class="variant-videos"><video style="border-radius: 10px; width= 100px; height: 100px; background-size: cover;" src="${reader.result}" autoplay></video></li>`
+                    $(html).insertBefore($(e.target).parents("li"));
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+    }
+
+    function updateFeatureImage(e) {
+        let files = $(e.target).prop('files')
+        if (files.length > 0) {
+            let prevall = $(e.target).parents("li").prevAll().replaceWith("");
+
+            let file = files[0];
+            let reader = new FileReader();
+            reader.onloadend = function () {
+                let html = ` <li><img style="border-radius: 10px; height: 100px; background-size: cover;" src="${reader.result}" /></li>`
+                $(html).insertBefore($(e.target).parents("li"));
+            }
+            reader.readAsDataURL(file);
+        }
+
     }
 
     function updateForm(e) {

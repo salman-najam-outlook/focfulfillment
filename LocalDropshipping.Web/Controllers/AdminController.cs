@@ -483,11 +483,9 @@ namespace LocalDropshipping.Web.Controllers
 
                         int variantId = Convert.ToInt32(form["variant-" + variantNo + "-variant-id"]);
                         var newImagesUploaded = form.Files.Any(x => x.Name == $"variant-{variantNo}-updated-images");
+                        var newVideosUploaded = form.Files.Any(x => x.Name == $"variant-{variantNo}-updated-videos");
                         var newFeaturedImage = form.Files.Any(x => x.Name == $"variant-{variantNo}-updated-image");
-
-
-
-
+                        
                         product.Variants.Add(new ProductVariant
                         {
                             ProductVariantId = variantId,
@@ -497,7 +495,8 @@ namespace LocalDropshipping.Web.Controllers
                             Quantity = Convert.ToInt32(form["variant-" + variantNo + "-quantity"]),
                             IsMainVariant = false,
                             Images = newImagesUploaded ? formFiles.GetFiles($"variant-{variantNo}-updated-images").ToArray().SaveTo("images/products", model.Name + " " + form["variant-type"]).Select(x => new ProductVariantImage { Link = x }).ToList() : new List<ProductVariantImage>(),
-                            FeatureImageLink = newFeaturedImage ? formFiles[$"variant-{variantNo}-updated-image"]!.SaveTo("images/products", model.Name + " " + form["variant-type"]) : ""
+                            Videos = newVideosUploaded? formFiles.GetFiles($"variant-{variantNo}-updated-videos").ToArray()!.SaveTo("videos/products", model.Name + " " + form["variant-type"]).Select(x => new ProductVariantVideo {  Link = x}).ToList(): new List<ProductVariantVideo>(),
+                            FeatureImageLink = newFeaturedImage ? formFiles[$"variant-{variantNo}-updated-image"]!.SaveTo("images/products", model.Name + " " + form["variant-type"]) : "",
                         });
                     }
 

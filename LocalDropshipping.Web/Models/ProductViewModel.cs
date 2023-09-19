@@ -86,7 +86,8 @@ namespace LocalDropshipping.Web.Models
                             VariantId = x.ProductVariantId, 
                             Variant = x.Variant,
                             FeatureImageLink = x.FeatureImageLink,
-                            Images = x.Images.Select(x => x.Link).ToList()
+                            Images = x.Images.Select(x => x.Link).ToList(),
+                            Videos = x.Videos.Select(x => x.Link).ToList()
                         }));
                 }
 
