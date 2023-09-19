@@ -2,7 +2,8 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @using LocalDropshipping.Web.Data.Entities;
-@model List<Category>;
+@using LocalDropshipping.Web.Helpers;
+@model PageResponse<List<Category>>;
 @{
     Layout = "_LayoutDashboard";
 }
@@ -12,31 +13,45 @@
 <style>
     /* styles.css */
     .delete-button {
-        background-color: red; /* Rang */
-        color: #fff; /* Text rang */
-        padding: 10px 20px; /* Padding */
-        border: none; /* Border nahi hai */
-        cursor: pointer; /* Cursor pointer ho jaye, isse button clickable lagega */
-        border-radius: 5px; /* Border ke kone rounded ho jayenge */
+        background-color: red;
+        color: #fff; 
+        padding: 10px 20px; 
+        border: none;
+        cursor: pointer; 
+        border-radius: 5px; 
     }
 
         .delete-button:hover {
-            background-color: maroon; /* Hover ke samay rang change ho jayega */
+            background-color: maroon; 
         }
 
     .edit-button {
-        background-color: #0DA487; /* Rang */
-        color: #fff; /* Text rang */
-        padding: 10px 20px; /* Padding */
-        border: none; /* Border nahi hai */
-        cursor: pointer; /* Cursor pointer ho jaye, isse button clickable lagega */
-        border-radius: 5px; /* Border ke kone rounded ho jayenge */
-    
+        background-color: #0DA487;
+        color: #fff; 
+        padding: 10px 20px; 
+        border: none; 
+        cursor: pointer; 
+        border-radius: 5px; 
     }
 
-    .edit-button:hover {
-        background-color: #0B8A6E; /* Hover ke samay rang change ho jayega */
+        .edit-button:hover {
+            background-color: #0B8A6E; 
+        }
+
+    .horizontal-buttons {
+        list-style: none;
+        padding: 0;
+        margin: 0;
     }
+
+        .horizontal-buttons li {
+            display: inline-block; 
+            margin-right: 10px;
+        }
+        .colorBtn{
+            color:red;
+            border:red;
+        }
 </style>
 <div class="page-body">
     <!-- All User Table Start -->
@@ -54,6 +69,19 @@
                                 </a>
                             </form>
                         </div>
+                        <div class="table-responsive dataTables_wrapper">
+                            <div id="table_id_filter" class="dataTables_filter">
+                                <form asp-controller="Admin" asp-action="CategoryList" method="get">
+                                    <label style="display:flex; justify-content:end; align-items:center">
+                                        Search:
+                                        <input type="search" name="SearchString" class="" placeholder="" aria-controls="table_id">
+                                        <button class="btn btn-solid" style="padding: 7px 24px;" type="submit" id="button-addon2">
+                                            <i style="color:white" data-feather="search"></i>
+                                        </button>
+                                    </label>
+                                </form>
+                            </div>
+                        </div>
 
                         <div class="table-responsive category-table">
                             <div>
@@ -61,52 +89,32 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">Category ID</th>
-                                            <th scope="col">Name</th>
+                                            <th scope="col">
+                                                @Html.ActionLink("Name", "CategoryList","Admin", new { sortByName = ViewBag.NameSortParm })
+                                            </th>
                                             <th scope="col">Image Path</th>
                                             <th scope="col">Options</th>
 
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var category in Model)
+                                        @foreach (var category in Model.Data)
                                         {
                                             <tr>
                                                 <td>@category.CategoryId</td>
                                                 <td>@category.Name</td>
                                                 <td>@category.ImagePath</td>
                                                 <td>
-                                                    <ul>
-
+                                                    <ul class="horizontal-buttons">
                                                         <li>
-                                                           @* <a href="javascript:void(0)" class="edit-category" data-id="@category.CategoryId">
-                                                                <i class="ri-pencil-line"></i>
-                                                            </a> *@
-                                                            <form asp-action="UpdateCategory" asp-controller="Admin" method="get">
-
-                                                                <input type="hidden" name="id" value="@category.CategoryId" />
-                                                                
-                                                             @* <a asp-action="DeleteCategory" asp-controller="Admin" class="delete-category" data-id="@category.CategoryId">
-                                                                    <i class="ri-delete-bin-line"></i>
-                                                                </a> *@
-
-
-                                                                 @*<a href="#" class="delete-category" data-id="@category.CategoryId">
-                                                                    <i class="ri-delete-bin-line"></i>
-                                                                </a> *@
-
-                                                                <button class="edit-button" type="submit">
+                                                                <a asp-controller="Admin" asp-action="UpdateCategory" asp-route-id="@category.CategoryId">
                                                                     <i class="ri-pencil-line"></i>
-                                                                </button>
-                                                            </form>
+                                                                </a>
                                                         </li>
-                                                        <br>
+
                                                         <li>
-                                                            <form asp-action="DeleteCategory" asp-controller="Admin" method="post">
-                                                                <input type="hidden" name="id" value="@category.CategoryId" />
-                                                                @*<a asp-action="DeleteCategory" asp-controller="Admin" class="delete-category" data-id="@category.CategoryId">
-                                                                    <i class="ri-delete-bin-line"></i>
-                                                                </a> *@
-                                                                <button class="delete-button" type="submit">
+                                                            <form method="post" id="txtdelete" asp-controller="Admin" asp-action="DeleteCategory" asp-route-id="@category.CategoryId">
+                                                                <button type="submit" class="btn btn-link colorBtn">
                                                                     <i class="ri-delete-bin-line"></i>
                                                                 </button>
                                                             </form>
@@ -119,6 +127,34 @@
                                 </table>
                             </div>
                         </div>
+                        <nav aria-label="Page navigation" class="custome-pagination mt-2">
+                            <ul class="pagination justify-content-center">
+                                @if (Model.pageNumber > 1)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="?pageNumber=@(Model.pageNumber - 1)&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Previous">
+                                            <i class="fa-solid fa-angles-left"></i>
+                                        </a>
+                                    </li>
+                                }
+
+                                @for (int i = 1; i <= Math.Ceiling((double)Model.totalCount / Model.pageSize); i++)
+                                {
+                                    <li class="page-item @(i == Model.pageNumber ? "active" : "")">
+                                        <a class="page-link" href="?pageNumber=@i&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter">@i</a>
+                                    </li>
+                                }
+
+                                @if (Model.pageNumber < Math.Ceiling((double)Model.totalCount / Model.pageSize))
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="?pageNumber=@(Model.pageNumber + 1)&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Next">
+                                            <i class="fa-solid fa-angles-right"></i>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>

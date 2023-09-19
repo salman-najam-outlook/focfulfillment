@@ -20,6 +20,9 @@ namespace LocalDropshipping.Web.Data
         public DbSet<Image> Images { get; set; }
         public DbSet<Profiles> Profiles { get; set; }
         public DbSet<ProductVariant> ProductVariants { get; set; }
+        public DbSet<ProductVariantImage> ProductVariantImages { get; set; }
+        public DbSet<ProductVariantVideo> ProductVariantVideos { get; set; }
         public DbSet<Consumer> Consumers { get; set; }
+        public DbSet<FocSetting> FocSettings { get; set; }
     }
 }

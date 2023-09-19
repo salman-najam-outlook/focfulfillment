@@ -1,5 +1,6 @@
 ﻿@using LocalDropshipping.Web.Data.Entities;
-@model List<Product>;
+@using LocalDropshipping.Web.Helpers;
+@model PageResponse<List<Product>>;
 @{
     Layout = "_LayoutDashboard";
 
@@ -26,14 +27,30 @@
                                 </ul>
                             </div>
                         </div>
+                        <div class="table-responsive dataTables_wrapper">
+                            <div id="table_id_filter" class="dataTables_filter">
+                                <form asp-controller="Admin" asp-action="Products" method="get">
+                                    <label style="display:flex; justify-content:end; align-items:center">
+                                        Search:
+                                        <input type="search" name="SearchString" class="" placeholder="" aria-controls="table_id">
+                                        <button class="btn btn-solid" style="padding: 7px 24px;" type="submit" id="button-addon2">
+                                            <i style="color:white" data-feather="search"></i>
+                                        </button>
+                                    </label>
+                                </form>
+                            </div>
+                        </div>
                         <div>
                             <div class="table-responsive">
                                 <div id="table_id_wrapper" class="dataTables_wrapper no-footer">
-                                    <div id="table_id_filter" class="dataTables_filter"><label>Search:<input type="search" class="" placeholder="" aria-controls="table_id"></label></div><table class="table all-package theme-table table-product dataTable no-footer" id="table_id">
+
+                                    <table class="table all-package theme-table table-product dataTable no-footer" id="table_id">
                                         <thead>
                                             <tr>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Product Image</th>
-                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Product Name</th>
+                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">
+                                                    @Html.ActionLink("Name", "Products","Admin", new { sortByName = ViewBag.NameSortParm })
+                                                </th>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Category</th>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Current Qty</th>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Price</th>
@@ -43,17 +60,22 @@
 
                                         <tbody>
 
-                                            @foreach (var product in Model)
+                                            @foreach (var product in Model.Data)
                                             {
                                                 <tr>
-                                                    <td><img style="width: 150px;" src="@product.Variants.First(x => x.IsMainVariant).FeatureImageLink" alt="Image of product @product.Name" /></td>
+                                                    <td><img style="width: 150px;" src="@product.Variants.First().FeatureImageLink" alt="Image of product @product.Name" /></td>
                                                     <td>@product.Name</td>
                                                     <td style="color:black;">@product.Category!.Name</td>
-                                                    <td>@product.Variants.First(x => x.IsMainVariant).Quantity</td>
-                                                    <td>@product.Variants.First(x => x.IsMainVariant).VariantPrice</td>
+                                                    <td>@product.Variants.First().Quantity</td>
+                                                    <td>@product.Variants.First().VariantPrice</td>
 
                                                     <td>
                                                         <ul>
+                                                            <li>
+                                                                <a asp-controller="Admin" asp-action="Product" asp-route-id="@product.ProductId">
+                                                                    <i class="ri-eye-line"></i>
+                                                                </a>
+                                                            </li>
                                                             <li>
                                                                 <a asp-controller="Admin" asp-action="AddUpdateProduct" asp-route-id="@product.ProductId">
                                                                     <i class="ri-pencil-line"></i>
@@ -61,11 +83,9 @@
                                                             </li>
 
                                                             <li>
-                                                                <form method="post" id="txtdelete" asp-controller="Admin" asp-action="Deleted" asp-route-id="@product.ProductId">
-                                                                    <button type="submit" class="btn btn-link">
-                                                                        <i class="ri-delete-bin-line"></i>
-                                                                    </button>
-                                                                </form>
+                                                                <a asp-controller="Admin" asp-action="DeleteProduct" asp-route-id="@product.ProductId">
+                                                                    <i class="ri-delete-bin-line"></i>
+                                                                </a>
                                                             </li>
                                                         </ul>
                                                     </td>
@@ -76,6 +96,34 @@
                                 </div>
                             </div>
                         </div>
+                        <nav aria-label="Page navigation" class="custome-pagination mt-2">
+                            <ul class="pagination justify-content-center">
+                                @if (Model.pageNumber > 1)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="?pageNumber=@(Model.pageNumber - 1)&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Previous">
+                                            <i class="fa-solid fa-angles-left"></i>
+                                        </a>
+                                    </li>
+                                }
+
+                                @for (int i = 1; i <= Math.Ceiling((double)Model.totalCount / Model.pageSize); i++)
+                                {
+                                    <li class="page-item @(i == Model.pageNumber ? "active" : "")">
+                                        <a class="page-link" href="?pageNumber=@i&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter">@i</a>
+                                    </li>
+                                }
+
+                                @if (Model.pageNumber < Math.Ceiling((double)Model.totalCount / Model.pageSize))
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="?pageNumber=@(Model.pageNumber + 1)&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Next">
+                                            <i class="fa-solid fa-angles-right"></i>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>

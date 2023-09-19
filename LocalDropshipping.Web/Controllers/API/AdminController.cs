@@ -43,7 +43,7 @@ namespace LocalDropshipping.Web.Controllers.API
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteProduct(int id)
+        public IActionResult DeleteProductById(int id)
         {
             productService.Delete(id);
             return Ok();
@@ -93,14 +93,15 @@ namespace LocalDropshipping.Web.Controllers.API
             return Ok();
         }
         [HttpDelete("{id}")]
-        public IActionResult DeleteCategory(int id)
+        public IActionResult RemoveCategory(int id)
         {
             categoryService.Delete(id)
 ;
             return Ok();
         }
-        [HttpPost("{id}")]
-        public IActionResult UpdateCategory(int id, CategoryDto categoryDto)
+
+        [HttpPost]
+        public IActionResult EditCategory(int id, CategoryDto categoryDto)
         {
             Category category = categoryDto.ToEntity();
             categoryService.Update(id, categoryDto);

@@ -2,7 +2,8 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @using LocalDropshipping.Web.Data.Entities;
-@model List<User>;
+@using LocalDropshipping.Web.Helpers;
+@model PageResponse<List<User>>;
 @{
     Layout = "_LayoutDashboard";
 }
@@ -14,14 +15,12 @@
         height: 34px;
     }
 
-        /* Hide default HTML checkbox */
         .switch input {
             opacity: 0;
             width: 0;
             height: 0;
         }
 
-    /* The slider */
     .slider {
         position: absolute;
         cursor: pointer;
@@ -60,7 +59,6 @@
         transform: translateX(26px);
     }
 
-    /* Rounded sliders */
     .slider.round {
         border-radius: 34px;
     }
@@ -68,6 +66,11 @@
         .slider.round:before {
             border-radius: 50%;
         }
+
+    .colorBtn {
+        color: red;
+        border: red;
+    }
 </style>
 <div class="page-body">
     <div class="container-fluid">
@@ -76,18 +79,31 @@
                 <div class="card card-table">
                     <div class="card-body">
                         <div class="title-header option-title">
-                            <h5>All Sellers</h5>
+                            <h5>All Vendors</h5>
                             <form class="d-inline-flex">
                                 <a asp-action="AddNewUser" asp-controller="Admin" class="align-items-center btn btn-theme d-flex">
                                     <i data-feather="plus"></i>Add New
                                 </a>
                             </form>
                         </div>
+                        <div class="table-responsive dataTables_wrapper">
+                            <div id="table_id_filter" class="dataTables_filter">
+                                <form asp-controller="Admin" asp-action="GetAllSellers" method="get">
+                                    <label style="display:flex; justify-content:end; align-items:center">
+                                        Search:
+                                        <input type="search" name="SearchString" class="" placeholder="" aria-controls="table_id">
+                                        <button class="btn btn-solid" style="padding: 7px 24px;" type="submit" id="button-addon2">
+                                            <i style="color:white" data-feather="search"></i>
+                                        </button>
+                                    </label>
+                                </form>
+                            </div>
+                        </div>
 
                         <table class="table all-package theme-table table-product" id="table_id">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
+                                    <th>@Html.ActionLink("Name", "GetAllSellers","Admin", new { sortByName = ViewBag.NameSortParm, searchString=ViewBag.CurrentFilter })</th>
                                     <th>Phone</th>
                                     <th>Email</th>
                                     <th>Options</th>
@@ -96,19 +112,18 @@
                             </thead>
 
                             <tbody>
-                                @foreach (var user in Model)
+                                @foreach (var user in Model.Data)
                                 {
                                     <tr>
                                         <td>@user.Fullname</td>
                                         <td>@user.PhoneNumber</td>
                                         <td>@user.Email</td>
                                         <td>
-                                            <form asp-controller="Admin" asp-action="ActivateUser" method="post">
-                                                <input type="hidden" name="userId" value="@user.Id" />
-                                                <ul>
+                                            <input type="hidden" name="userId" value="@user.Id" />
+                                            <ul>
 
-                                                    <li>
-                                                        <!-- Rounded switch -->
+                                                <li>
+                                                    <form asp-controller="Admin" asp-action="ActivateUser" method="post">
                                                         <label class="switch">
                                                             <input type="hidden" name="userId" value="@user.Id" />
                                                             <button type="submit" asp-action="ActivateUser" asp-controller="Admin">
@@ -117,20 +132,51 @@
                                                                 <span class="slider round"></span>
                                                             </button>
                                                         </label>
-                                                    </li>
-                                                    <li>
-                                                        <button type="submit">
+                                                    </form>
+                                                </li>
+                                                <li>
+                                                    <form method="post" id="txtdelete" asp-controller="Admin" asp-action="DeleteUser" asp-route-id="@user.Id">
+                                                        <button type="submit" class="btn btn-link colorBtn">
                                                             <i class="ri-delete-bin-line"></i>
                                                         </button>
-                                                    </li>
-                                                </ul>
-                                            </form>
+                                                    </form>
+                                               
+                                                </li>
+                                            </ul>
                                         </td>
                                     </tr>
                                 }
                             </tbody>
                         </table>
                     </div>
+                    <nav aria-label="Page navigation" class="custome-pagination mt-2">
+                        <ul class="pagination justify-content-center">
+                            @if (Model.pageNumber > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="?pageNumber=@(Model.pageNumber - 1)&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Previous">
+                                        <i class="fa-solid fa-angles-left"></i>
+                                    </a>
+                                </li>
+                            }
+
+                            @for (int i = 1; i <= Math.Ceiling((double)Model.totalCount / Model.pageSize); i++)
+                            {
+                                <li class="page-item @(i == Model.pageNumber ? "active" : "")">
+                                    <a class="page-link" href="?pageNumber=@i&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter">@i</a>
+                                </li>
+                            }
+
+                            @if (Model.pageNumber < Math.Ceiling((double)Model.totalCount / Model.pageSize))
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="?pageNumber=@(Model.pageNumber + 1)&pageSize=@Model.pageSize&sortByName=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Next">
+                                        <i class="fa-solid fa-angles-right"></i>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>

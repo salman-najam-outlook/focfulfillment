@@ -4,6 +4,7 @@ using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
 using LocalDropshipping.Web.Enums;
 using LocalDropshipping.Web.Extensions;
+using LocalDropshipping.Web.Helpers;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging;
 using System.Security.Claims;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LocalDropshipping.Web.Controllers
 {
@@ -202,10 +204,13 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         #endregion
-        public IActionResult StaffMember()
+        public IActionResult StaffMember([FromQuery] Pagination pagination)
         {
             SetRoleByCurrentUser();
-            return View(_userService.GetAllStaffMember());
+            var staffMembers = _userService.GetAllStaffMember();
+            var count = staffMembers.Count();
+            staffMembers = staffMembers.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+            return View(new PageResponse<List<User>>(staffMembers, pagination.PageNumber, pagination.PageSize, count));
         }
         public IActionResult EditUser()
         {
@@ -246,10 +251,43 @@ namespace LocalDropshipping.Web.Controllers
         }
 
 
-        public IActionResult GetAllSellers()
+        public IActionResult GetAllSellers([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
         {
             SetRoleByCurrentUser();
-            return View(_userService.GetAll());
+            ViewBag.CurrentSort = sortByName;
+            ViewBag.NameSortParm = string.IsNullOrEmpty(sortByName) ? "name_asc" : (sortByName == "name_asc" ? "name_desc" : "name_asc");
+            
+            if (searchString != null)
+            {
+                pagination.PageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+            var sellers = _userService.GetAll();
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                sellers = sellers.Where(x=>x.Fullname.ToLower().Contains(searchString.ToLower())).ToList();
+            }
+            switch (sortByName)
+            {
+                case "name_asc":
+                    sellers = sellers.OrderBy(s => s.Fullname).ToList();
+                    break;
+                case "name_desc":
+                    sellers = sellers.OrderByDescending(s => s.Fullname).ToList();
+                    break;
+
+                default:
+                    sellers = sellers.OrderBy(s => s.Id).ToList();
+                    break;
+            }
+            var count = sellers.Count();
+            sellers = sellers.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+            return View(new PageResponse<List<User>>(sellers, pagination.PageNumber, pagination.PageSize, count));
         }
 
 
@@ -263,13 +301,17 @@ namespace LocalDropshipping.Web.Controllers
         }
 
 
-       [HttpGet]
-        public IActionResult OrdersList()
+
+        [HttpGet]
+        public IActionResult OrdersList([FromQuery] Pagination pagination)
         {
             try
             {
+                SetRoleByCurrentUser();
                 List<Order> orders = _orderService.GetAll();
-                return View(orders);
+                var count = orders.Count();
+                orders = orders.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+                return View(new PageResponse<List<Order>>(orders, pagination.PageNumber, pagination.PageSize, count));
             }
             catch (Exception ex)
             {
@@ -282,18 +324,46 @@ namespace LocalDropshipping.Web.Controllers
         [HttpGet]
         [Authorize]
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
-        public IActionResult Products()
+        public IActionResult Products([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter) 
         {
-            List<Product> data = _productsService.GetAll();
-            return View(data);
+            //Add ViewBag to save SortOrder of table
+            ViewBag.CurrentSort = sortByName;
+            ViewBag.NameSortParm = string.IsNullOrEmpty(sortByName) ? "name_asc" : (sortByName == "name_asc" ? "name_desc" : "name_asc");
+            if (searchString != null)
+            {
+                pagination.PageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+            List<Product> data= _productsService.GetAll();
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                data = _productsService.GetProductsBySearch(searchString);
+            }
+            switch (sortByName)
+            {
+                case "name_desc":
+                    data = data.OrderBy(s => s.Name).ToList();
+                    break;
+
+                default:
+                    data = data.OrderBy(s => s.ProductId).ToList();
+                    break;
+            }
+            var count = data.Count();
+            data = data.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+            return View(new PageResponse<List<Product>>(data, pagination.PageNumber, pagination.PageSize, count));
         }
-
-
         [HttpGet]
         [Authorize]
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
         public IActionResult AddUpdateProduct(int id = 0)
         {
+            SetRoleByCurrentUser();
             ViewBag.Categories = _categoryService.GetAll();
             var productVeiwModel = new ProductViewModel(_productsService.GetById(id));
             return View(productVeiwModel);
@@ -305,13 +375,29 @@ namespace LocalDropshipping.Web.Controllers
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
         public IActionResult AddUpdateProduct(ProductViewModel model)
         {
+            SetRoleByCurrentUser();
             ModelState.Remove("ProductId");
-            if (ModelState.IsValid)
+
+            // TODO: ValidateModel Here
+            if (model.HasVariants == 0)
             {
-                if (model.ProductId == 0)
+                // Prouct without variants
+
+            }
+            else
+            {
+                // Prouct with variants
+
+            }
+
+
+            var form = Request.Form;
+            var formFiles = form.Files;
+            if (model.ProductId == 0)
+            {
+                if (model.HasVariants == 0)
                 {
-                    var form = Request.Form;
-                    var formFiles = form.Files;
+                    // Product without variants
                     var featuredImage = formFiles["featuredImage"]!;
                     var featureImageLink = featuredImage.SaveTo("images/products", model.Name!);
 
@@ -337,8 +423,30 @@ namespace LocalDropshipping.Web.Controllers
                                 IsMainVariant = true,
                                 VariantPrice = model.Price,
                                 FeatureImageLink = featureImageLink,
+                                Images = otherImagesLinks.Select(imageLink => new ProductVariantImage { Link = imageLink }).ToList(),
+                                Videos = videoLinks.Select(videoLink => new ProductVariantVideo { Link = videoLink }).ToList(),
+                                Quantity = model.Quantity
                             }
-                        }
+                        },
+                    };
+
+                    _productsService.Add(product);
+                    TempData["ProductAdded"] = "Product added successfully";
+                    return RedirectToAction("Products");
+                }
+                else
+                {
+                    // Product with variants
+                    var product = new Product()
+                    {
+                        Name = model.Name,
+                        CategoryId = model.CategoryId,
+                        IsBestSelling = model.IsBestSelling,
+                        IsFeatured = model.IsFeatured,
+                        IsNewArravial = model.IsNewArravial,
+                        Description = model.Description,
+                        SKU = model.SKU,
+                        Variants = new List<ProductVariant>(),
                     };
 
                     for (int variantNo = 1; variantNo <= model.VariantCounts; variantNo++)
@@ -346,9 +454,11 @@ namespace LocalDropshipping.Web.Controllers
                         product.Variants.Add(new ProductVariant
                         {
                             VariantType = form["variant-type"],
-                            Variant = form["variant-1-value"],
+                            Variant = form["variant-" + variantNo + "-value"],
                             VariantPrice = Convert.ToInt32(form["variant-" + variantNo + "-price"]),
                             FeatureImageLink = formFiles["variant-" + variantNo + "-feature-image"]!.SaveTo("images/products", model.Name + " " + form["variant-type"]),
+                            Images = formFiles.GetFiles("variant-" + variantNo + "-images").ToArray().SaveTo("images/products", model.Name + " " + form["variant-type"]).Select(x => new ProductVariantImage { Link = x }).ToList(),
+                            Videos = formFiles.GetFiles("variant-" + variantNo + "-videos").ToArray().SaveTo("videos/products", model.Name + " " + form["variant-type"]).Select(x => new ProductVariantVideo { Link = x }).ToList(),
                             Quantity = Convert.ToInt32(form["variant-" + variantNo + "-quantity"]),
                             IsMainVariant = false
                         });
@@ -358,13 +468,53 @@ namespace LocalDropshipping.Web.Controllers
                     TempData["ProductAdded"] = "Product added successfully";
                     return RedirectToAction("Products");
                 }
+
+            }
+            else
+            {
+                var product = new Product();
+                product.Name = model.Name;
+                product.CategoryId = model.CategoryId;
+                product.IsBestSelling = model.IsBestSelling;
+                product.IsFeatured = model.IsFeatured;
+                product.IsNewArravial = model.IsNewArravial;
+                product.Description = model.Description;
+                product.SKU = model.SKU;
+                product.Variants = new List<ProductVariant>();
+
+                if (model.HasVariants == 1)
+                {
+                    for (int variantNo = 1; variantNo <= model.VariantCounts; variantNo++)
+                    {
+                        product.Variants.Add(new ProductVariant
+                        {
+                            ProductVariantId = Convert.ToInt32(form["variant-" + variantNo + "-variant-id"]),
+                            VariantType = form["variant-type"],
+                            Variant = form["variant-" + variantNo + "-value"],
+                            VariantPrice = Convert.ToInt32(form["variant-" + variantNo + "-price"]),
+                            Quantity = Convert.ToInt32(form["variant-" + variantNo + "-quantity"]),
+                            IsMainVariant = false
+                        });
+                    }
+                    _productsService.Update(model.ProductId, product, false);
+                    TempData["updated"] = "Product updated successfully";
+                }
                 else
                 {
-                    //_productsService.Update(model.ProductId, product);
-                    //TempData["updated"] = "Product updated successfully";
-                    //return RedirectToAction("Products");
+                    product.Variants.Add(new ProductVariant
+                    {
+                        ProductVariantId = model.MainVariantId,
+                        IsMainVariant = true,
+                        VariantPrice = model.Price,
+                        Quantity = model.Quantity
+                    });
+                    _productsService.Update(model.ProductId, product);
+                    TempData["updated"] = "Product updated successfully";
                 }
+
+                return RedirectToAction("Products");
             }
+
             ViewBag.Categories = _categoryService.GetAll();
             return View(model);
         }
@@ -424,13 +574,14 @@ namespace LocalDropshipping.Web.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
         public IActionResult DeleteProduct(int id)
         {
             try
             {
+                SetRoleByCurrentUser();
                 Product product = _productsService.Delete(id);
                 TempData["Message"] = "Product deleted successfully.";
             }
@@ -439,6 +590,21 @@ namespace LocalDropshipping.Web.Controllers
                 Console.WriteLine(e.Message);
                 TempData["Message"] = "no";
             }
+            return RedirectToAction("Products");
+        }
+
+        [HttpGet]
+        [Authorize]
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        public IActionResult Product(int id)
+        {
+            Product? product = _productsService.GetById(id);
+            if (product != null)
+            {
+                return View(product);
+            }
+
+            TempData["Message"] = "Product does not exist.";
             return RedirectToAction("Products");
         }
 
@@ -466,21 +632,52 @@ namespace LocalDropshipping.Web.Controllers
             return currentUserEmail;
         }
 
-        public IActionResult CategoryList()
+        public IActionResult CategoryList([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
         {
-            var category = _categoryService.GetAll();
-            return View(category);
+			//Add ViewBag to save SortOrder of table
+			ViewBag.CurrentSort = sortByName;
+            ViewBag.NameSortParm = string.IsNullOrEmpty(sortByName) ? "name_asc" : (sortByName == "name_asc" ? "name_desc" : "name_asc");
+            if (searchString != null)
+			{
+				pagination.PageNumber = 1;
+			}
+			else
+			{
+				searchString = currentFilter;
+			}
+
+			ViewBag.CurrentFilter = searchString;
+			List<Category> category = _categoryService.GetAll();
+			if (!string.IsNullOrEmpty(searchString))
+			{
+				category =_categoryService.GetCatagoreyBySearch(searchString);
+                    //_productsService.GetProductsBySearch(searchString);
+			}
+			switch (sortByName)
+			{
+				case "name_desc":
+					category = category.OrderBy(s => s.Name).ToList();
+					break;
+
+				default:
+					category = category.OrderBy(s => s.CategoryId).ToList();
+					break;
+			}
+			var count = category.Count();
+            category = category.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+            return View(new PageResponse<List<Category>>(category, pagination.PageNumber, pagination.PageSize, count));
         }
 
         public IActionResult AddNewCategory()
         {
-
+            SetRoleByCurrentUser();
             return View();
         }
 
         [HttpPost]
         public IActionResult AddNewCategory(Category categoryModel)
         {
+            SetRoleByCurrentUser();
 
             if (ModelState.IsValid)
             {
@@ -507,19 +704,22 @@ namespace LocalDropshipping.Web.Controllers
         [HttpPost]
         public IActionResult DeleteCategory(int id)
         {
+            SetRoleByCurrentUser();
             var user = _categoryService.Delete(id);
             SetRoleByCurrentUser();
             return View("CategoryList", _categoryService.GetAll());
         }
         [HttpGet]
-        public IActionResult UpdateCategory()
+        public IActionResult UpdateCategory()//int id
         {
+            SetRoleByCurrentUser();
             return View();
         }
 
         [HttpPost]
         public IActionResult UpdateCategory(int categoryId, CategoryDto categoryDto)
         {
+            SetRoleByCurrentUser();
             if (ModelState.IsValid)
             {
                 var createdBy = GetCurrentLoggedInUserEmail();
@@ -544,19 +744,29 @@ namespace LocalDropshipping.Web.Controllers
             return View();
         }
 
-        public IActionResult GetAllConsumers()
+        public IActionResult GetAllConsumers([FromQuery] Pagination pagination)
         {
             SetRoleByCurrentUser();
-            return View(_consumerService.GetAllConsumer());
+            var consumers = _consumerService.GetAllConsumer();
+            var count = consumers.Count();
+            consumers = consumers.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+            return View(new PageResponse<List<Consumer>>(consumers, pagination.PageNumber, pagination.PageSize, count));
         }
 
         [HttpPost]
         public IActionResult BlockOrUnblockConsumer(int userId)
         {
+            SetRoleByCurrentUser();
             var consumer = _consumerService.BlockOrUnblockConsumer(userId);
             var consumers = _consumerService.GetAllConsumer();
             SetRoleByCurrentUser();
             return View("GetAllConsumers", consumers);
+        }
+
+        public IActionResult Reports()
+        {
+            SetRoleByCurrentUser();
+            return View();
         }
     }
 }
