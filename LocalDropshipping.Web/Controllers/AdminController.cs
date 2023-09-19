@@ -519,7 +519,7 @@ namespace LocalDropshipping.Web.Controllers
             return View(model);
         }
        
-        public IActionResult Withdrawal()
+        public IActionResult Withdrawal([FromQuery] Pagination pagination)
         {
             try
             {
@@ -544,8 +544,9 @@ namespace LocalDropshipping.Web.Controllers
                                        Withdrawals = new List<Withdrawals> { withdrawal },
                                        Profiles = profileData != null ? new List<Profiles> { profileData } : new List<Profiles>()
                                    };
-
-                return View(combinedData.ToList());
+                var count = combinedData.Count();
+                combinedData = combinedData.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+                return View(new PageResponse<List<AddWithdrawalUserViewModel>>(combinedData.ToList(), pagination.PageNumber, pagination.PageSize, count));
             }
             catch (Exception ex)
             {
