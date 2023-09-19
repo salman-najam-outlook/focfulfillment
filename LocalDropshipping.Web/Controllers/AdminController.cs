@@ -299,6 +299,8 @@ namespace LocalDropshipping.Web.Controllers
         public IActionResult Dashboard()
         {
             SetRoleByCurrentUser();
+            string? currentUserID = _userManager.GetUserId(HttpContext.User);
+            ViewBag.currentUser = _userService.GetById(currentUserID);
             return View();
         }
 

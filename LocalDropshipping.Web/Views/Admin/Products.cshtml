@@ -2,11 +2,12 @@
 @using LocalDropshipping.Web.Helpers;
 @model PageResponse<List<Product>>;
 @{
-    ViewBag.Title = "FOC Fulfillment - Products";
+    ViewBag.Title = "FOC Fulfillment - Products list";
 
     Layout = "_LayoutDashboard";
 
 }
+
 <div class="page-body">
     <div class="container-fluid">
         <div class="row">
@@ -77,12 +78,12 @@
                                                         <ul>
                                                             <li>
                                                                 <a asp-controller="Admin" asp-action="Product" asp-route-id="@product.ProductId">
-                                                                    <i class="ri-eye-line"></i>
+                                                                    <i class="ri-eye-line" style="color:#0DA487"></i>
                                                                 </a>
                                                             </li>
                                                             <li>
                                                                 <a asp-controller="Admin" asp-action="AddUpdateProduct" asp-route-id="@product.ProductId">
-                                                                    <i class="ri-pencil-line"></i>
+                                                                    <i class="ri-pencil-line" style="color:#0DA487"></i>
                                                                 </a>
                                                             </li>
 

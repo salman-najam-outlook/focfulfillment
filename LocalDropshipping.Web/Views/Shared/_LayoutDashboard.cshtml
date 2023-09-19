@@ -96,10 +96,6 @@
                         </a>
                     </div>
                 </div>
-
-
-
-
                 <div class="nav-right col-6 pull-right right-header p-0">
                     <ul class="nav-menus">
                         <li>
@@ -107,50 +103,9 @@
                                 <i class="ri-search-line"></i>
                             </span>
                         </li>
-                        <li class="onhover-dropdown">
-                            <div class="notification-box">
-                                <i class="ri-notification-line"></i>
-                                <span class="badge rounded-pill badge-theme">4</span>
-                            </div>
-                            <ul class="notification-dropdown onhover-show-div">
-                                <li>
-                                    <i class="ri-notification-line"></i>
-                                    <h6 class="f-18 mb-0">Notitications</h6>
-                                </li>
-                                <li>
-                                    <p>
-                                        <i class="fa fa-circle me-2 font-primary"></i>Delivery processing <span class="pull-right">10 min.</span>
-                                    </p>
-                                </li>
-                                <li>
-                                    <p>
-                                        <i class="fa fa-circle me-2 font-success"></i>Order Complete<span class="pull-right">1 hr</span>
-                                    </p>
-                                </li>
-                                <li>
-                                    <p>
-                                        <i class="fa fa-circle me-2 font-info"></i>Tickets Generated<span class="pull-right">3 hr</span>
-                                    </p>
-                                </li>
-                                <li>
-                                    <p>
-                                        <i class="fa fa-circle me-2 font-danger"></i>Delivery Complete<span class="pull-right">6 hr</span>
-                                    </p>
-                                </li>
-                                <li>
-                                    <a class="btn btn-primary" href="javascript:void(0)">Check all notification</a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li>
-                            <div class="mode">
-                                <i class="ri-moon-line"></i>
-                            </div>
-                        </li>
                         <li class="profile-nav onhover-dropdown pe-0 me-0">
                             <div class="media profile-media">
-                                <img class="user-profile rounded-circle" src="~/backend-assets/images/users/4.jpg" alt="">
+                                <img class="user-profile rounded-circle" src="~/backend-assets/images/users/default-profile-image.svg" alt="">
                                 <div class="user-name-hide media-body">
                                     <span>Emay Walter</span>
                                     <p class="mb-0 font-roboto">Admin<i class="middle ri-arrow-down-s-line"></i></p>
@@ -160,27 +115,40 @@
                                 <li>
                                     <a href="all-users.html">
                                         <i data-feather="users"></i>
-                                        <span>Users</span>
+                                        <span>Name: @ViewBag.currentUser.Fullname</span>
                                     </a>
                                 </li>
-                                <li>
-                                    <a href="order-list.html">
-                                        <i data-feather="archive"></i>
-                                        <span>Orders</span>
-                                    </a>
-                                </li>
-                                <li>
+                                @if (isSuperAdmin)
+                                {
+                                    <li>
+                                        <a href="order-list.html">
+                                            <i data-feather="archive"></i>
+                                            <span>LoggedIn as: SuperAdmin </span>
+                                        </a>
+                                    </li>
+                                }
+                                @if(isAdmin)
+                                {
+                                    <li>
+                                        <a href="order-list.html">
+                                            <i data-feather="archive"></i>
+                                            <span>LoggedIn as: Admin </span>
+                                        </a>
+                                    </li>
+                                }
+                                
+                                @* <li>
                                     <a href="support-ticket.html">
                                         <i data-feather="phone"></i>
                                         <span>Spports Tickets</span>
                                     </a>
-                                </li>
-                                <li>
+                                </li> *@
+                                @* <li>
                                     <a href="profile-setting.html">
                                         <i data-feather="settings"></i>
                                         <span>Settings</span>
                                     </a>
-                                </li>
+                                </li> *@
                                 <li>
                                     <a data-bs-toggle="modal" data-bs-target="#staticBackdrop"
                                        href="javascript:void(0)">
@@ -203,7 +171,7 @@
                 <div>
                     <div class="logo-wrapper logo-wrapper-center">
                         <a href="index.html" data-bs-original-title="" title="">
-                            <img class="img-fluid for-white" src="~/backend-assets/images/logo/full-white.png" alt="logo">
+                            <img class="img-fluid for-white" src="~/backend-assets/images/logo/FOCFulfillment-Logo-Main-Admin-Panel.png" alt="logo">
                         </a>
                         <div class="back-btn">
                             <i class="fa fa-angle-left"></i>
@@ -227,11 +195,6 @@
                         <div id="sidebar-menu">
                             <ul class="sidebar-links" id="simple-bar">
                                 <li class="back-btn"></li>
-
-
-
-
-
                                 <li class="sidebar-list">
                                     <a class="sidebar-link sidebar-title link-nav" asp-controller="Admin" asp-action="Dashboard">
                                         <i class="ri-home-line"></i>
@@ -246,11 +209,10 @@
                                     </a>
                                     <ul class="sidebar-submenu">
                                         <li>
-                                            <a asp-controller="Admin" asp-action="Products">Products List</a>
+                                            <a asp-controller="Admin" asp-action="AddUpdateProduct">Add Product</a>
                                         </li>
-
                                         <li>
-                                            <a asp-controller="Admin" asp-action="AddUpdateProduct">Add A New Product</a>
+                                            <a asp-controller="Admin" asp-action="Products">Products List</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -306,14 +268,6 @@
                                     </ul>
                                 </li>
 
-                                @*  <li class="sidebar-list">
-                                <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                                <i class="ri-user-3-line"></i>
-                                <span>Roles</span>
-                                </a>
-
-                                </li> *@
-
 
 
                                 <li class="sidebar-list">
@@ -325,22 +279,15 @@
                                         <li>
                                             <a asp-action="OrdersList" asp-controller="Admin">Order List</a>
                                         </li>
-
-                                        <li>
-                                            <a href="order-tracking.html">Order Tracking</a>
-                                        </li>
                                     </ul>
                                 </li>
-
-
-
-                                <li class="sidebar-list">
+                                @* <li class="sidebar-list">
                                     <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
                                         <i class="ri-settings-line"></i>
                                         <span>Profile</span>
                                     </a>
 
-                                </li>
+                                </li> *@
 
                                 <li class="sidebar-list">
                                     <a class="sidebar-link sidebar-title link-nav" asp-action="Reports" asp-controller="Admin">
@@ -360,7 +307,7 @@
                                     <i class="ri-file-chart-line"></i>
                                     <span>Logout</span>
                                     </a> *@
-                                    <a href="#" class="sidebar-link sidebar-title link-nav" id="logoutLink">
+                                    <a style="cursor:pointer" class="sidebar-link sidebar-title link-nav" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                         <i class="ri-file-chart-line"></i>
                                         <span>Logout</span>
                                     </a>
@@ -378,7 +325,7 @@
             </div>
             <!-- Page Sidebar Ends-->
             <!-- index body start -->
-            @*   <div class="page-body"> *@
+            @* <div class="page-body"> *@ 
 
             @RenderBody()
 
@@ -387,6 +334,15 @@
 
         </div>
         <!-- Page Body End -->
+        <div class="container-fluid">
+            <footer class="footer">
+                <div class="row">
+                    <div class="col-md-12 footer-copyright text-center">
+                        <p class="mb-0">©2023 FOC Fulfillment - All rights reserved. Powered By: <a href="https://tetrasol.net" target="_blank">TetraSol</a> </p>
+                    </div>
+                </div>
+            </footer>
+        </div>
     </div>
     <!-- page-wrapper End-->
     <!-- Modal Start -->
@@ -400,7 +356,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     <div class="button-box">
                         <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-                        <button type="button" class="btn  btn--yes btn-primary">Yes</button>
+                        <button id="logoutLink" type="button" class="btn  btn--yes btn-primary">Yes</button>
                     </div>
                 </div>
             </div>
@@ -459,12 +415,6 @@
     <!-- Theme js -->
     <script src="~/backend-assets/js/script.js"></script>
     <script>
-
-
-
-
-
-
 
         document.getElementById("logoutLink").addEventListener("click", function (e) {
             e.preventDefault(); // Prevent the default anchor tag behavior
