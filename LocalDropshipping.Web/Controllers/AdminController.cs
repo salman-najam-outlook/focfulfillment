@@ -11,6 +11,7 @@ using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using NuGet.Packaging;
 using System.Security.Claims;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -240,6 +241,7 @@ namespace LocalDropshipping.Web.Controllers
 
             SetRoleByCurrentUser();
 
+
             return View("StaffMember", sellers);
         }
 
@@ -247,7 +249,7 @@ namespace LocalDropshipping.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-
+            HttpContext.Session.Remove("CurrentUser");
             return RedirectToAction("AdminLogin", "Admin");
         }
 
@@ -300,7 +302,8 @@ namespace LocalDropshipping.Web.Controllers
         {
             SetRoleByCurrentUser();
             string? currentUserID = _userManager.GetUserId(HttpContext.User);
-            ViewBag.currentUser = _userService.GetById(currentUserID);
+            var currentUser = _userService.GetById(currentUserID);
+            HttpContext.Session.SetString("CurrentUser", JsonConvert.SerializeObject(currentUser));
             return View();
         }
 

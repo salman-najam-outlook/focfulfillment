@@ -1,10 +1,11 @@
-﻿@{
-
-    Layout = null;
-}
+﻿@using Newtonsoft.Json;
+@using LocalDropshipping.Web.Data.Entities;
 @{
+    Layout = null;
     bool isAdmin = TempData["IsAdmin"] as bool? ?? false;
     bool isSuperAdmin = TempData["IsSuperAdmin"] as bool? ?? false;
+    var data = Context.Session.GetString("CurrentUser");
+    var currentUserData = JsonConvert.DeserializeObject<User>(data);
 }
 
 <!DOCTYPE html>
@@ -65,7 +66,7 @@
     <link rel="stylesheet" type="text/css" href="~/backend-assets/css/style.css">
 
    <!-- Template css -->
-    @* <link rel="stylesheet" type="text/css" href="../assets/css/style.css"> *@
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
 
 </head>
 
@@ -113,42 +114,29 @@
                             </div>
                             <ul class="profile-dropdown onhover-show-div">
                                 <li>
-                                    <a href="all-users.html">
+                                    <a >
                                         <i data-feather="users"></i>
-                                        <span>Name: @ViewBag.currentUser.Fullname</span>
+                                        <strong>@currentUserData.Fullname</strong>
                                     </a>
                                 </li>
-                                @if (isSuperAdmin)
+                                @if (@currentUserData.IsSuperAdmin)
                                 {
                                     <li>
-                                        <a href="order-list.html">
+                                        <a >
                                             <i data-feather="archive"></i>
                                             <span>LoggedIn as: SuperAdmin </span>
                                         </a>
                                     </li>
                                 }
-                                @if(isAdmin)
+                                else
                                 {
                                     <li>
-                                        <a href="order-list.html">
+                                        <a >
                                             <i data-feather="archive"></i>
                                             <span>LoggedIn as: Admin </span>
                                         </a>
                                     </li>
                                 }
-                                
-                                @* <li>
-                                    <a href="support-ticket.html">
-                                        <i data-feather="phone"></i>
-                                        <span>Spports Tickets</span>
-                                    </a>
-                                </li> *@
-                                @* <li>
-                                    <a href="profile-setting.html">
-                                        <i data-feather="settings"></i>
-                                        <span>Settings</span>
-                                    </a>
-                                </li> *@
                                 <li>
                                     <a data-bs-toggle="modal" data-bs-target="#staticBackdrop"
                                        href="javascript:void(0)">

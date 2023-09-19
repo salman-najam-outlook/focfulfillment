@@ -50,7 +50,16 @@
                                             <tr data-bs-toggle="offcanvas" href="#order-details" class="odd">
                                                 <td>@order.Id</td>
                                                 <td>@order.OrderDate</td>
-                                                <td>@order.OrderStatus</td>
+                                                <td>
+                                                    @if (order.OrderStatus == LocalDropshipping.Web.Enums.OrderStatus.Delivered)
+                                                    {
+                                                        <label class="success">@order.OrderStatus</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label class="danger" >@order.OrderStatus</label>
+                                                    }
+                                                </td>
                                                 <td>@order.GrandTotal</td>
                                                 <td>
                                                     <ul>
