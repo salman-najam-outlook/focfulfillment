@@ -8,7 +8,7 @@ namespace LocalDropshipping.Web.Models
 
         public int? WithDrawalId { get; set; }
         public string? UserEmail { get; set; }
-        public int AmountInPkr { get; set; }
+        public decimal AmountInPkr { get; set; }
         public PaymentStatus paymentStatus { get; set; }
         public List<Withdrawals> Withdrawals { get; set; }
         public List<Profiles> Profiles { get; set; }

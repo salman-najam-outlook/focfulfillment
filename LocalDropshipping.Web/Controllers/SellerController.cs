@@ -395,28 +395,25 @@ namespace LocalDropshipping.Web.Controllers
 
         public IActionResult Withdrawal([FromQuery] Pagination pagination)
         {
-            try
-            {
-                //var data = _orderService.GetAll();
-                //return View(data);
-                var orders = _orderService.GetAll();
+            var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
+            var email = _userService.GetUserEmailById(userId);
+            var withdrawals = _withdrawlsService.GetWithdrawalByUserEmail(email);
 
-                var withdrawalModels = orders.Select(order => new withdrawalModel
+            if(withdrawals != null)
+            {
+                var withdrawalModel = withdrawals.Select(withdrawal => new WithdrawalModel
                 {
-                    Id = order.Id,
-                    Name = order.Name,
-                    GrandTotal = order.GrandTotal,
-                    OrderStatus = order.OrderStatus,
-
+                    AmountInPkr = withdrawal.AmountInPkr,
+                    PaymentStatus = withdrawal.PaymentStatus,
+                    TransactionId = withdrawal.TransactionId,
+                    RequestDate = withdrawal.CreatedDate,
+                    Reason = withdrawal.Reason
                 }).ToList();
-                var count = withdrawalModels.Count();
-                withdrawalModels = withdrawalModels.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
-                return View(new PageResponse<List<withdrawalModel>>(withdrawalModels, pagination.PageNumber, pagination.PageSize, count));
+                var count = withdrawalModel.Count();
+                withdrawalModel = withdrawalModel.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+                return View(new PageResponse<List<WithdrawalModel>>(withdrawalModel, pagination.PageNumber, pagination.PageSize, count));
             }
-            catch (Exception ex)
-            {
-                return View(ex.Message);
-            }
+            return View();   
         }
 
         [HttpGet]

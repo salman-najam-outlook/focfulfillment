@@ -2,7 +2,7 @@
 @using LocalDropshipping.Web.Helpers;
 @using LocalDropshipping.Web.Models;
 
-@model PageResponse<List<withdrawalModel>>;
+@model PageResponse<List<WithdrawalModel>>;
 @{
     ViewBag.Title = "FOC Fulfillment - Withdrawals";
     Layout = "_LayoutSellerDashboard";
@@ -36,24 +36,22 @@
                     <table class="table order-table">
                         <thead>
                             <tr>
-                                <th scope="col">Order ID</th>
-                                <th scope="col">Order Date</th>
-                                <th scope="col">Product Name</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Price</th>
-
+                                <th scope="col">TransactionId</th>
+                                <th scope="col">AmountInPkr</th>
+                                <th scope="col">PaymentStatus</th>
+                                <th scope="col">RequestDate</th>
+                                <th scope="col">Reason</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var order in Model.Data)
+                            @foreach (var withdrawal in Model.Data)
                             {
                                 <tr>
-                                    <td>@order.Id</td>
-                                    <td>@order.OrderDate</td>
-                                    <td>@order.Name</td>
-                                    <td>@order.OrderStatus</td>
-                                    @* <td>@order.GrandTotal</td> *@
-                                    <td>Rs.@order.GrandTotal.ToString("N0")/-</td>
+                                    <td>@withdrawal.TransactionId</td>
+                                    <td>Rs.@withdrawal.AmountInPkr.ToString("N0")/-</td>
+                                    <td>@withdrawal.PaymentStatus</td>
+                                    <td>@withdrawal.RequestDate</td>
+                                    <td>@withdrawal.Reason</td>
                                 </tr>
 
                             }
