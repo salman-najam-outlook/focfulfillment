@@ -52,12 +52,12 @@
                                             <tr>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Product Image</th>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">
-                                                    @Html.ActionLink("Name", "Products","Admin", new { sortProduct = ViewBag.NameSortParm })
+                                                    @Html.ActionLink("Name", "Products","Admin", new { sortProduct = ViewBag.NameSortParm})
                                                 </th>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Category</th>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Current Qty</th>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">
-                                                    @Html.ActionLink("Price", "Products","Admin", new { sortProduct = ViewBag.PriceSortParm })
+                                                    @Html.ActionLink("Price", "Products","Admin", new { sortProduct = ViewBag.PriceSortParm})
                                                 </th>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Action</th>
                                             </tr>
@@ -72,8 +72,7 @@
                                                     <td>@product.Name</td>
                                                     <td style="color:black;">@product.Category!.Name</td>
                                                     <td>@product.Variants.First().Quantity</td>
-                                                    <td>@product.Variants.First().VariantPrice</td>
-
+                                                    <td>Rs.@product.Variants.First().VariantPrice.ToString("N0")/-</td>
                                                     <td>
                                                         <ul>
                                                             <li>

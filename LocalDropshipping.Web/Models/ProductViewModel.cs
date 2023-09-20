@@ -18,7 +18,7 @@ namespace LocalDropshipping.Web.Models
 
         public bool IsBestSelling { get; set; }
 
-        public bool IsFeatured { get; set; }
+        public bool IsTopRated { get; set; }
 
         public int Quantity { get; set; }
 
@@ -56,7 +56,7 @@ namespace LocalDropshipping.Web.Models
                     Name = product.Name;
                     CategoryId = product.CategoryId;
                     IsBestSelling = product.IsBestSelling;
-                    IsFeatured = product.IsFeatured;
+                    IsTopRated = product.IsTopRated;
                     IsNewArravial = product.IsNewArravial;
                     Description = product.Description;
                     SKU = product.SKU;
@@ -71,7 +71,7 @@ namespace LocalDropshipping.Web.Models
                     Name = product.Name;
                     CategoryId = product.CategoryId;
                     IsBestSelling = product.IsBestSelling;
-                    IsFeatured = product.IsFeatured;
+                    IsTopRated = product.IsTopRated;
                     IsNewArravial = product.IsNewArravial;
                     Description = product.Description;
                     SKU = product.SKU;

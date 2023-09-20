@@ -87,7 +87,9 @@ namespace LocalDropshipping.Web.Controllers
                         if (isActive)
                         {
                             if (!returnUrl.IsNullOrEmpty())
+                            {
                                 return LocalRedirect(returnUrl);
+                            }  
                             return RedirectToAction("Dashboard", "Admin");
                         }
                         else
@@ -109,7 +111,7 @@ namespace LocalDropshipping.Web.Controllers
 
             return View(model);
         }
-
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult AddNewUser()
         {
             try
@@ -141,6 +143,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public async Task<IActionResult> AddNewUser(UserViewModel model)
         {
             try
@@ -208,6 +211,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         #endregion
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult StaffMember([FromQuery] Pagination pagination)
         {
             SetRoleByCurrentUser();
@@ -216,6 +220,7 @@ namespace LocalDropshipping.Web.Controllers
             staffMembers = staffMembers.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
             return View(new PageResponse<List<User>>(staffMembers, pagination.PageNumber, pagination.PageSize, count));
         }
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult EditUser()
         {
             return View();
@@ -223,6 +228,7 @@ namespace LocalDropshipping.Web.Controllers
 
 
         [HttpPost]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult DeleteUser(string userId)
         {
             _userService.Delete(userId);
@@ -231,6 +237,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult ActivateUser(string userId)
         {
             if (!string.IsNullOrEmpty(userId))
@@ -251,11 +258,11 @@ namespace LocalDropshipping.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            HttpContext.Session.Remove("CurrentUser");
+           
             return RedirectToAction("AdminLogin", "Admin");
         }
 
-
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult GetAllSellers([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
         {
             SetRoleByCurrentUser();
@@ -298,7 +305,6 @@ namespace LocalDropshipping.Web.Controllers
 
 
         [HttpGet]
-        [Authorize]
         [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult Dashboard()
         {
@@ -312,6 +318,7 @@ namespace LocalDropshipping.Web.Controllers
 
 
         [HttpGet]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult OrdersList([FromQuery] Pagination pagination, string searchString, string sortOrder, string currentFilter)
         {
             try
@@ -435,7 +442,6 @@ namespace LocalDropshipping.Web.Controllers
 
 
         [HttpPost]
-        [Authorize]
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin), ]
         public IActionResult AddUpdateProduct(ProductViewModel model)
         {
@@ -476,7 +482,7 @@ namespace LocalDropshipping.Web.Controllers
                         Name = model.Name,
                         CategoryId = model.CategoryId,
                         IsBestSelling = model.IsBestSelling,
-                        IsFeatured = model.IsFeatured,
+                        IsTopRated = model.IsTopRated,
                         IsNewArravial = model.IsNewArravial,
                         Description = model.Description,
                         SKU = model.SKU,
@@ -506,7 +512,7 @@ namespace LocalDropshipping.Web.Controllers
                         Name = model.Name,
                         CategoryId = model.CategoryId,
                         IsBestSelling = model.IsBestSelling,
-                        IsFeatured = model.IsFeatured,
+                        IsTopRated = model.IsTopRated,
                         IsNewArravial = model.IsNewArravial,
                         Description = model.Description,
                         SKU = model.SKU,
@@ -540,7 +546,7 @@ namespace LocalDropshipping.Web.Controllers
                 product.Name = model.Name;
                 product.CategoryId = model.CategoryId;
                 product.IsBestSelling = model.IsBestSelling;
-                product.IsFeatured = model.IsFeatured;
+                product.IsTopRated = model.IsTopRated;
                 product.IsNewArravial = model.IsNewArravial;
                 product.Description = model.Description;
                 product.SKU = model.SKU;
@@ -592,7 +598,7 @@ namespace LocalDropshipping.Web.Controllers
             ViewBag.Categories = _categoryService.GetAll();
             return View(model);
         }
-       
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult Withdrawal([FromQuery] Pagination pagination)
         {
             try
@@ -630,6 +636,7 @@ namespace LocalDropshipping.Web.Controllers
 
 
         [HttpPost]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult Withdrawal(PaymentViewModel model)
         {
             if (ModelState.IsValid)
@@ -704,6 +711,7 @@ namespace LocalDropshipping.Web.Controllers
             return currentUserEmail;
         }
 
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult CategoryList([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
         {
             ViewBag.CurrentSort = sortByName;
@@ -741,6 +749,7 @@ namespace LocalDropshipping.Web.Controllers
             return View(new PageResponse<List<Category>>(category, pagination.PageNumber, pagination.PageSize, count));
         }
 
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult AddNewCategory()
         {
             SetRoleByCurrentUser();
@@ -748,6 +757,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult AddNewCategory(Category categoryModel)
         {
             SetRoleByCurrentUser();
@@ -775,6 +785,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult DeleteCategory(int id)
         {
             SetRoleByCurrentUser();
@@ -783,6 +794,7 @@ namespace LocalDropshipping.Web.Controllers
             return View("CategoryList", _categoryService.GetAll());
         }
         [HttpGet]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult UpdateCategory()//int id
         {
             SetRoleByCurrentUser();
@@ -790,6 +802,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult UpdateCategory(int categoryId, CategoryDto categoryDto)
         {
             SetRoleByCurrentUser();
@@ -816,7 +829,7 @@ namespace LocalDropshipping.Web.Controllers
             }
             return View();
         }
-
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult GetAllConsumers([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
         {
             SetRoleByCurrentUser();
@@ -857,6 +870,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult BlockOrUnblockConsumer(int userId)
         {
             SetRoleByCurrentUser();
@@ -865,7 +879,7 @@ namespace LocalDropshipping.Web.Controllers
             SetRoleByCurrentUser();
             return View("GetAllConsumers", consumers);
         }
-
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult Reports()
         {
             SetRoleByCurrentUser();

@@ -6,6 +6,7 @@
     bool isSuperAdmin = TempData["IsSuperAdmin"] as bool? ?? false;
     var data = Context.Session.GetString("CurrentUser");
     var currentUserData = JsonConvert.DeserializeObject<User>(data);
+
 }
 
 <!DOCTYPE html>
@@ -123,7 +124,7 @@
                                 {
                                     <li>
                                         <a >
-                                            <i data-feather="archive"></i>
+                                            <i class="ri-user-3-line"></i>
                                             <span>LoggedIn as: SuperAdmin </span>
                                         </a>
                                     </li>
@@ -132,7 +133,7 @@
                                 {
                                     <li>
                                         <a >
-                                            <i data-feather="archive"></i>
+                                            <i class="ri-user-3-line"></i>
                                             <span>LoggedIn as: Admin </span>
                                         </a>
                                     </li>

@@ -85,7 +85,7 @@ namespace LocalDropshipping.Web.Services
                 exProduct.Description = product.Description;
                 exProduct.SKU = product.SKU;
                 exProduct.CategoryId = product.CategoryId;
-                exProduct.IsFeatured = product.IsFeatured;
+                exProduct.IsTopRated = product.IsTopRated;
                 exProduct.IsBestSelling = product.IsBestSelling;
                 exProduct.IsNewArravial = product.IsNewArravial;
 
