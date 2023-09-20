@@ -18,7 +18,7 @@ namespace LocalDropshipping.Web.Models
 
         public bool IsBestSelling { get; set; }
 
-        public bool IsFeatured { get; set; }
+        public bool IsTopRated { get; set; }
 
         public int Quantity { get; set; }
 
@@ -56,13 +56,24 @@ namespace LocalDropshipping.Web.Models
                     Name = product.Name;
                     CategoryId = product.CategoryId;
                     IsBestSelling = product.IsBestSelling;
-                    IsFeatured = product.IsFeatured;
+                    IsTopRated = product.IsTopRated;
                     IsNewArravial = product.IsNewArravial;
                     Description = product.Description;
                     SKU = product.SKU;
                     Price = product.Variants.First().VariantPrice;
                     Quantity = product.Variants.First().Quantity;
                     MainVariantId = product.Variants.First().ProductVariantId;
+                    Variants = product.Variants.Select(x => new ProductVariantViewModel
+                    {
+                        Quantity = x.Quantity,
+                        VariantPrice = x.VariantPrice,
+                        VariantType = x.VariantType,
+                        VariantId = x.ProductVariantId,
+                        Variant = x.Variant,
+                        FeatureImageLink = x.FeatureImageLink,
+                        Images = x.Images.Select(x => x.Link).ToList(),
+                        Videos = x.Videos.Select(x => x.Link).ToList()
+                    }).ToList();
                 }
                 else
                 {
@@ -71,7 +82,7 @@ namespace LocalDropshipping.Web.Models
                     Name = product.Name;
                     CategoryId = product.CategoryId;
                     IsBestSelling = product.IsBestSelling;
-                    IsFeatured = product.IsFeatured;
+                    IsTopRated = product.IsTopRated;
                     IsNewArravial = product.IsNewArravial;
                     Description = product.Description;
                     SKU = product.SKU;
