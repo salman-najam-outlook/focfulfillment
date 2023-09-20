@@ -1,41 +1,50 @@
 ﻿@using LocalDropshipping.Web.Data.Entities;
 @using LocalDropshipping.Web.Helpers;
 @using LocalDropshipping.Web.Models;
-@* @model List<Order>; *@
-@model PageResponse<List<withdrawalModel>>;
+
+@model PageResponse<List<WithdrawalModel>>;
 @{
     ViewBag.Title = "FOC-FulFillment-Withdrawals";
     Layout = "_LayoutSellerDashboard";
 }
-
 <body>
-
+    
     <div class="tab-pane fade active show" id="pills-order" role="tabpanel" aria-labelledby="pills-order-tab">
         <div class="dashboard-order">
-            <div class="title">
+            <div class="title d-flex justify-content-between align-items-center">
                 <h2>All Withdrawals</h2>
-                <span class="title-leaf title-leaf-gray">
-                    <svg class="icon-width bg-gray">
-                        <use xlink:href="https://themes.pixelstrap.com/fastkart/assets/svg/leaf.svg#leaf"></use>
-                    </svg>
-                </span>
+                <div>
+                    <a asp-action="WithdrawalRequest" asp-controller="Seller">
+                        <button class="btn request-btn">
+                            Withdrawal Request
+                        </button>
+                    </a>
+                </div>
             </div>
-
+                @* <div class="tab-pane fade active show" id="pills-order" role="tabpanel" aria-labelledby="pills-order-tab">
+                    <div class="dashboard-order">
+                        <div class="title">
+                            <h2>All Withdrawals</h2>
+                            <span class="title-leaf title-leaf-gray">
+                                <svg class="icon-width bg-gray">
+                                    <use xlink:href="https://themes.pixelstrap.com/fastkart/assets/svg/leaf.svg#leaf"></use>
+                                </svg>
+                            </span>
+                        </div> *@
             <div class="order-tab dashboard-bg-box">
                 <div class="table-responsive">
                     <table class="table order-table">
                         <thead>
                             <tr>
-                                <th scope="col">Order ID</th>
-                                <th scope="col">Order Date</th>
-                                <th scope="col">Product Name</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Price</th>
-
+                                <th scope="col">TransactionId</th>
+                                <th scope="col">AmountInPkr</th>
+                                <th scope="col">PaymentStatus</th>
+                                <th scope="col">RequestDate</th>
+                                <th scope="col">Reason</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var order in Model.Data)
+                            @foreach (var withdrawal in Model.Data)
                             {
                                 <tr>
                                     <td>@order.Id</td>

@@ -16,15 +16,31 @@
                             <h5>Order List</h5>
                             <a href="#" class="btn btn-solid">Download all orders</a>
                         </div>
+                        <div class="table-responsive dataTables_wrapper">
+                            <div id="table_id_filter" class="dataTables_filter">
+                                <form asp-controller="Admin" asp-action="OrdersList" method="get">
+                                    <label style="display:flex; justify-content:end; align-items:center">
+                                        Search:
+                                        <input type="search" name="SearchString" class="" placeholder="">
+                                        <button class="btn btn-solid" style="padding: 7px 24px;" type="submit" id="button-addon2">
+                                            <i style="color:white" data-feather="search"></i>
+                                        </button>
+                                    </label>
+                                </form>
+                            </div>
+                        </div>
                         <div class="table-responsive">
                             <div id="table_id_wrapper" class="dataTables_wrapper no-footer">
-                                <div id="table_id_filter" class="dataTables_filter"><label>Search:<input type="search" class="" placeholder="" aria-controls="table_id"></label></div><table class="table all-package order-table theme-table dataTable no-footer" id="table_id">
+                                <table class="table all-package order-table theme-table dataTable no-footer" id="table_id">
                                     <thead>
                                         <tr>
                                             <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Order Id</th>
-                                            <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Order Date</th>
+                                            <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">
+                                        @Html.ActionLink("Order Date", "OrdersList","Admin", new { sortOrder =  ViewBag.DateSortParm, searchString=ViewBag.CurrentFilter })</th>
                                             <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Delivery Status </th>
-                                            <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Price </th>
+                                            <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">
+                                                @Html.ActionLink("Price", "OrdersList","Admin", new { sortOrder = ViewBag.PriceSortParm, searchString=ViewBag.CurrentFilter })
+                                            </th>
                                             <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 180.938px;">Option</th>
                                         </tr>
                                     </thead>
@@ -34,19 +50,28 @@
                                             <tr data-bs-toggle="offcanvas" href="#order-details" class="odd">
                                                 <td>@order.Id</td>
                                                 <td>@order.OrderDate</td>
-                                                <td>@order.OrderStatus</td>
+                                                <td>
+                                                    @if (order.OrderStatus == LocalDropshipping.Web.Enums.OrderStatus.Delivered)
+                                                    {
+                                                        <label class="success">@order.OrderStatus</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label class="danger" >@order.OrderStatus</label>
+                                                    }
+                                                </td>
                                                 <td>@order.GrandTotal</td>
                                                 <td>
                                                     <ul>
                                                         <li>
                                                             <a href="order-detail.html">
-                                                                <i class="ri-eye-line"></i>
+                                                                <i class="ri-eye-line" style="color:#0DA487"></i>
                                                             </a>
                                                         </li>
 
                                                         <li>
                                                             <a href="javascript:void(0)">
-                                                                <i class="ri-pencil-line"></i>
+                                                                <i class="ri-pencil-line" style="color:#0DA487"></i>
                                                             </a>
                                                         </li>
 
@@ -69,11 +94,11 @@
                                 </table>
                             </div>
                              <nav aria-label="Page navigation" class="custome-pagination mt-2">
-                    <ul class="pagination justify-content-center">
+                               <ul class="pagination justify-content-center">
                                     @if (Model.pageNumber > 1)
                                     {
                                 <li class="page-item">
-                                    <a class="page-link" href="?pageNumber=@(Model.pageNumber - 1)&pageSize=@Model.pageSize" aria-label="Previous">
+                                            <a class="page-link" href="?pageNumber=@(Model.pageNumber - 1)&pageSize=@Model.pageSize&sortOrder=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Previous">
                                         <i class="fa-solid fa-angles-left"></i>
                                     </a>
                                 </li>
@@ -82,20 +107,20 @@
                                     @for (int i = 1; i <= Math.Ceiling((double)Model.totalCount / Model.pageSize); i++)
                                     {
                                 <li class="page-item @(i == Model.pageNumber ? "active" : "")">
-                                    <a class="page-link" href="?pageNumber=@i&pageSize=@Model.pageSize">@i</a>
+                                            <a class="page-link" href="?pageNumber=@i&pageSize=@Model.pageSize&sortOrder=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter">@i</a>
                                 </li>
                                     }
 
                                     @if (Model.pageNumber < Math.Ceiling((double)Model.totalCount / Model.pageSize))
                                     {
                                 <li class="page-item">
-                                    <a class="page-link" href="?pageNumber=@(Model.pageNumber + 1)&pageSize=@Model.pageSize" aria-label="Next">
+                                            <a class="page-link" href="?pageNumber=@(Model.pageNumber + 1)&pageSize=@Model.pageSize&sortOrder=@ViewBag.CurrentSort&currentFilter=@ViewBag.CurrentFilter" aria-label="Next">
                                         <i class="fa-solid fa-angles-right"></i>
                                     </a>
                                 </li>
                                     }
-                    </ul>
-                </nav>
+                               </ul>
+                             </nav>
                         </div>
                     </div>
                 </div>

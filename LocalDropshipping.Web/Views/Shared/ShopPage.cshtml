@@ -101,11 +101,8 @@
 									<i class="fa-solid fa-bars"></i>
 								</span>
 							</button>
-
-
-								<div class="middle-box col-lg-12">
-
-								<div class="location-box col-lg-9">
+						<div class="middle-box">
+                                <div class="location-box" style="padding:12px 25px">
 										<button class="btn location-button">
 
 										<a asp-action="SellerDashboard" asp-controller="Seller" id="Colour">DashBoard</a>
@@ -114,11 +111,18 @@
 										</button>
 								</div>
 
-						
-							
-
-
-								<div class="rightside-box col-lg-6">
+                                <div class="search-box">
+                                    <div class="input-group">
+										<form asp-controller="Seller" asp-action="FilterPage" method="get" class="d-flex mb-0">
+                                        <input type="search" name="searchString" class="form-control" placeholder="I'm searching for..." aria-label="Recipient's username" aria-describedby="button-addon2">
+                                        <button class="btn bg-theme" type="submit" id="button-addon2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                        </button>
+										</form>
+                                    </div>
+                                </div>
+                            </div>
+								<div class="rightside-box">
 									<div class="search-full">
 										<div class="input-group">
 											<span class="input-group-text">
@@ -157,82 +161,7 @@
 											</a>
 										</li>
 										@Html.Partial("_ShoppingCart")
-										@* <li class="right-side">
-											<div class="onhover-dropdown header-badge">
-												<button type="button" class="btn p-0 position-relative header-wishlist cartBtn">
-													<i data-feather="shopping-cart"></i>
-													<span class="position-absolute top-0 start-100 translate-middle badge cartItem">
-														@countCart
-														 <span class="visually-hidden">unread messages</span> 
-													</span>
-												</button>
-												
-												<div class="onhover-div">
-													<ul class="cart-list">
-														@if (Model != null)
-														{
-															@foreach (var cart in Model)
-															{
-																<li class="product-box-contain">
-															<div class="drop-cart">
-																<a href="product-left-thumbnail.html" class="drop-image">
-																	<img src="@cart.Image"
-																		 class="blur-up lazyload" alt="">
-																</a>
-
-																<div class="drop-contain">
-																	<a href="product-left-thumbnail.html">
-																		<h5>@cart.Name</h5>
-																	</a>
-																	<h6><span>@cart.Quantity x</span> @cart.Price</h6>
-																	<button class="close-button close_button">
-																		<i class="fa-solid fa-xmark"></i>
-																	</button>
-																</div>
-															</div>
-														</li>
-															}
-														}
-														else
-														{
-															<p>No Items is in the cart</p>
-														}
-														
-														@* <li class="product-box-contain">
-															<div class="drop-cart">
-																<a href="product-left-thumbnail.html" class="drop-image">
-																	<img src="../assets/images/vegetable/product/2.png"
-																		 class="blur-up lazyload" alt="">
-																</a>
-
-																<div class="drop-contain">
-																	<a href="product-left-thumbnail.html">
-																		<h5>
-																			Peanut Butter Bite Premium Butter Cookies 600 g
-																		</h5>
-																	</a>
-																	<h6><span>1 x</span> $25.68</h6>
-																	<button class="close-button close_button">
-																		<i class="fa-solid fa-xmark"></i>
-																	</button>
-																</div>
-															</div>
-														</li> 
-													</ul>
-
-													<div class="price-box">
-														<h5>Total :</h5>
-														<h4 class="theme-color fw-bold">$106.58</h4>
-													</div>
-
-													<div class="button-group">
-														<a asp-action="Cart" asp-controller="Seller" class="btn btn-sm cart-button">View Cart</a>
-														<a asp-action="Cart" asp-controller="Checkout" class="btn btn-sm cart-button theme-bg-color
-                                                        text-white">Checkout</a>
-													</div>
-												</div>
-											</div>
-										</li> *@
+										
 										<li class="right-side onhover-dropdown">
 											<div class="delivery-login-box">
 												<div class="delivery-icon">
@@ -286,7 +215,7 @@
 										</li> 
 									</ul>
 								</div>
-							</div>
+							
 					</div>
 				</div>
 			</div>
@@ -343,86 +272,16 @@
 							<img src="../assets/images/logo/1.png" class="img-fluid blur-up lazyload" alt="">
 						</a>
 						<ul>
-							<li>
+							@foreach (var categorey in ViewBag.categories)
+							{
+								<li>
 								<div class="category-list">
-									<img src="https://themes.pixelstrap.com/fastkart/assets/svg/1/vegetable.svg" class="blur-up lazyload" alt="">
 									<h5>
-										<a href="shop-left-sidebar.html">Vegetables & Fruit</a>
+										<a href="Seller/FilterPage?searchString=@categorey.Name">@categorey.Name</a>
 									</h5>
 								</div>
 							</li>
-							<li>
-								<div class="category-list">
-									<img src="https://themes.pixelstrap.com/fastkart/assets/svg/1/cup.svg" class="blur-up lazyload" alt="">
-									<h5>
-										<a href="shop-left-sidebar.html">Beverages</a>
-									</h5>
-								</div>
-							</li>
-							<li>
-								<div class="category-list">
-									<img src="https://themes.pixelstrap.com/fastkart/assets/svg/1/meats.svg" class="blur-up lazyload" alt="">
-									<h5>
-										<a href="shop-left-sidebar.html">Meats & Seafood</a>
-									</h5>
-								</div>
-							</li>
-							<li>
-								<div class="category-list">
-									<img src="https://themes.pixelstrap.com/fastkart/assets/svg/1/breakfast.svg" class="blur-up lazyload" alt="">
-									<h5>
-										<a href="shop-left-sidebar.html">Breakfast & Dairy</a>
-									</h5>
-								</div>
-							</li>
-							<li>
-								<div class="category-list">
-									<img src="https://themes.pixelstrap.com/fastkart/assets/svg/1/frozen.svg" class="blur-up lazyload" alt="">
-									<h5>
-										<a href="shop-left-sidebar.html">Frozen Foods</a>
-									</h5>
-								</div>
-							</li>
-							<li>
-								<div class="category-list">
-									<img src="https://themes.pixelstrap.com/fastkart/assets/svg/1/biscuit.svg" class="blur-up lazyload" alt="">
-									<h5>
-										<a href="shop-left-sidebar.html">Biscuits & Snacks</a>
-									</h5>
-								</div>
-							</li>
-							<li>
-								<div class="category-list">
-									<img src="https://themes.pixelstrap.com/fastkart/assets/svg/1/grocery.svg" class="blur-up lazyload" alt="">
-									<h5>
-										<a href="shop-left-sidebar.html">Grocery & Staples</a>
-									</h5>
-								</div>
-							</li>
-							<li>
-								<div class="category-list">
-									<img src="https://themes.pixelstrap.com/fastkart/assets/svg/1/drink.svg" class="blur-up lazyload" alt="">
-									<h5>
-										<a href="shop-left-sidebar.html">Wines & Alcohol Drinks</a>
-									</h5>
-								</div>
-							</li>
-							<li>
-								<div class="category-list">
-									<img src="https://themes.pixelstrap.com/fastkart/assets/svg/1/milk.svg" class="blur-up lazyload" alt="">
-									<h5>
-										<a href="shop-left-sidebar.html">Milk & Dairies</a>
-									</h5>
-								</div>
-							</li>
-							<li class="pb-30">
-								<div class="category-list">
-									<img src="https://themes.pixelstrap.com/fastkart/assets/svg/1/pet.svg" class="blur-up lazyload" alt="">
-									<h5>
-										<a href="shop-left-sidebar.html">Pet Foods</a>
-									</h5>
-								</div>
-							</li>
+							}
 						</ul>
 					</div>
 				</div>
@@ -485,9 +344,6 @@
 		</div>
 	</section>
 	<!-- Product Section End -->
-	
-
-
 	<!-- Footer Section Start -->
 	<footer class="footer-sm">
 		<div class="container-fluid-xs">
@@ -712,25 +568,7 @@
 		</div>
 	</div>
 	<!-- Location Modal End -->
-	<!-- Cookie Bar Box Start -->
-	@*<div class="cookie-bar-box">
-		<div class="cookie-box">
-			<div class="cookie-image">
-				<img src="../assets/images/cookie-bar.png" class="blur-up lazyload" alt="">
-				<h2>Cookies!</h2>
-			</div>
-
-			<div class="cookie-contain">
-				<h5 class="text-content">We use cookies to make your experience better</h5>
-			</div>
-		</div>
-
-		<div class="button-group">
-			<button class="btn privacy-button">Privacy Policy</button>
-			<button class="btn ok-button">OK</button>
-		</div>
-	</div>*@
-	<!-- Cookie Bar Box End -->
+	
 	<!-- Deal Box Modal Start -->
 	<div class="modal fade theme-modal deal-modal" id="deal-box" tabindex="-1" aria-labelledby="exampleModalLabel"
 		 aria-hidden="true">
@@ -810,59 +648,7 @@
 		</div>
 	</div>
 	<!-- Deal Box Modal End -->
-	<!-- Tap to top start -->
-	@*<div class="theme-option">
-		<div class="setting-box">
-			<button class="btn setting-button">
-				<i class="fa-solid fa-gear"></i>
-			</button>
-
-			<div class="theme-setting-2">
-				<div class="theme-box">
-					<ul>
-						<li>
-							<div class="setting-name">
-								<h4>Color</h4>
-							</div>
-							<div class="theme-setting-button color-picker">
-								<form class="form-control">
-									<label for="colorPick" class="form-label mb-0">Theme Color</label>
-									<input type="color" class="form-control form-control-color" id="colorPick"
-										   value="#6262a6" title="Choose your color">
-								</form>
-							</div>
-						</li>
-
-						<li>
-							<div class="setting-name">
-								<h4>Dark</h4>
-							</div>
-							<div class="theme-setting-button">
-								<button class="btn btn-2 outline" id="darkButton">Dark</button>
-								<button class="btn btn-2 unline" id="lightButton">Light</button>
-							</div>
-						</li>
-
-						<li>
-							<div class="setting-name">
-								<h4>RTL</h4>
-							</div>
-							<div class="theme-setting-button rtl">
-								<button class="btn btn-2 rtl-unline">LTR</button>
-								<button class="btn btn-2 rtl-outline">RTL</button>
-							</div>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-
-		<div class="back-to-top">
-			<a id="back-to-top" href="#">
-				<i class="fas fa-chevron-up"></i>
-			</a>
-		</div>
-	</div>*@
+	
 	<!-- Tap to top end -->
 
 	   <!-- Log Out Modal Start -->

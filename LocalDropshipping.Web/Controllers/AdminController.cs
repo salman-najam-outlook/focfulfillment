@@ -1,4 +1,5 @@
-﻿using LocalDropshipping.Web.Attributes;
+﻿using Humanizer;
+using LocalDropshipping.Web.Attributes;
 using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
@@ -10,8 +11,10 @@ using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using NuGet.Packaging;
 using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LocalDropshipping.Web.Controllers
@@ -60,7 +63,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AdminLogin(AdminLoginViewModel model)
+        public async Task<IActionResult> AdminLogin(AdminLoginViewModel model, string returnUrl)
         {
 
 
@@ -83,7 +86,8 @@ namespace LocalDropshipping.Web.Controllers
                     {
                         if (isActive)
                         {
-                            // Redirect to the admin dashboard if the user is an admin active
+                            if (!returnUrl.IsNullOrEmpty())
+                                return LocalRedirect(returnUrl);
                             return RedirectToAction("Dashboard", "Admin");
                         }
                         else
@@ -239,6 +243,7 @@ namespace LocalDropshipping.Web.Controllers
 
             SetRoleByCurrentUser();
 
+
             return View("StaffMember", sellers);
         }
 
@@ -246,7 +251,7 @@ namespace LocalDropshipping.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-
+            HttpContext.Session.Remove("CurrentUser");
             return RedirectToAction("AdminLogin", "Admin");
         }
 
@@ -256,7 +261,7 @@ namespace LocalDropshipping.Web.Controllers
             SetRoleByCurrentUser();
             ViewBag.CurrentSort = sortByName;
             ViewBag.NameSortParm = string.IsNullOrEmpty(sortByName) ? "name_asc" : (sortByName == "name_asc" ? "name_desc" : "name_asc");
-            
+
             if (searchString != null)
             {
                 pagination.PageNumber = 1;
@@ -270,7 +275,8 @@ namespace LocalDropshipping.Web.Controllers
             var sellers = _userService.GetAll();
             if (!string.IsNullOrEmpty(searchString))
             {
-                sellers = sellers.Where(x=>x.Fullname.ToLower().Contains(searchString.ToLower())).ToList();
+                sellers = sellers.Where(x => x.Fullname.ToLower().Contains(searchString.ToLower())
+                || x.Email.ToLower().Contains(searchString.ToLower())).ToList();
             }
             switch (sortByName)
             {
@@ -297,18 +303,66 @@ namespace LocalDropshipping.Web.Controllers
         public IActionResult Dashboard()
         {
             SetRoleByCurrentUser();
+            string? currentUserID = _userManager.GetUserId(HttpContext.User);
+            var currentUser = _userService.GetById(currentUserID);
+            HttpContext.Session.SetString("CurrentUser", JsonConvert.SerializeObject(currentUser));
             return View();
         }
 
 
 
         [HttpGet]
-        public IActionResult OrdersList([FromQuery] Pagination pagination)
+        public IActionResult OrdersList([FromQuery] Pagination pagination, string searchString, string sortOrder, string currentFilter)
         {
             try
             {
                 SetRoleByCurrentUser();
+                ViewBag.CurrentSort = sortOrder;
+                ViewBag.NameSortParm = string.IsNullOrEmpty(sortOrder) ? "name_asc" : (sortOrder == "name_asc" ? "name_desc" : "name_asc");
+                ViewBag.PriceSortParm = string.IsNullOrEmpty(sortOrder) ? "price_asc" : (sortOrder == "price_asc" ? "price_desc" : "price_asc");
+                ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+                if (searchString != null)
+                {
+                    pagination.PageNumber = 1;
+                }
+                else
+                {
+                    searchString = currentFilter;
+                }
+
+                ViewBag.CurrentFilter = searchString;
                 List<Order> orders = _orderService.GetAll();
+                if (!string.IsNullOrEmpty(searchString))
+                {
+                    if(Enum.TryParse<OrderStatus>(searchString.ApplyCase(LetterCasing.Sentence), out OrderStatus status))
+                    orders = orders.Where(x => x.OrderStatus == status).ToList();
+                }
+                switch (sortOrder)
+                {
+                    case "name_asc":
+                        orders = orders.OrderBy(s => s.OrderStatus).ToList();
+                        break;
+                    case "name_desc":
+                        orders = orders.OrderByDescending(s => s.OrderStatus).ToList();
+                        break;
+                    case "Date":
+                        orders = orders.OrderBy(s => s.OrderDate).ToList();
+                        break;
+                    case "date_desc":
+                        orders = orders.OrderByDescending(s => s.OrderDate).ToList();
+                        break;
+                    case "price_asc":
+                        orders = orders.OrderBy(s => s.GrandTotal).ToList();
+                        break;
+                    case "price_desc":
+                        orders = orders.OrderByDescending(s => s.GrandTotal).ToList();
+                        break;
+
+                    default:
+                        orders = orders.OrderBy(s => s.Id).ToList();
+                        break;
+                }
+                
                 var count = orders.Count();
                 orders = orders.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
                 return View(new PageResponse<List<Order>>(orders, pagination.PageNumber, pagination.PageSize, count));
@@ -322,13 +376,14 @@ namespace LocalDropshipping.Web.Controllers
         #endregion
 
         [HttpGet]
-        [Authorize]
-        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
-        public IActionResult Products([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter) 
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin, "AdminLogin", "Admin")]
+        public IActionResult Products([FromQuery] Pagination pagination, string searchString, string sortProduct, string currentFilter)
         {
             //Add ViewBag to save SortOrder of table
-            ViewBag.CurrentSort = sortByName;
-            ViewBag.NameSortParm = string.IsNullOrEmpty(sortByName) ? "name_asc" : (sortByName == "name_asc" ? "name_desc" : "name_asc");
+            ViewBag.CurrentSort = sortProduct;
+            ViewBag.NameSortParm = string.IsNullOrEmpty(sortProduct) ? "name_asc" : (sortProduct == "name_asc" ? "name_desc" : "name_asc");
+            ViewBag.PriceSortParm = string.IsNullOrEmpty(sortProduct) ? "price_asc" : (sortProduct == "price_asc" ? "price_desc" : "price_asc");
+
             if (searchString != null)
             {
                 pagination.PageNumber = 1;
@@ -339,17 +394,27 @@ namespace LocalDropshipping.Web.Controllers
             }
 
             ViewBag.CurrentFilter = searchString;
-            List<Product> data= _productsService.GetAll();
+            List<Product> data = _productsService.GetAll();
             if (!string.IsNullOrEmpty(searchString))
             {
-                data = _productsService.GetProductsBySearch(searchString);
+                data = data.Where(x => x.Name.ToLower().Contains(searchString.ToLower()) ||
+                x.Description.ToLower().Contains(searchString.ToLower()) ||
+                 x.Category.Name.ToLower().Contains(searchString.ToLower())).ToList();
             }
-            switch (sortByName)
+            switch (sortProduct)
             {
-                case "name_desc":
+                case "name_asc":
                     data = data.OrderBy(s => s.Name).ToList();
                     break;
-
+                case "name_desc":
+                    data = data.OrderByDescending(s => s.Name).ToList();
+                    break;
+                case "price_asc":
+                    data = data.OrderBy(s => s.Variants.FirstOrDefault().VariantPrice).ToList();
+                    break;
+                case "price_desc":
+                    data = data.OrderByDescending(s => s.Variants.FirstOrDefault().VariantPrice).ToList();
+                    break;
                 default:
                     data = data.OrderBy(s => s.ProductId).ToList();
                     break;
@@ -359,8 +424,7 @@ namespace LocalDropshipping.Web.Controllers
             return View(new PageResponse<List<Product>>(data, pagination.PageNumber, pagination.PageSize, count));
         }
         [HttpGet]
-        [Authorize]
-        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult AddUpdateProduct(int id = 0)
         {
             SetRoleByCurrentUser();
@@ -372,7 +436,7 @@ namespace LocalDropshipping.Web.Controllers
 
         [HttpPost]
         [Authorize]
-        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin), ]
         public IActionResult AddUpdateProduct(ProductViewModel model)
         {
             SetRoleByCurrentUser();
@@ -486,16 +550,26 @@ namespace LocalDropshipping.Web.Controllers
                 {
                     for (int variantNo = 1; variantNo <= model.VariantCounts; variantNo++)
                     {
+
+                        int variantId = Convert.ToInt32(form["variant-" + variantNo + "-variant-id"]);
+                        var newImagesUploaded = form.Files.Any(x => x.Name == $"variant-{variantNo}-updated-images");
+                        var newVideosUploaded = form.Files.Any(x => x.Name == $"variant-{variantNo}-updated-videos");
+                        var newFeaturedImage = form.Files.Any(x => x.Name == $"variant-{variantNo}-updated-image");
+                        
                         product.Variants.Add(new ProductVariant
                         {
-                            ProductVariantId = Convert.ToInt32(form["variant-" + variantNo + "-variant-id"]),
+                            ProductVariantId = variantId,
                             VariantType = form["variant-type"],
                             Variant = form["variant-" + variantNo + "-value"],
                             VariantPrice = Convert.ToInt32(form["variant-" + variantNo + "-price"]),
                             Quantity = Convert.ToInt32(form["variant-" + variantNo + "-quantity"]),
-                            IsMainVariant = false
+                            IsMainVariant = false,
+                            Images = newImagesUploaded ? formFiles.GetFiles($"variant-{variantNo}-updated-images").ToArray().SaveTo("images/products", model.Name + " " + form["variant-type"]).Select(x => new ProductVariantImage { Link = x }).ToList() : new List<ProductVariantImage>(),
+                            Videos = newVideosUploaded? formFiles.GetFiles($"variant-{variantNo}-updated-videos").ToArray()!.SaveTo("videos/products", model.Name + " " + form["variant-type"]).Select(x => new ProductVariantVideo {  Link = x}).ToList(): new List<ProductVariantVideo>(),
+                            FeatureImageLink = newFeaturedImage ? formFiles[$"variant-{variantNo}-updated-image"]!.SaveTo("images/products", model.Name + " " + form["variant-type"]) : "",
                         });
                     }
+
                     _productsService.Update(model.ProductId, product, false);
                     TempData["updated"] = "Product updated successfully";
                 }
@@ -519,7 +593,7 @@ namespace LocalDropshipping.Web.Controllers
             return View(model);
         }
        
-        public IActionResult Withdrawal()
+        public IActionResult Withdrawal([FromQuery] Pagination pagination)
         {
             try
             {
@@ -529,23 +603,24 @@ namespace LocalDropshipping.Web.Controllers
                 var combinedData = from withdrawal in withdrawals
                                    join profile in profiles
                                    on withdrawal.UserEmail equals profile.User.Email into joinedData
-                                   from profileData in joinedData.DefaultIfEmpty() // Left join
+                                   from profileData in joinedData.DefaultIfEmpty() 
                                    select new AddWithdrawalUserViewModel
                                    {
                                        WithDrawalId = withdrawal.WithdrawalId,
                                        UserEmail = withdrawal.UserEmail,
                                        AmountInPkr = withdrawal.AmountInPkr,
-                                       paymentStatus = withdrawal.paymentStatus,
+                                       paymentStatus = withdrawal.PaymentStatus,
                                        ProcessedBy = withdrawal.ProcessedBy,
                                        CreatedDate = withdrawal.CreatedDate,
-                                       AccountTitle = withdrawal.AccountTitle,
-                                       BankAccountNumberOrIBAN = profileData?.BankAccountNumberOrIBAN, // Use null conditional operator
-                                       BankName = profileData?.BankName, // Use null conditional operator
+                                       AccountTitle = profileData?.BankAccountTitle,
+                                       BankAccountNumberOrIBAN = profileData?.BankAccountNumberOrIBAN, 
+                                       BankName = profileData?.BankName, 
                                        Withdrawals = new List<Withdrawals> { withdrawal },
                                        Profiles = profileData != null ? new List<Profiles> { profileData } : new List<Profiles>()
                                    };
-
-                return View(combinedData.ToList());
+                var count = combinedData.Count();
+                combinedData = combinedData.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+                return View(new PageResponse<List<AddWithdrawalUserViewModel>>(combinedData.ToList(), pagination.PageNumber, pagination.PageSize, count));
             }
             catch (Exception ex)
             {
@@ -563,8 +638,7 @@ namespace LocalDropshipping.Web.Controllers
                 var email = _userService.GetUserEmailById(userId);
                 model.UpdatedBy = email;
                 model.ProcessedBy = email;
-                model.UpdatedBy = email;
-                var result = _withdrawlsService.UpdateWithDrawal(model);
+                var result = _withdrawlsService.UpdateWithdrawal(model);
                 if (result != null) return RedirectToAction("Withdrawal");
                 return RedirectToAction("Withdrawal");
             }
@@ -575,8 +649,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize]
-        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin, "AdminLogin", "Admin")]
         public IActionResult DeleteProduct(int id)
         {
             try
@@ -594,8 +667,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize]
-        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin, "AdminLogin", "Admin")]
         public IActionResult Product(int id)
         {
             Product? product = _productsService.GetById(id);
@@ -634,36 +706,37 @@ namespace LocalDropshipping.Web.Controllers
 
         public IActionResult CategoryList([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
         {
-			//Add ViewBag to save SortOrder of table
-			ViewBag.CurrentSort = sortByName;
+            ViewBag.CurrentSort = sortByName;
             ViewBag.NameSortParm = string.IsNullOrEmpty(sortByName) ? "name_asc" : (sortByName == "name_asc" ? "name_desc" : "name_asc");
             if (searchString != null)
-			{
-				pagination.PageNumber = 1;
-			}
-			else
-			{
-				searchString = currentFilter;
-			}
+            {
+                pagination.PageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
 
-			ViewBag.CurrentFilter = searchString;
-			List<Category> category = _categoryService.GetAll();
-			if (!string.IsNullOrEmpty(searchString))
-			{
-				category =_categoryService.GetCatagoreyBySearch(searchString);
-                    //_productsService.GetProductsBySearch(searchString);
-			}
-			switch (sortByName)
-			{
-				case "name_desc":
-					category = category.OrderBy(s => s.Name).ToList();
-					break;
+            ViewBag.CurrentFilter = searchString;
+            List<Category> category = _categoryService.GetAll();
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                category = category.Where(c => c.Name.ToLower().Contains(searchString.ToLower())).ToList();
+            }
+            switch (sortByName)
+            {
+                case "name_asc":
+                    category = category.OrderBy(s => s.Name).ToList();
+                    break;
+                case "name_desc":
+                    category = category.OrderByDescending(s => s.Name).ToList();
+                    break;
 
-				default:
-					category = category.OrderBy(s => s.CategoryId).ToList();
-					break;
-			}
-			var count = category.Count();
+                default:
+                    category = category.OrderBy(s => s.CategoryId).ToList();
+                    break;
+            }
+            var count = category.Count();
             category = category.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
             return View(new PageResponse<List<Category>>(category, pagination.PageNumber, pagination.PageSize, count));
         }
@@ -744,10 +817,40 @@ namespace LocalDropshipping.Web.Controllers
             return View();
         }
 
-        public IActionResult GetAllConsumers([FromQuery] Pagination pagination)
+        public IActionResult GetAllConsumers([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
         {
             SetRoleByCurrentUser();
+            ViewBag.CurrentSort = sortByName;
+            ViewBag.NameSortParm = string.IsNullOrEmpty(sortByName) ? "name_asc" : (sortByName == "name_asc" ? "name_desc" : "name_asc");
+            if (searchString != null)
+            {
+                pagination.PageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+            ViewBag.CurrentFilter = searchString;
             var consumers = _consumerService.GetAllConsumer();
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                consumers = consumers.Where(c => c.FullName.ToLower().Contains(searchString.ToLower())
+                || c.PrimaryPhoneNumber.Contains(searchString)
+                || c.PrimaryPhoneNumber.Contains(searchString)).ToList();
+            }
+            switch (sortByName)
+            {
+                case "name_asc":
+                    consumers = consumers.OrderBy(s => s.FullName).ToList();
+                    break;
+                case "name_desc":
+                    consumers = consumers.OrderByDescending(s => s.FullName).ToList();
+                    break;
+
+                default:
+                    consumers = consumers.ToList();
+                    break;
+            }
             var count = consumers.Count();
             consumers = consumers.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
             return View(new PageResponse<List<Consumer>>(consumers, pagination.PageNumber, pagination.PageSize, count));

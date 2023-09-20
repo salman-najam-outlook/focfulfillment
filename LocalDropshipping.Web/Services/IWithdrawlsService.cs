@@ -7,12 +7,13 @@ namespace LocalDropshipping.Web.Services
 {
     public interface IWithdrawlsService
     {
-        Withdrawals RequestWithdrawal(Withdrawals withdrawal);
+        bool WithdrawalRequest(string email);
         Withdrawals GetWithdrawalRequestsById(int withdrawalId);
         Withdrawals GetWithdrawalRequestsByUserEmail(string userEmail);
-        Withdrawals ProcessWidrawal(ProcessWidrawalDto processDto);
+        Withdrawals ProcessWithdrawal(ProcessWidrawalDto processDto);
         List<Withdrawals?> GetAll();
-        Withdrawals UpdateWithDrawal(PaymentViewModel withdrawal);
+        Withdrawals UpdateWithdrawal(PaymentViewModel withdrawal);
         bool UpdateWithpaymentStatus(PaymentStatus paymentStatus,int WithdrawalId);
+        List<Withdrawals> GetWithdrawalByUserEmail(string email);
     }
 }

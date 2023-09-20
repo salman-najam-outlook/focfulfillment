@@ -59,14 +59,6 @@ namespace LocalDropshipping.Web.Controllers.API
         #endregion
 
         #region Withdrawal
-        [HttpPost]
-        public IActionResult RequestWithdrawal(WithdrawlsDto withdrawlsDto)
-        {
-            Withdrawals withdrawal = withdrawlsDto.ToEntity();
-            withdrawalsService.RequestWithdrawal(withdrawal);
-            return Ok(withdrawlsDto);
-        }
-
         [HttpGet("{id}")]
         public IActionResult getWithdrawalById(int id)
         {
@@ -82,7 +74,7 @@ namespace LocalDropshipping.Web.Controllers.API
         [HttpPost]
         public IActionResult ProcessWithdrawal(ProcessWidrawalDto processDto)
         {
-            var withdrawal = withdrawalsService.ProcessWidrawal(processDto);
+            var withdrawal = withdrawalsService.ProcessWithdrawal(processDto);
             if (withdrawal != null)
             {
                 return Ok(withdrawal);

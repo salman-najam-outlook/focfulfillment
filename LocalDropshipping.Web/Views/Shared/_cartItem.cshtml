@@ -17,9 +17,10 @@
                             <h5>@cart.Name</h5>
                         </a>
                         <h6><span>@cart.Quantity x</span> @cart.Price</h6>
-                        <button class="close-button close_button cartDel" data-id="@cart.ProductId">
-                            <i class="fa-solid fa-xmark "></i>
+                        <button id="cartDel" class="close-button close_button" data-id="@cart.ProductId">
+                            <i class="fa-solid fa-xmark "></i> 
                         </button>
+                       
                     </div>
                 </div>
             </li>
