@@ -13,8 +13,12 @@ namespace LocalDropshipping.Web.Middlewares
         }
         public async Task InvokeAsync(HttpContext context, IUserService _userService)
         {
+            context.Items.Add("IsSignedIn", false);
             if(_userService.IsUserSignedIn())
             {
+                context.Items.Remove("IsSignedIn");
+                context.Items.Add("IsSignedIn", true);
+
                 var user = await _userService.GetCurrentUserAsync();
                 if(user != null)
                 {

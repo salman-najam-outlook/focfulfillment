@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NuGet.Packaging;
 using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LocalDropshipping.Web.Controllers
@@ -62,7 +63,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AdminLogin(AdminLoginViewModel model)
+        public async Task<IActionResult> AdminLogin(AdminLoginViewModel model, string returnUrl)
         {
 
 
@@ -85,7 +86,8 @@ namespace LocalDropshipping.Web.Controllers
                     {
                         if (isActive)
                         {
-                            // Redirect to the admin dashboard if the user is an admin active
+                            if (!returnUrl.IsNullOrEmpty())
+                                return LocalRedirect(returnUrl);
                             return RedirectToAction("Dashboard", "Admin");
                         }
                         else
@@ -374,8 +376,7 @@ namespace LocalDropshipping.Web.Controllers
         #endregion
 
         [HttpGet]
-        [Authorize]
-        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin, "AdminLogin", "Admin")]
         public IActionResult Products([FromQuery] Pagination pagination, string searchString, string sortProduct, string currentFilter)
         {
             //Add ViewBag to save SortOrder of table
@@ -423,8 +424,7 @@ namespace LocalDropshipping.Web.Controllers
             return View(new PageResponse<List<Product>>(data, pagination.PageNumber, pagination.PageSize, count));
         }
         [HttpGet]
-        [Authorize]
-        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult AddUpdateProduct(int id = 0)
         {
             SetRoleByCurrentUser();
@@ -436,7 +436,7 @@ namespace LocalDropshipping.Web.Controllers
 
         [HttpPost]
         [Authorize]
-        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin), ]
         public IActionResult AddUpdateProduct(ProductViewModel model)
         {
             SetRoleByCurrentUser();
@@ -550,16 +550,26 @@ namespace LocalDropshipping.Web.Controllers
                 {
                     for (int variantNo = 1; variantNo <= model.VariantCounts; variantNo++)
                     {
+
+                        int variantId = Convert.ToInt32(form["variant-" + variantNo + "-variant-id"]);
+                        var newImagesUploaded = form.Files.Any(x => x.Name == $"variant-{variantNo}-updated-images");
+                        var newVideosUploaded = form.Files.Any(x => x.Name == $"variant-{variantNo}-updated-videos");
+                        var newFeaturedImage = form.Files.Any(x => x.Name == $"variant-{variantNo}-updated-image");
+                        
                         product.Variants.Add(new ProductVariant
                         {
-                            ProductVariantId = Convert.ToInt32(form["variant-" + variantNo + "-variant-id"]),
+                            ProductVariantId = variantId,
                             VariantType = form["variant-type"],
                             Variant = form["variant-" + variantNo + "-value"],
                             VariantPrice = Convert.ToInt32(form["variant-" + variantNo + "-price"]),
                             Quantity = Convert.ToInt32(form["variant-" + variantNo + "-quantity"]),
-                            IsMainVariant = false
+                            IsMainVariant = false,
+                            Images = newImagesUploaded ? formFiles.GetFiles($"variant-{variantNo}-updated-images").ToArray().SaveTo("images/products", model.Name + " " + form["variant-type"]).Select(x => new ProductVariantImage { Link = x }).ToList() : new List<ProductVariantImage>(),
+                            Videos = newVideosUploaded? formFiles.GetFiles($"variant-{variantNo}-updated-videos").ToArray()!.SaveTo("videos/products", model.Name + " " + form["variant-type"]).Select(x => new ProductVariantVideo {  Link = x}).ToList(): new List<ProductVariantVideo>(),
+                            FeatureImageLink = newFeaturedImage ? formFiles[$"variant-{variantNo}-updated-image"]!.SaveTo("images/products", model.Name + " " + form["variant-type"]) : "",
                         });
                     }
+
                     _productsService.Update(model.ProductId, product, false);
                     TempData["updated"] = "Product updated successfully";
                 }
@@ -639,8 +649,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize]
-        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin, "AdminLogin", "Admin")]
         public IActionResult DeleteProduct(int id)
         {
             try
@@ -658,8 +667,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize]
-        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin)]
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin, "AdminLogin", "Admin")]
         public IActionResult Product(int id)
         {
             Product? product = _productsService.GetById(id);
