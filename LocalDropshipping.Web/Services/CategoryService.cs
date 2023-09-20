@@ -1,4 +1,5 @@
-﻿using LocalDropshipping.Web.Data;
+﻿using Humanizer;
+using LocalDropshipping.Web.Data;
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
 using Microsoft.EntityFrameworkCore;
@@ -67,6 +68,11 @@ namespace LocalDropshipping.Web.Services
         public List<Category> GetCatagoreyBySearch(string searchString)
         {
             return _context.Categories.Where(x => !x.IsDeleted && x.Name.Contains(searchString)).ToList();
+        }
+
+        public Category? GetDeafultCategory()
+        {
+            return _context.Categories.FirstOrDefault(x => x.Name.ToUpper() == "UNMANAGED");
         }
     }
 

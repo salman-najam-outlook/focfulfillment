@@ -9,7 +9,6 @@
         public bool IsNewArravial { get; set; }
         public bool IsBestSelling { get; set; }
         public bool IsTopRated { get; set; }
-        //public bool IsFeatured { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public string? UpdatedBy { get; set; }

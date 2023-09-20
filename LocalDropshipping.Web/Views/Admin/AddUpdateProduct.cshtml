@@ -42,7 +42,9 @@
                                         <div class="col-sm-9">
                                             @Html.DropDownListFor(
                                             model => model.CategoryId,
-                                            new SelectList(ViewBag.Categories, "CategoryId", "Name", Model.CategoryId),
+                                            new List<SelectListItem> {
+                                                new SelectListItem((ViewBag.Category as Category).Name, Model.CategoryId.ToString(), true) 
+                                            },
                                             "Select Category",
                                             new { @class = "js-example-basic-single w-100 select2-hidden-accessible" })
                                             @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
@@ -67,7 +69,7 @@
 
 
                                     <div class="mb-4 row align-items-center">
-                                        <label class="col-sm-3 col-form-label form-label-title">Best Selling</label>
+                                        <label class="col-sm-3 col-form-label form-label-title">Best Seller</label>
                                         <div class="col-sm-9">
                                             @Html.CheckBoxFor(model => model.IsBestSelling, new { @class = "checkbox_animated check-it" })
                                         </div>
@@ -77,7 +79,7 @@
 
 
                                     <div class="mb-4 row align-items-center">
-                                        <label class="col-sm-3 col-form-label form-label-title">Featured</label>
+                                        <label class="col-sm-3 col-form-label form-label-title">Top Rated</label>
                                         <div class="col-sm-9">
                                             <label>
                                                 @Html.CheckBoxFor(model => model.IsTopRated, new { @class = "checkbox_animated check-it" })
@@ -155,6 +157,96 @@
                                     </div>
                                 </div>
                             }
+                            @if(Model.ProductId != 0 && Model.VariantCounts == 1)
+                            {
+                                var variant = Model.Variants.First();
+
+                                <div class="card productSpecificControl">
+                                    <div class="card-body">
+                                        <div class="card-header-2">
+                                            <h5>Product Images</h5>
+                                        </div>
+
+                                        <div class="mb-4 row align-items-center">
+                                            <label class="col-sm-3 col-form-label form-label-title">Featured Image</label>
+                                            <div class="col-sm-9">
+                                                <ul class="d-flex align-items-center gap-3">
+                                                    @if (variant.FeatureImageLink == null || variant.FeatureImageLink == "")
+                                                    {
+                                                        <p class="noImagesText">No Feature image uploaded yet.</p>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li><img style="border-radius: 10px; height: 100px; background-size: cover;" src="@variant.FeatureImageLink" /></li>
+                                                    }
+                                                    <li>
+                                                        <a class="btn btn-primary ml-auto" style="float: right;" onclick="javascript:document.getElementById('main-variant-updated-image').click()">
+                                                            <span>Upload</span>
+                                                            <input type="file" id="main-variant-updated-image" name="main-variant-updated-image" onchange="updateFeatureImage(event)" class="d-none" />
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-4 row align-items-center">
+                                            <label class="col-sm-3 col-form-label form-label-title">Images</label>
+                                            <div class="col-sm-9">
+                                                <ul class="d-flex align-items-center gap-3 variant-images flex-wrap">
+                                                    @if (variant.Images.Count == 0)
+                                                    {
+                                                        <p class="noImagesText">No Images uploaded yet.</p>
+                                                    }
+                                                    @foreach (var image in variant.Images)
+                                                    {
+                                                        <li class="variant-image"><img style="border-radius: 10px; height: 100px; background-size: cover;" src="@image" /></li>
+                                                    }
+                                                    <li>
+                                                        <a class="btn btn-primary ml-auto" style="float: right;" onclick="javascript:document.getElementById('main-variant-updated-images').click()">
+                                                            <span>Upload</span>
+                                                            <input type="file" id="main-variant-updated-images" name="main-variant-updated-images" class="d-none" onchange="updateImages(event)" multiple />
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card productSpecificControl">
+                                    <div class="card-body">
+                                        <div class="card-header-2">
+                                            <h5>Product Videos</h5>
+                                        </div>
+
+                                        <div class="mb-4 row align-items-center">
+                                            <label class="col-sm-3 col-form-label form-label-title">
+                                                Videos
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <ul class="d-flex align-items-center gap-3 variant-videos flex-wrap">
+                                                    @if (variant.Videos.Count == 0)
+                                                    {
+                                                        <p class="noVideossText">No Videos uploaded yet.</p>
+                                                    }
+                                                    @foreach (var video in variant.Videos)
+                                                    {
+                                                        <li class="variant-videos"><video muted style="border-radius: 10px; height: 100px; background-size: cover;" src="@video" autoplay></video></li>
+                                                    }
+                                                    <li>
+                                                        <a class="btn btn-primary ml-auto" style="float: right;" onclick="javascript:document.getElementById('main-variant-updated-videos').click()">
+                                                            <span>Upload</span>
+                                                            <input type="file" id="main-variant-updated-videos" name="main-variant-updated-videos" class="d-none" onchange="updateVideos(event)" multiple />
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+
                             <div class="card variantSpecificControl">
                                 <div class="card-body">
                                     <div class="card-header-2">
@@ -273,7 +365,7 @@
                                                         }
                                                         @foreach (var video in variant.Videos)
                                                         {
-                                                            <li class="variant-videos"><video style="border-radius: 10px; height: 100px; background-size: cover;" src="@video" autoplay></video></li>
+                                                            <li class="variant-videos"><video muted style="border-radius: 10px; height: 100px; background-size: cover;" src="@video" autoplay></video></li>
                                                         }
                                                         <li>
                                                             <a class="btn btn-primary ml-auto" style="float: right;" onclick="javascript:document.getElementById('variant-@variantNo-updated-videos').click()">
@@ -563,7 +655,7 @@
                 let file = files[i];
                 let reader = new FileReader();
                 reader.onloadend = function () {
-                    let html = `<li class="variant-videos"><video style="border-radius: 10px; width= 100px; height: 100px; background-size: cover;" src="${reader.result}" autoplay></video></li>`
+                    let html = `<li class="variant-videos"><video muted style="border-radius: 10px; width= 100px; height: 100px; background-size: cover;" src="${reader.result}" autoplay></video></li>`
                     $(html).insertBefore($(e.target).parents("li"));
                 }
                 reader.readAsDataURL(file);

@@ -96,41 +96,44 @@
                                 <div class="row g-sm-4 g-2">
                                     <div class="col-12">
                                         <div class="product-main no-arrow">
-                                            <div>
-                                                <div class="slider-image">
-                                                    <img src="@Model.Variants.First().FeatureImageLink" id="img-1"
-                                                         data-zoom-image="@Model.Variants.First().FeatureImageLink" class="
-                                                        img-fluid image_zoom_cls-0 blur-up lazyload" alt="">
-                                                </div>
 
-                                                @foreach(var image in @Model.Variants.First().Images)
+                                            <div class="slider-image">
+                                                <img src="@Model.Variants.First().FeatureImageLink.Substring(1)" id="img-1"
+                                                     data-zoom-image="@Model.Variants.First().FeatureImageLink.Substring(1)" class="
+                                                        img-fluid image_zoom_cls-0 blur-up lazyload" alt="">
+                                            </div>
+
+                                            @{
+                                                var images = Model.Variants.First().Images;
+                                                for (var i = 2; i <= images.Count; i++)
                                                 {
                                                     <div class="slider-image">
-                                                    <img src="@image.Link" id="img-1"
-                                                             data-zoom-image="@image.Link" class="
-                                                        img-fluid image_zoom_cls-0 blur-up lazyload" alt="">
-                                                </div>
+                                                        <img src="~@images[i-1].Link" id="img-@i"
+                                                             data-zoom-image="@images[i-1].Link.Substring(1)" class="
+                                                                img-fluid image_zoom_cls-@(i - 1) blur-up lazyload" alt="">
+                                                    </div>
                                                 }
-                                            </div>
+                                            }
                                         </div>
                                     </div>
 
                                     <div class="col-12">
                                         <div class="left-slider-image left-slider no-arrow slick-top">
-                                            <div>
-                                                <div class="sidebar-image">
-                                                    <img src="@Model.Variants.First().FeatureImageLink"
-                                                         class="img-fluid blur-up lazyload" alt="">
-                                                </div>
+                                            <div class="slider-image">
+                                                <img src="@Model.Variants.First().FeatureImageLink.Substring(1)" id="img-1"
+                                                     data-zoom-image="@Model.Variants.First().FeatureImageLink.Substring(1)" class="
+                                                        img-fluid blur-up lazyload" alt="">
                                             </div>
-                                            @foreach(var image in @Model.Variants.First().Images)
-                                            {
-                                            <div>
-                                                <div class="sidebar-image">
-                                                    <img src="@image.Link"
-                                                         class="img-fluid blur-up lazyload" alt="">
-                                                </div>
-                                            </div>
+
+                                            @{
+                                                images = Model.Variants.First().Images;
+                                                for (var i = 2; i <= images.Count; i++)
+                                                {
+                                                    <div class="slider-image">
+                                                        <img src="https:@Context.Request.IsHttps@images[i-1].Link.Substring(1)" id="img-@i" class="
+                                                            img-fluid blur-up lazyload" alt="">
+                                                    </div>
+                                                }
                                             }
                                         </div>
                                     </div>
@@ -153,14 +156,14 @@
                                         This is the short description of the <span class="data-pname">@Model.Name</span>
                                     </p>
                                 </div>
-                                @if(Model.Variants.Count > 1)
+                                @if (Model.Variants.Count > 1)
                                 {
                                     <div class="product-packege">
                                         <div class="product-title">
                                             <h4 class="data-pvtype">@Model.Variants.First().VariantType</h4>
                                         </div>
                                         <ul class="select-packege">
-                                            @foreach(var variant in Model.Variants)
+                                            @foreach (var variant in Model.Variants)
                                             {
                                                 <li>
                                                     <a href="javascript:void(0)">@variant.Variant</a>
@@ -365,7 +368,7 @@
                         <div class="tab-content custom-tab" id="myTabContent">
                             <div class="tab-pane fade show active" id="description" role="tabpanel"
                                  aria-labelledby="description-tab">
-                                   <div class="data-pdesc">@Model.Description</div>
+                                <div class="data-pdesc">@Model.Description</div>
                             </div>
 
                             <div class="tab-pane fade" id="info" role="tabpanel" aria-labelledby="info-tab">
