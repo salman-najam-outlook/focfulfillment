@@ -75,7 +75,7 @@
                                     </a>
                                 </li>
 
-                                <li class="breadcrumb-item active" class="data-pname">@Model.Name</li>
+                                <li class="breadcrumb-item active data-pname">@Model.Name</li>
                             </ol>
                         </nav>
                     </div>
@@ -95,21 +95,23 @@
                                 <div class="row g-sm-4 g-2">
                                     <div class="col-12">
                                         <div class="product-main no-arrow">
-
+                                            <div>
                                             <div class="slider-image">
-                                                <img src="@Model.Variants.First().FeatureImageLink.Substring(1)" id="img-1"
-                                                     data-zoom-image="@Model.Variants.First().FeatureImageLink.Substring(1)" class="
+                                                <img src="@if(Context.Request.IsHttps) {<text>https://</text>} else {<text>http://</text>}@Context.Request.Host@Model.Variants.First().FeatureImageLink" id="img-1"
+                                                     data-zoom-image="@if(Context.Request.IsHttps) { <text>https://</text> } else { <text>http://</text> }@Context.Request.Host@Model.Variants.First().FeatureImageLink" class="
                                                         img-fluid image_zoom_cls-0 blur-up lazyload" alt="">
                                             </div>
-
+                                            </div>
                                             @{
                                                 var images = Model.Variants.First().Images;
                                                 for (var i = 2; i <= images.Count; i++)
                                                 {
-                                                    <div class="slider-image">
-                                                        <img src="~@images[i-1].Link" id="img-@i"
-                                                             data-zoom-image="@images[i-1].Link.Substring(1)" class="
-                                                                img-fluid image_zoom_cls-@(i - 1) blur-up lazyload" alt="">
+                                                    <div>
+                                                        <div class="slider-image">
+                                                            <img src="@if (Context.Request.IsHttps) { <text>https://</text>} else {<text>http://</text>}@Context.Request.Host@images[i-1].Link" id="img-@i"
+                                                                 data-zoom-image="@if (Context.Request.IsHttps) {  <text>https://</text> } else { <text>http://</text> }@Context.Request.Host@images[i-1].Link" class="
+                                                                    img-fluid image_zoom_cls-@(i - 1) blur-up lazyload" alt="">
+                                                        </div>
                                                     </div>
                                                 }
                                             }
@@ -117,23 +119,25 @@
                                     </div>
 
                                     <div class="col-12">
-                                        <div class="left-slider-image left-slider no-arrow slick-top">
-                                            <div class="slider-image">
-                                                <img src="@Model.Variants.First().FeatureImageLink.Substring(1)" id="img-1"
-                                                     data-zoom-image="@Model.Variants.First().FeatureImageLink.Substring(1)" class="
-                                                        img-fluid blur-up lazyload" alt="">
+                                        <div class="left-slider-image  left-slider no-arrow slick-top">
+                                            <div>
+                                                <div class="slider-image">
+                                                    <img src="@if(Context.Request.IsHttps) { <text>https://</text> } else { <text>http://</text> }@Context.Request.Host@Model.Variants.First().FeatureImageLink" id="img-1"
+                                                         data-zoom-image="@if(Context.Request.IsHttps){ <text>https://</text> } else { <text>http://</text> })@Context.Request.Host@Model.Variants.First().FeatureImageLink" class="img-fluid blur-up lazyload" alt="">
+                                                </div>
                                             </div>
-
                                             @{
                                                 images = Model.Variants.First().Images;
                                                 for (var i = 2; i <= images.Count; i++)
                                                 {
-                                                    <div class="slider-image">
-                                                        <img src="https:@Context.Request.IsHttps@images[i-1].Link.Substring(1)" id="img-@i" class="
-                                                            img-fluid blur-up lazyload" alt="">
-                                                    </div>
+                                                    <div>
+                                                        <div class="slider-image">
+                                                            <img src="@if(Context.Request.IsHttps) { <text>https://</text> } else { <text>http://</text> }@Context.Request.Host@images[i-1].Link" id="img-@i" class="
+                                                                img-fluid blur-up lazyload" alt="">
+                                                        </div>
+                                                    </div>                                               
                                                 }
-                                            }
+                                              }
                                         </div>
                                     </div>
                                 </div>
@@ -142,17 +146,16 @@
 
                         <div class="col-xl-6 wow fadeInUp">
                             <div class="right-box-contain">
-                                <h6 class="offer-top">30% Off</h6>
                                 <h2 class="name data-pname">@Model.Name</h2>
                                 <div class="price-rating">
                                     <h3 class="theme-color price">
-                                        <span class="data-pprice">Rs @Model.Variants.First().VariantPrice/- </span> <del class="text-content">Rs @(Model.Variants.First().VariantPrice * 1.08)/-</del> <span class="offer theme-color">(8% off)</span>
+                                        <span class="data-pprice">Rs @Model.Variants.First().VariantPrice/-</span>
                                     </h3>
                                 </div>
 
                                 <div class="procuct-contain">
                                     <p>
-                                        This is the short description of the <span class="data-pname">@Model.Name</span>
+                                            This is the short description of the <span class="data-pname">@Model.Name</span>
                                     </p>
                                 </div>
                                 @if (Model.Variants.Count > 1)
@@ -165,86 +168,17 @@
                                             @foreach (var variant in Model.Variants)
                                             {
                                                 <li>
-                                                    <a href="javascript:void(0)">@variant.Variant</a>
+                                                    <a href="javascript:void(0)" onclick="updateUI(event)">@variant.Variant</a>
                                                 </li>
                                             }
                                         </ul>
                                     </div>
                                 }
 
-                                <div class="time deal-timer product-deal-timer mx-md-0 mx-auto" id="clockdiv-1"
-                                     data-hours="1" data-minutes="2" data-seconds="3">
-                                    <div class="product-title">
-                                        <h4>Hurry up! Sales Ends In</h4>
-                                    </div>
-                                    <ul>
-                                        <li>
-                                            <div class="counter d-block">
-                                                <div class="days d-block">
-                                                    <h5></h5>
-                                                </div>
-                                                <h6>Days</h6>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="counter d-block">
-                                                <div class="hours d-block">
-                                                    <h5></h5>
-                                                </div>
-                                                <h6>Hours</h6>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="counter d-block">
-                                                <div class="minutes d-block">
-                                                    <h5></h5>
-                                                </div>
-                                                <h6>Min</h6>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="counter d-block">
-                                                <div class="seconds d-block">
-                                                    <h5></h5>
-                                                </div>
-                                                <h6>Sec</h6>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-
-
-
-                                <div class="note-box product-packege">
-                                    <div class="cart_qty qty-box product-qty">
-                                        <div class="input-group">
-                                            <button type="button" class="qty-right-plus" data-type="plus" data-field="">
-                                                <i class="fa fa-plus" aria-hidden="true"></i>
-                                            </button>
-                                            <input class="form-control input-number qty-input" type="text"
-                                                   name="quantity" value="0">
-                                            <button type="button" class="qty-left-minus" data-type="minus"
-                                                    data-field="">
-                                                <i class="fa fa-minus" aria-hidden="true"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <button onclick="location.href = 'cart.html';"
-                                            class="btn btn-md bg-dark cart-button text-white w-100">
-                                        Add To Cart
-                                    </button>
-                                </div>
-
                                 <div class="buy-box">
                                     <a href="wishlist.html">
                                         <i data-feather="heart"></i>
                                         <span>Add To Wishlist</span>
-                                    </a>
-
-                                    <a href="compare.html">
-                                        <i data-feather="shuffle"></i>
-                                        <span>Add To Compare</span>
                                     </a>
                                 </div>
                             </div>
@@ -367,7 +301,7 @@
                         <div class="tab-content custom-tab" id="myTabContent">
                             <div class="tab-pane fade show active" id="description" role="tabpanel"
                                  aria-labelledby="description-tab">
-                                <div class="data-pdesc">@Model.Description</div>
+                                <div class="data-pdesc">@Html.Raw(Model.Description)</div>
                             </div>
 
                             <div class="tab-pane fade" id="info" role="tabpanel" aria-labelledby="info-tab">
@@ -767,6 +701,906 @@
         </div>
     </section>
     <!-- Nav Tab Section End -->
+    <!-- Releted Product Section Start -->
+    <section class="product-list-section section-b-space">
+        <div class="container-fluid-lg">
+            <div class="title">
+                <h2>Related Products</h2>
+                <span class="title-leaf">
+                    <svg class="icon-width">
+                        <use xlink:href="https://themes.pixelstrap.com/fastkart/assets/svg/leaf.svg#leaf"></use>
+                    </svg>
+                </span>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="slider-6_1 product-wrapper">
+                        <div>
+                            <div class="product-box-3 wow fadeInUp">
+                                <div class="product-header">
+                                    <div class="product-image">
+                                        <a href="product-left-2.html">
+                                            <img src="../assets/images/cake/product/11.png"
+                                                 class="img-fluid blur-up lazyload" alt="">
+                                        </a>
+
+                                        <ul class="product-option">
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
+                                                <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                   data-bs-target="#view">
+                                                    <i data-feather="eye"></i>
+                                                </a>
+                                            </li>
+
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                                <a href="compare.html">
+                                                    <i data-feather="refresh-cw"></i>
+                                                </a>
+                                            </li>
+
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
+                                                <a href="wishlist.html" class="notifi-wishlist">
+                                                    <i data-feather="heart"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="product-footer">
+                                    <div class="product-detail">
+                                        <span class="span-name">Cake</span>
+                                        <a href="product-left-thumbnail.html">
+                                            <h5 class="name">Chocolate Chip Cookies 250 g</h5>
+                                        </a>
+                                        <div class="product-rating mt-2">
+                                            <ul class="rating">
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                            </ul>
+                                            <span>(5.0)</span>
+                                        </div>
+                                        <h6 class="unit">500 G</h6>
+                                        <h5 class="price">
+                                            <span class="theme-color">$10.25</span> <del>$12.57</del>
+                                        </h5>
+                                        <div class="add-to-cart-box bg-white">
+                                            <button class="btn btn-add-cart addcart-button">
+                                                Add
+                                                <span class="add-icon bg-light-gray">
+                                                    <i class="fa-solid fa-plus"></i>
+                                                </span>
+                                            </button>
+                                            <div class="cart_qty qty-box">
+                                                <div class="input-group bg-white">
+                                                    <button type="button" class="qty-left-minus bg-gray"
+                                                            data-type="minus" data-field="">
+                                                        <i class="fa fa-minus" aria-hidden="true"></i>
+                                                    </button>
+                                                    <input class="form-control input-number qty-input" type="text"
+                                                           name="quantity" value="0">
+                                                    <button type="button" class="qty-right-plus bg-gray"
+                                                            data-type="plus" data-field="">
+                                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="product-box-3 wow fadeInUp" data-wow-delay="0.05s">
+                                <div class="product-header">
+                                    <div class="product-image">
+                                        <a href="product-left-thumbnail.html">
+                                            <img src="../assets/images/cake/product/2.png"
+                                                 class="img-fluid blur-up lazyload" alt="">
+                                        </a>
+
+                                        <ul class="product-option">
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
+                                                <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                   data-bs-target="#view">
+                                                    <i data-feather="eye"></i>
+                                                </a>
+                                            </li>
+
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                                <a href="compare.html">
+                                                    <i data-feather="refresh-cw"></i>
+                                                </a>
+                                            </li>
+
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
+                                                <a href="wishlist.html" class="notifi-wishlist">
+                                                    <i data-feather="heart"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="product-footer">
+                                    <div class="product-detail">
+                                        <span class="span-name">Vegetable</span>
+                                        <a href="product-left-thumbnail.html">
+                                            <h5 class="name">Fresh Bread and Pastry Flour 200 g</h5>
+                                        </a>
+                                        <div class="product-rating mt-2">
+                                            <ul class="rating">
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star"></i>
+                                                </li>
+                                            </ul>
+                                            <span>(4.0)</span>
+                                        </div>
+                                        <h6 class="unit">250 ml</h6>
+                                        <h5 class="price">
+                                            <span class="theme-color">$08.02</span> <del>$15.15</del>
+                                        </h5>
+                                        <div class="add-to-cart-box bg-white">
+                                            <button class="btn btn-add-cart addcart-button">
+                                                Add
+                                                <span class="add-icon bg-light-gray">
+                                                    <i class="fa-solid fa-plus"></i>
+                                                </span>
+                                            </button>
+                                            <div class="cart_qty qty-box">
+                                                <div class="input-group bg-white">
+                                                    <button type="button" class="qty-left-minus bg-gray"
+                                                            data-type="minus" data-field="">
+                                                        <i class="fa fa-minus" aria-hidden="true"></i>
+                                                    </button>
+                                                    <input class="form-control input-number qty-input" type="text"
+                                                           name="quantity" value="0">
+                                                    <button type="button" class="qty-right-plus bg-gray"
+                                                            data-type="plus" data-field="">
+                                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="product-box-3 wow fadeInUp" data-wow-delay="0.1s">
+                                <div class="product-header">
+                                    <div class="product-image">
+                                        <a href="product-left-thumbnail.html">
+                                            <img src="../assets/images/cake/product/3.png"
+                                                 class="img-fluid blur-up lazyload" alt="">
+                                        </a>
+
+                                        <ul class="product-option">
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
+                                                <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                   data-bs-target="#view">
+                                                    <i data-feather="eye"></i>
+                                                </a>
+                                            </li>
+
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                                <a href="compare.html">
+                                                    <i data-feather="refresh-cw"></i>
+                                                </a>
+                                            </li>
+
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
+                                                <a href="wishlist.html" class="notifi-wishlist">
+                                                    <i data-feather="heart"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="product-footer">
+                                    <div class="product-detail">
+                                        <span class="span-name">Vegetable</span>
+                                        <a href="product-left-thumbnail.html">
+                                            <h5 class="name">Peanut Butter Bite Premium Butter Cookies 600 g</h5>
+                                        </a>
+                                        <div class="product-rating mt-2">
+                                            <ul class="rating">
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star"></i>
+                                                </li>
+                                            </ul>
+                                            <span>(2.4)</span>
+                                        </div>
+                                        <h6 class="unit">350 G</h6>
+                                        <h5 class="price">
+                                            <span class="theme-color">$04.33</span> <del>$10.36</del>
+                                        </h5>
+                                        <div class="add-to-cart-box bg-white">
+                                            <button class="btn btn-add-cart addcart-button">
+                                                Add
+                                                <span class="add-icon bg-light-gray">
+                                                    <i class="fa-solid fa-plus"></i>
+                                                </span>
+                                            </button>
+                                            <div class="cart_qty qty-box">
+                                                <div class="input-group bg-white">
+                                                    <button type="button" class="qty-left-minus bg-gray"
+                                                            data-type="minus" data-field="">
+                                                        <i class="fa fa-minus" aria-hidden="true"></i>
+                                                    </button>
+                                                    <input class="form-control input-number qty-input" type="text"
+                                                           name="quantity" value="0">
+                                                    <button type="button" class="qty-right-plus bg-gray"
+                                                            data-type="plus" data-field="">
+                                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="product-box-3 wow fadeInUp" data-wow-delay="0.15s">
+                                <div class="product-header">
+                                    <div class="product-image">
+                                        <a href="product-left-thumbnail.html">
+                                            <img src="../assets/images/cake/product/4.png"
+                                                 class="img-fluid blur-up lazyload" alt="">
+                                        </a>
+
+                                        <ul class="product-option">
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
+                                                <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                   data-bs-target="#view">
+                                                    <i data-feather="eye"></i>
+                                                </a>
+                                            </li>
+
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                                <a href="compare.html">
+                                                    <i data-feather="refresh-cw"></i>
+                                                </a>
+                                            </li>
+
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
+                                                <a href="wishlist.html" class="notifi-wishlist">
+                                                    <i data-feather="heart"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="product-footer">
+                                    <div class="product-detail">
+                                        <span class="span-name">Snacks</span>
+                                        <a href="product-left-thumbnail.html">
+                                            <h5 class="name">SnackAmor Combo Pack of Jowar Stick and Jowar Chips</h5>
+                                        </a>
+                                        <div class="product-rating mt-2">
+                                            <ul class="rating">
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                            </ul>
+                                            <span>(5.0)</span>
+                                        </div>
+                                        <h6 class="unit">570 G</h6>
+                                        <h5 class="price">
+                                            <span class="theme-color">$12.52</span> <del>$13.62</del>
+                                        </h5>
+                                        <div class="add-to-cart-box bg-white">
+                                            <button class="btn btn-add-cart addcart-button">
+                                                Add
+                                                <span class="add-icon bg-light-gray">
+                                                    <i class="fa-solid fa-plus"></i>
+                                                </span>
+                                            </button>
+                                            <div class="cart_qty qty-box">
+                                                <div class="input-group bg-white">
+                                                    <button type="button" class="qty-left-minus bg-gray"
+                                                            data-type="minus" data-field="">
+                                                        <i class="fa fa-minus" aria-hidden="true"></i>
+                                                    </button>
+                                                    <input class="form-control input-number qty-input" type="text"
+                                                           name="quantity" value="0">
+                                                    <button type="button" class="qty-right-plus bg-gray"
+                                                            data-type="plus" data-field="">
+                                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="product-box-3 wow fadeInUp" data-wow-delay="0.2s">
+                                <div class="product-header">
+                                    <div class="product-image">
+                                        <a href="product-left-thumbnail.html">
+                                            <img src="../assets/images/cake/product/5.png"
+                                                 class="img-fluid blur-up lazyload" alt="">
+                                        </a>
+
+                                        <ul class="product-option">
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
+                                                <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                   data-bs-target="#view">
+                                                    <i data-feather="eye"></i>
+                                                </a>
+                                            </li>
+
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                                <a href="compare.html">
+                                                    <i data-feather="refresh-cw"></i>
+                                                </a>
+                                            </li>
+
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
+                                                <a href="wishlist.html" class="notifi-wishlist">
+                                                    <i data-feather="heart"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="product-footer">
+                                    <div class="product-detail">
+                                        <span class="span-name">Snacks</span>
+                                        <a href="product-left-thumbnail.html">
+                                            <h5 class="name">Yumitos Chilli Sprinkled Potato Chips 100 g</h5>
+                                        </a>
+                                        <div class="product-rating mt-2">
+                                            <ul class="rating">
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star"></i>
+                                                </li>
+                                            </ul>
+                                            <span>(3.8)</span>
+                                        </div>
+                                        <h6 class="unit">100 G</h6>
+                                        <h5 class="price">
+                                            <span class="theme-color">$10.25</span> <del>$12.36</del>
+                                        </h5>
+                                        <div class="add-to-cart-box bg-white">
+                                            <button class="btn btn-add-cart addcart-button">
+                                                Add
+                                                <span class="add-icon bg-light-gray">
+                                                    <i class="fa-solid fa-plus"></i>
+                                                </span>
+                                            </button>
+                                            <div class="cart_qty qty-box">
+                                                <div class="input-group bg-white">
+                                                    <button type="button" class="qty-left-minus bg-gray"
+                                                            data-type="minus" data-field="">
+                                                        <i class="fa fa-minus" aria-hidden="true"></i>
+                                                    </button>
+                                                    <input class="form-control input-number qty-input" type="text"
+                                                           name="quantity" value="0">
+                                                    <button type="button" class="qty-right-plus bg-gray"
+                                                            data-type="plus" data-field="">
+                                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="product-box-3 wow fadeInUp" data-wow-delay="0.25s">
+                                <div class="product-header">
+                                    <div class="product-image">
+                                        <a href="product-left-thumbnail.html">
+                                            <img src="../assets/images/cake/product/6.png"
+                                                 class="img-fluid blur-up lazyload" alt="">
+                                        </a>
+
+                                        <ul class="product-option">
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
+                                                <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                   data-bs-target="#view">
+                                                    <i data-feather="eye"></i>
+                                                </a>
+                                            </li>
+
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                                <a href="compare.html">
+                                                    <i data-feather="refresh-cw"></i>
+                                                </a>
+                                            </li>
+
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
+                                                <a href="wishlist.html" class="notifi-wishlist">
+                                                    <i data-feather="heart"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="product-footer">
+                                    <div class="product-detail">
+                                        <span class="span-name">Vegetable</span>
+                                        <a href="product-left-thumbnail.html">
+                                            <h5 class="name">Fantasy Crunchy Choco Chip Cookies</h5>
+                                        </a>
+                                        <div class="product-rating mt-2">
+                                            <ul class="rating">
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star"></i>
+                                                </li>
+                                            </ul>
+                                            <span>(4.0)</span>
+                                        </div>
+
+                                        <h6 class="unit">550 G</h6>
+
+                                        <h5 class="price">
+                                            <span class="theme-color">$14.25</span> <del>$16.57</del>
+                                        </h5>
+                                        <div class="add-to-cart-box bg-white">
+                                            <button class="btn btn-add-cart addcart-button">
+                                                Add
+                                                <span class="add-icon bg-light-gray">
+                                                    <i class="fa-solid fa-plus"></i>
+                                                </span>
+                                            </button>
+                                            <div class="cart_qty qty-box">
+                                                <div class="input-group bg-white">
+                                                    <button type="button" class="qty-left-minus bg-gray"
+                                                            data-type="minus" data-field="">
+                                                        <i class="fa fa-minus" aria-hidden="true"></i>
+                                                    </button>
+                                                    <input class="form-control input-number qty-input" type="text"
+                                                           name="quantity" value="0">
+                                                    <button type="button" class="qty-right-plus bg-gray"
+                                                            data-type="plus" data-field="">
+                                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="product-box-3 wow fadeInUp" data-wow-delay="0.3s">
+                                <div class="product-header">
+                                    <div class="product-image">
+                                        <a href="product-left-thumbnail.html">
+                                            <img src="../assets/images/cake/product/7.png" class="img-fluid" alt="">
+                                        </a>
+
+                                        <ul class="product-option">
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
+                                                <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                   data-bs-target="#view">
+                                                    <i data-feather="eye"></i>
+                                                </a>
+                                            </li>
+
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                                <a href="compare.html">
+                                                    <i data-feather="refresh-cw"></i>
+                                                </a>
+                                            </li>
+
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
+                                                <a href="wishlist.html" class="notifi-wishlist">
+                                                    <i data-feather="heart"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="product-footer">
+                                    <div class="product-detail">
+                                        <span class="span-name">Vegetable</span>
+                                        <a href="product-left-thumbnail.html">
+                                            <h5 class="name">Fresh Bread and Pastry Flour 200 g</h5>
+                                        </a>
+                                        <div class="product-rating mt-2">
+                                            <ul class="rating">
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star" class="fill"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star"></i>
+                                                </li>
+                                                <li>
+                                                    <i data-feather="star"></i>
+                                                </li>
+                                            </ul>
+                                            <span>(3.8)</span>
+                                        </div>
+
+                                        <h6 class="unit">1 Kg</h6>
+
+                                        <h5 class="price">
+                                            <span class="theme-color">$12.68</span> <del>$14.69</del>
+                                        </h5>
+                                        <div class="add-to-cart-box bg-white">
+                                            <button class="btn btn-add-cart addcart-button">
+                                                Add
+                                                <span class="add-icon bg-light-gray">
+                                                    <i class="fa-solid fa-plus"></i>
+                                                </span>
+                                            </button>
+                                            <div class="cart_qty qty-box">
+                                                <div class="input-group bg-white">
+                                                    <button type="button" class="qty-left-minus bg-gray"
+                                                            data-type="minus" data-field="">
+                                                        <i class="fa fa-minus" aria-hidden="true"></i>
+                                                    </button>
+                                                    <input class="form-control input-number qty-input" type="text"
+                                                           name="quantity" value="0">
+                                                    <button type="button" class="qty-right-plus bg-gray"
+                                                            data-type="plus" data-field="">
+                                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Releted Product Section End -->
+    <!-- Footer Section Start -->
+    <footer class="section-t-space">
+        <div class="container-fluid-lg">
+            <div class="service-section">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="service-contain">
+                            <div class="service-box">
+                                <div class="service-image">
+                                    <img src="https://themes.pixelstrap.com/fastkart/assets/svg/product.svg" class="blur-up lazyload" alt="">
+                                </div>
+
+                                <div class="service-detail">
+                                    <h5>Every Fresh Products</h5>
+                                </div>
+                            </div>
+
+                            <div class="service-box">
+                                <div class="service-image">
+                                    <img src="https://themes.pixelstrap.com/fastkart/assets/svg/delivery.svg" class="blur-up lazyload" alt="">
+                                </div>
+
+                                <div class="service-detail">
+                                    <h5>Free Delivery For Order Over $50</h5>
+                                </div>
+                            </div>
+
+                            <div class="service-box">
+                                <div class="service-image">
+                                    <img src="https://themes.pixelstrap.com/fastkart/assets/svg/discount.svg" class="blur-up lazyload" alt="">
+                                </div>
+
+                                <div class="service-detail">
+                                    <h5>Daily Mega Discounts</h5>
+                                </div>
+                            </div>
+
+                            <div class="service-box">
+                                <div class="service-image">
+                                    <img src="https://themes.pixelstrap.com/fastkart/assets/svg/market.svg" class="blur-up lazyload" alt="">
+                                </div>
+
+                                <div class="service-detail">
+                                    <h5>Best Price On The Market</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-footer section-b-space section-t-space">
+                <div class="row g-md-4 g-3">
+                    <div class="col-xl-3 col-lg-4 col-sm-6">
+                        <div class="footer-logo">
+                            <div class="theme-logo">
+                                <a href="index.html">
+                                    <img src="../assets/images/logo/1.png" class="blur-up lazyload" alt="">
+                                </a>
+                            </div>
+
+                            <div class="footer-logo-contain">
+                                <p>
+                                    We are a friendly bar serving a variety of cocktails, wines and beers. Our bar is a
+                                    perfect place for a couple.
+                                </p>
+
+                                <ul class="address">
+                                    <li>
+                                        <i data-feather="home"></i>
+                                        <a href="javascript:void(0)">1418 Riverwood Drive, CA 96052, US</a>
+                                    </li>
+                                    <li>
+                                        <i data-feather="mail"></i>
+                                        <a href="javascript:void(0)">support@fastkart.com</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                        <div class="footer-title">
+                            <h4>Categories</h4>
+                        </div>
+
+                        <div class="footer-contain">
+                            <ul>
+                                <li>
+                                    <a href="shop-left-sidebar.html" class="text-content">Vegetables & Fruit</a>
+                                </li>
+                                <li>
+                                    <a href="shop-left-sidebar.html" class="text-content">Beverages</a>
+                                </li>
+                                <li>
+                                    <a href="shop-left-sidebar.html" class="text-content">Meats & Seafood</a>
+                                </li>
+                                <li>
+                                    <a href="shop-left-sidebar.html" class="text-content">Frozen Foods</a>
+                                </li>
+                                <li>
+                                    <a href="shop-left-sidebar.html" class="text-content">Biscuits & Snacks</a>
+                                </li>
+                                <li>
+                                    <a href="shop-left-sidebar.html" class="text-content">Grocery & Staples</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-xl col-lg-2 col-sm-3">
+                        <div class="footer-title">
+                            <h4>Useful Links</h4>
+                        </div>
+
+                        <div class="footer-contain">
+                            <ul>
+                                <li>
+                                    <a href="index.html" class="text-content">Home</a>
+                                </li>
+                                <li>
+                                    <a href="shop-left-sidebar.html" class="text-content">Shop</a>
+                                </li>
+                                <li>
+                                    <a href="about-us.html" class="text-content">About Us</a>
+                                </li>
+                                <li>
+                                    <a href="blog-list.html" class="text-content">Blog</a>
+                                </li>
+                                <li>
+                                    <a href="contact-us.html" class="text-content">Contact Us</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-2 col-sm-3">
+                        <div class="footer-title">
+                            <h4>Help Center</h4>
+                        </div>
+
+                        <div class="footer-contain">
+                            <ul>
+                                <li>
+                                    <a href="order-success.html" class="text-content">Your Order</a>
+                                </li>
+                                <li>
+                                    <a href="user-dashboard.html" class="text-content">Your Account</a>
+                                </li>
+                                <li>
+                                    <a href="order-tracking.html" class="text-content">Track Order</a>
+                                </li>
+                                <li>
+                                    <a href="wishlist.html" class="text-content">Your Wishlist</a>
+                                </li>
+                                <li>
+                                    <a href="search.html" class="text-content">Search</a>
+                                </li>
+                                <li>
+                                    <a href="faq.html" class="text-content">FAQ</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-lg-4 col-sm-6">
+                        <div class="footer-title">
+                            <h4>Contact Us</h4>
+                        </div>
+
+                        <div class="footer-contact">
+                            <ul>
+                                <li>
+                                    <div class="footer-number">
+                                        <i data-feather="phone"></i>
+                                        <div class="contact-number">
+                                            <h6 class="text-content">Hotline 24/7 :</h6>
+                                            <h5>+91 888 104 2340</h5>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="footer-number">
+                                        <i data-feather="mail"></i>
+                                        <div class="contact-number">
+                                            <h6 class="text-content">Email Address :</h6>
+                                            <h5>fastkart@hotmail.com</h5>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li class="social-app">
+                                    <h5 class="mb-2 text-content">Download App :</h5>
+                                    <ul>
+                                        <li class="mb-0">
+                                            <a href="https://play.google.com/store/apps" target="_blank">
+                                                <img src="https://themes.pixelstrap.com/fastkart/assets/images/playstore.svg" class="blur-up lazyload"
+                                                     alt="">
+                                            </a>
+                                        </li>
+                                        <li class="mb-0">
+                                            <a href="https://www.apple.com/in/app-store/" target="_blank">
+                                                <img src="https://themes.pixelstrap.com/fastkart/assets/images/appstore.svg" class="blur-up lazyload"
+                                                     alt="">
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-footer section-small-space">
+                <div class="reserve">
+                    <h6 class="text-content">©2022 Fastkart All rights reserved</h6>
+                </div>
+
+                <div class="payment">
+                    <img src="../assets/images/payment/1.png" class="blur-up lazyload" alt="">
+                </div>
+
+                <div class="social-link">
+                    <h6 class="text-content">Stay connected :</h6>
+                    <ul>
+                        <li>
+                            <a href="https://www.facebook.com/" target="_blank">
+                                <i class="fa-brands fa-facebook-f"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://twitter.com/" target="_blank">
+                                <i class="fa-brands fa-twitter"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.instagram.com/" target="_blank">
+                                <i class="fa-brands fa-instagram"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://in.pinterest.com/" target="_blank">
+                                <i class="fa-brands fa-pinterest-p"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Footer Section End -->
+
+
+
     <!-- Quick View Modal Box Start -->
     <div class="modal fade theme-modal view-modal" id="view" tabindex="-1" aria-labelledby="exampleModalLabel"
          aria-hidden="true">
