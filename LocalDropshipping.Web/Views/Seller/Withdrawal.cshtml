@@ -2,9 +2,9 @@
 @using LocalDropshipping.Web.Helpers;
 @using LocalDropshipping.Web.Models;
 
-@model PageResponse<List<withdrawalModel>>;
+@model PageResponse<List<WithdrawalModel>>;
 @{
-    ViewBag.Title = "FOC Fulfillment - Withdrawals";
+    ViewBag.Title = "FOC-FulFillment-Withdrawals";
     Layout = "_LayoutSellerDashboard";
 }
 <body>
@@ -36,24 +36,22 @@
                     <table class="table order-table">
                         <thead>
                             <tr>
-                                <th scope="col">Order ID</th>
-                                <th scope="col">Order Date</th>
-                                <th scope="col">Product Name</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Price</th>
-
+                                <th scope="col">TransactionId</th>
+                                <th scope="col">AmountInPkr</th>
+                                <th scope="col">PaymentStatus</th>
+                                <th scope="col">RequestDate</th>
+                                <th scope="col">Reason</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var order in Model.Data)
+                            @foreach (var withdrawal in Model.Data)
                             {
                                 <tr>
-                                    <td>@order.Id</td>
-                                    <td>@order.OrderDate</td>
-                                    <td>@order.Name</td>
-                                    <td>@order.OrderStatus</td>
-                                    @* <td>@order.GrandTotal</td> *@
-                                    <td>Rs.@order.GrandTotal.ToString("N0")/-</td>
+                                    <td>@withdrawal.TransactionId</td>
+                                    <td>Rs.@withdrawal.AmountInPkr/-</td>
+                                    <td>@withdrawal.PaymentStatus</td>
+                                    <td>@withdrawal.RequestDate</td>
+                                    <td>@withdrawal.Reason</td>
                                 </tr>
 
                             }
@@ -88,47 +86,41 @@
                         }
                     </ul>
                 </nav>
-@*
+                @*
                 <nav class="custome-pagination">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="javascript:void(0)" tabindex="-1">
-                                <i class="fa-solid fa-angles-left"></i>
-                            </a>
-                        </li>
-                        <li class="page-item active">
-                            <a class="page-link" href="javascript:void(0)">1</a>
-                        </li>
-                        <li class="page-item" aria-current="page">
-                            <a class="page-link" href="javascript:void(0)">2</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="javascript:void(0)">3</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="javascript:void(0)">
-                                <i class="fa-solid fa-angles-right"></i>
-                            </a>
-                        </li>
-                    </ul>
+                <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                <a class="page-link" href="javascript:void(0)" tabindex="-1">
+                <i class="fa-solid fa-angles-left"></i>
+                </a>
+                </li>
+                <li class="page-item active">
+                <a class="page-link" href="javascript:void(0)">1</a>
+                </li>
+                <li class="page-item" aria-current="page">
+                <a class="page-link" href="javascript:void(0)">2</a>
+                </li>
+                <li class="page-item">
+                <a class="page-link" href="javascript:void(0)">3</a>
+                </li>
+                <li class="page-item">
+                <a class="page-link" href="javascript:void(0)">
+                <i class="fa-solid fa-angles-right"></i>
+                </a>
+                </li>
+                </ul>
                 </nav>*@
             </div>
         </div>
     </div>
 
-</body>
+    <script>
+        var withdrawalNameElements = document.querySelectorAll("#withdrawalName");
 
-<style>
- .request-btn{
-   background-color: #0DA487;
-   color: #ffffff;
-   font-size: 18px;
-   font-weight: 600
-  }
-  .request-btn:hover {
-   background-color: #0DA487;
-   color: #ffffff;
-   font-size: 18px;
-   font-weight: 600
-    }
-</style>
+        withdrawalNameElements.forEach(function (element) {
+            if (element.textContent.trim() === "") {
+                element.textContent = "<No Product Name>";
+            }
+        });
+    </script>
+</body>

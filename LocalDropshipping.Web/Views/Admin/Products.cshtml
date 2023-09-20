@@ -2,11 +2,12 @@
 @using LocalDropshipping.Web.Helpers;
 @model PageResponse<List<Product>>;
 @{
-    ViewBag.Title = "FOC Fulfillment - Products";
+    ViewBag.Title = "FOC-FulFillment-Products";
 
     Layout = "_LayoutDashboard";
 
 }
+
 <div class="page-body">
     <div class="container-fluid">
         <div class="row">
@@ -51,12 +52,12 @@
                                             <tr>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Product Image</th>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">
-                                                    @Html.ActionLink("Name", "Products","Admin", new { sortProduct = ViewBag.NameSortParm })
+                                                    @Html.ActionLink("Name", "Products","Admin", new { sortProduct = ViewBag.NameSortParm})
                                                 </th>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Category</th>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Current Qty</th>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">
-                                                    @Html.ActionLink("Price", "Products","Admin", new { sortProduct = ViewBag.PriceSortParm })
+                                                    @Html.ActionLink("Price", "Products","Admin", new { sortProduct = ViewBag.PriceSortParm})
                                                 </th>
                                                 <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Action</th>
                                             </tr>
@@ -71,18 +72,17 @@
                                                     <td>@product.Name</td>
                                                     <td style="color:black;">@product.Category!.Name</td>
                                                     <td>@product.Variants.First().Quantity</td>
-                                                    <td>@product.Variants.First().VariantPrice</td>
-
+                                                    <td>Rs.@product.Variants.First().VariantPrice.ToString("N0")/-</td>
                                                     <td>
                                                         <ul>
                                                             <li>
                                                                 <a asp-controller="Admin" asp-action="Product" asp-route-id="@product.ProductId">
-                                                                    <i class="ri-eye-line"></i>
+                                                                    <i class="ri-eye-line" style="color:#0DA487"></i>
                                                                 </a>
                                                             </li>
                                                             <li>
                                                                 <a asp-controller="Admin" asp-action="AddUpdateProduct" asp-route-id="@product.ProductId">
-                                                                    <i class="ri-pencil-line"></i>
+                                                                    <i class="ri-pencil-line" style="color:#0DA487"></i>
                                                                 </a>
                                                             </li>
 
