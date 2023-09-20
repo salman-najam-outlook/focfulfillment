@@ -14,5 +14,6 @@ namespace LocalDropshipping.Web.Services
         List<Withdrawals?> GetAll();
         Withdrawals UpdateWithdrawal(PaymentViewModel withdrawal);
         bool UpdateWithpaymentStatus(PaymentStatus paymentStatus,int WithdrawalId);
+        List<Withdrawals> GetWithdrawalByUserEmail(string email);
     }
 }
