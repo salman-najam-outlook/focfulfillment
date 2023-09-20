@@ -418,12 +418,14 @@ namespace LocalDropshipping.Web.Controllers
             data = data.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
             return View(new PageResponse<List<Product>>(data, pagination.PageNumber, pagination.PageSize, count));
         }
+
+
         [HttpGet]
         [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult AddUpdateProduct(int id = 0)
         {
             SetRoleByCurrentUser();
-            ViewBag.Categories = _categoryService.GetAll();
+            ViewBag.Category = _categoryService.GetDeafultCategory();
             var productVeiwModel = new ProductViewModel(_productsService.GetById(id));
             return View(productVeiwModel);
         }
@@ -471,7 +473,7 @@ namespace LocalDropshipping.Web.Controllers
                         Name = model.Name,
                         CategoryId = model.CategoryId,
                         IsBestSelling = model.IsBestSelling,
-                        IsFeatured = model.IsFeatured,
+                        IsTopRated = model.IsTopRated,
                         IsNewArravial = model.IsNewArravial,
                         Description = model.Description,
                         SKU = model.SKU,
@@ -501,7 +503,7 @@ namespace LocalDropshipping.Web.Controllers
                         Name = model.Name,
                         CategoryId = model.CategoryId,
                         IsBestSelling = model.IsBestSelling,
-                        IsFeatured = model.IsFeatured,
+                        IsTopRated = model.IsTopRated,
                         IsNewArravial = model.IsNewArravial,
                         Description = model.Description,
                         SKU = model.SKU,
@@ -535,7 +537,7 @@ namespace LocalDropshipping.Web.Controllers
                 product.Name = model.Name;
                 product.CategoryId = model.CategoryId;
                 product.IsBestSelling = model.IsBestSelling;
-                product.IsFeatured = model.IsFeatured;
+                product.IsTopRated = model.IsTopRated;
                 product.IsNewArravial = model.IsNewArravial;
                 product.Description = model.Description;
                 product.SKU = model.SKU;
@@ -570,12 +572,18 @@ namespace LocalDropshipping.Web.Controllers
                 }
                 else
                 {
+                    var newImagesUploaded = form.Files.Any(x => x.Name == $"main-variant-updated-images");
+                    var newVideosUploaded = form.Files.Any(x => x.Name == $"main-variant-updated-videos");
+                    var newFeaturedImage = form.Files.Any(x => x.Name == $"main-variant-updated-image");
                     product.Variants.Add(new ProductVariant
                     {
                         ProductVariantId = model.MainVariantId,
                         IsMainVariant = true,
                         VariantPrice = model.Price,
-                        Quantity = model.Quantity
+                        Quantity = model.Quantity,
+                        Images = newImagesUploaded ? formFiles.GetFiles($"main-variant-updated-images").ToArray().SaveTo("images/products", model.Name).Select(x => new ProductVariantImage { Link = x }).ToList() : new List<ProductVariantImage>(),
+                        Videos = newVideosUploaded ? formFiles.GetFiles($"main-variant-updated-videos").ToArray()!.SaveTo("videos/products", model.Name).Select(x => new ProductVariantVideo { Link = x }).ToList() : new List<ProductVariantVideo>(),
+                        FeatureImageLink = newFeaturedImage ? formFiles[$"main-variant-updated-image"]!.SaveTo("images/products", model.Name + " " + form["variant-type"]) : "",
                     });
                     _productsService.Update(model.ProductId, product);
                     TempData["updated"] = "Product updated successfully";
@@ -583,9 +591,6 @@ namespace LocalDropshipping.Web.Controllers
 
                 return RedirectToAction("Products");
             }
-
-            ViewBag.Categories = _categoryService.GetAll();
-            return View(model);
         }
        
         public IActionResult Withdrawal([FromQuery] Pagination pagination)

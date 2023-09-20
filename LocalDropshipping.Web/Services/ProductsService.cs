@@ -85,7 +85,7 @@ namespace LocalDropshipping.Web.Services
                 exProduct.Description = product.Description;
                 exProduct.SKU = product.SKU;
                 exProduct.CategoryId = product.CategoryId;
-                exProduct.IsFeatured = product.IsFeatured;
+                exProduct.IsTopRated = product.IsTopRated;
                 exProduct.IsBestSelling = product.IsBestSelling;
                 exProduct.IsNewArravial = product.IsNewArravial;
 
@@ -93,9 +93,31 @@ namespace LocalDropshipping.Web.Services
 
                 if (isSimpleProduct)
                 {
-                    var variant = exProduct.Variants.FirstOrDefault(x => x.ProductVariantId == product.Variants.First().ProductVariantId);
-                    variant.Quantity = product.Variants.First().Quantity;
-                    variant.VariantPrice = product.Variants.First().VariantPrice;
+                    var variant = product.Variants.First();
+                    var exVariant = exProduct.Variants.FirstOrDefault(x => x.ProductVariantId == variant.ProductVariantId);
+                    exVariant.Quantity = variant.Quantity;
+                    exVariant.VariantPrice = variant.VariantPrice;
+                    if (variant.Images.Any())
+                    {
+                        exVariant.Images.DeleteAllFromServer(_webHostEnvironment.ContentRootPath);
+                        exVariant.Images.RemoveAll(_ => true);
+                        exVariant.Images.AddRange(variant.Images);
+                    }
+
+                    if (variant.Videos.Any())
+                    {
+                        exVariant.Videos.DeleteAllFromServer(_webHostEnvironment.ContentRootPath);
+                        exVariant.Videos.RemoveAll(_ => true);
+                        exVariant.Videos.AddRange(variant.Videos);
+                    }
+
+                    if (!variant.FeatureImageLink.IsNullOrEmpty())
+                    {
+                        new ProductVariantImage { Link = exVariant.FeatureImageLink }.DeleteFromServer(_webHostEnvironment.ContentRootPath);
+                        exVariant.FeatureImageLink = variant.FeatureImageLink;
+                    }
+
+
                     variant.UpdatedDate = DateTime.Now;
                     variant.UpdatedBy = userEmail;
                 }
