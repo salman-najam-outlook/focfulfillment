@@ -13,27 +13,27 @@ namespace LocalDropshipping.Web.Services
 {
     public class WithdrawlsService : IWithdrawlsService
     {
-        private readonly LocalDropshippingContext context;
+        private readonly LocalDropshippingContext _context;
 
         public WithdrawlsService(LocalDropshippingContext context)
         {
-            this.context = context;
+            _context = context;
         }
 
 
         public Withdrawals GetWithdrawalRequestsById(int withdrawalId)
         {
-            return context.Withdrawals.FirstOrDefault(x => x.WithdrawalId == withdrawalId);
+            return _context.Withdrawals.FirstOrDefault(x => x.WithdrawalId == withdrawalId);
         }
 
         public Withdrawals GetWithdrawalRequestsByUserEmail(string userEmail)
         {
-            return context.Withdrawals.FirstOrDefault(x => x.UserEmail == userEmail);
+            return _context.Withdrawals.FirstOrDefault(x => x.UserEmail == userEmail);
         }
 
         public Withdrawals ProcessWithdrawal(ProcessWidrawalDto processDto)
         {
-            var withdrawal = context.Withdrawals.FirstOrDefault(x => x.WithdrawalId == processDto.WithdrawalId);
+            var withdrawal = _context.Withdrawals.FirstOrDefault(x => x.WithdrawalId == processDto.WithdrawalId);
             if (withdrawal != null)
             {
                 withdrawal.TransactionId = processDto.TransactionId;
@@ -41,7 +41,7 @@ namespace LocalDropshipping.Web.Services
                 //withdrawal.paymentStatus = PaymentStatus.UnPaid;
                 withdrawal.UpdatedDate = DateTime.Now;
 
-                context.SaveChanges();
+                _context.SaveChanges();
             }
             return withdrawal;
         }
@@ -58,8 +58,8 @@ namespace LocalDropshipping.Web.Services
                     CreatedDate = DateTime.Now,
                     CreatedBy = email,
                 };
-                context.Withdrawals.Update(withdrawals);
-                var result = context.SaveChanges();
+                _context.Withdrawals.Update(withdrawals);
+                var result = _context.SaveChanges();
                 if(result > 0) return true;
             }
             return false;
@@ -70,7 +70,7 @@ namespace LocalDropshipping.Web.Services
         {
             //var userEmail = context.Users.Select(x=>x.Email).ToList();
             var withdrawal = new List<Withdrawals?>();
-            withdrawal = context.Withdrawals.ToList();
+            withdrawal = _context.Withdrawals.ToList();
             if (withdrawal != null)
             {
                 return withdrawal;
@@ -79,7 +79,7 @@ namespace LocalDropshipping.Web.Services
         }
         public Withdrawals UpdateWithdrawal(PaymentViewModel withdrawal)
         {
-            Withdrawals result = (from p in context.Withdrawals
+            Withdrawals result = (from p in _context.Withdrawals
                              where p.WithdrawalId == withdrawal.WithdrawalId
                                   select p).SingleOrDefault();
 
@@ -88,18 +88,25 @@ namespace LocalDropshipping.Web.Services
             result.PaymentStatus = withdrawal.PaymentStatus;
             result.TransactionId = withdrawal.TransactionId;
             result.UpdatedDate = DateTime.Now;
+            result.Reason = withdrawal.Reason;
 
-            context.SaveChanges();
+            _context.SaveChanges();
 
             return result;
         }
 
         public bool UpdateWithpaymentStatus(PaymentStatus paymentStatus, int WithdrawalId)
         {
-            var attachedWithdrawal = context.Withdrawals.Attach(new Withdrawals { WithdrawalId = WithdrawalId });
+            var attachedWithdrawal = _context.Withdrawals.Attach(new Withdrawals { WithdrawalId = WithdrawalId });
             attachedWithdrawal.Entity.PaymentStatus = paymentStatus;
-            context.SaveChanges();
+            _context.SaveChanges();
             return true;
+        }
+
+        public List<Withdrawals> GetWithdrawalByUserEmail(string email)
+        {
+            var withdrawals = _context.Withdrawals.Where(x => x.UserEmail == email).ToList();
+            return withdrawals;
         }
     }
 }

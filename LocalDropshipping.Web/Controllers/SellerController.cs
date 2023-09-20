@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
@@ -68,18 +69,25 @@ namespace LocalDropshipping.Web.Controllers
         {
             return View();
         }
+
+        [Authorize]
         public IActionResult ForgotPassword()
         {
             return View();
         }
+
+        [Authorize]
         public IActionResult UpdatePassword(string userId, string token)
         {
             return View();
         }
+
+        [Authorize]
         public IActionResult UpdatePasswordMessage()
         {
             return View();
         }
+
         public IActionResult ForgotPasswordMessage()
         {
             return View();
@@ -92,6 +100,8 @@ namespace LocalDropshipping.Web.Controllers
         {
             return View();
         }
+        
+        [Authorize]
         public IActionResult contactUs()
         {
             return View();
@@ -100,7 +110,7 @@ namespace LocalDropshipping.Web.Controllers
         {
             return View();
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> contactUs(ContactUsViewModel contactUsViewModel)
         {
@@ -121,13 +131,19 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     var user = await _accountService.LoginAsync(model.Email, model.Password);
+                   
+                    if(!String.IsNullOrEmpty(returnUrl))
+                    {
+                        return LocalRedirect(returnUrl);
+                    }
+
                     return RedirectToAction("Shop", "Seller");
                 }
             }
@@ -179,6 +195,7 @@ namespace LocalDropshipping.Web.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> UpdatePassword(NewPasswordViewModel model)
         {
             var isUpdated = await _accountService.UpdatePasswordAsync(model);
@@ -217,7 +234,8 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ForgotPassword(string email)
+		[Authorize]
+		public async Task<IActionResult> ForgotPassword(string email)
         {
             var isPasswordResetLinkSent = await _accountService.ForgotPasswordAsync(email);
             if (isPasswordResetLinkSent)
@@ -231,8 +249,8 @@ namespace LocalDropshipping.Web.Controllers
                 return View("ForgotPassword");
             }
         }
-
-        public IActionResult Subscribe()
+		[Authorize]
+		public IActionResult Subscribe()
         {
             var user = _userService.GetCurrentUserAsync().GetAwaiter().GetResult();
             if (user != null && user.IsSubscribed && user.IsActive)
@@ -250,7 +268,9 @@ namespace LocalDropshipping.Web.Controllers
             ViewBag.total = TotalCost();
             return View(cart);
         }
-        [HttpPost]
+
+		[Authorize]
+		[HttpPost]
         public JsonResult AddToCart(string id)
         {
             try
@@ -392,38 +412,41 @@ namespace LocalDropshipping.Web.Controllers
             ViewBag.total = TotalCost();
             return PartialView("_cartItem", cart);
         }
-
+		[Authorize]
         public IActionResult Withdrawal([FromQuery] Pagination pagination)
         {
-            try
-            {
-                //var data = _orderService.GetAll();
-                //return View(data);
-                var orders = _orderService.GetAll();
+            var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
+            var email = _userService.GetUserEmailById(userId);
+            var withdrawals = _withdrawlsService.GetWithdrawalByUserEmail(email);
 
-                var withdrawalModels = orders.Select(order => new withdrawalModel
+            if(withdrawals != null)
+            {
+                var withdrawalModel = withdrawals.Select(withdrawal => new WithdrawalModel
                 {
-                    Id = order.Id,
-                    Name = order.Name,
-                    GrandTotal = order.GrandTotal,
-                    OrderStatus = order.OrderStatus,
-
+                    AmountInPkr = withdrawal.AmountInPkr,
+                    PaymentStatus = withdrawal.PaymentStatus,
+                    TransactionId = withdrawal.TransactionId,
+                    RequestDate = withdrawal.CreatedDate,
+                    Reason = withdrawal.Reason
                 }).ToList();
-                var count = withdrawalModels.Count();
-                withdrawalModels = withdrawalModels.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
-                return View(new PageResponse<List<withdrawalModel>>(withdrawalModels, pagination.PageNumber, pagination.PageSize, count));
+                var count = withdrawalModel.Count();
+                withdrawalModel = withdrawalModel.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+                return View(new PageResponse<List<WithdrawalModel>>(withdrawalModel, pagination.PageNumber, pagination.PageSize, count));
             }
-            catch (Exception ex)
-            {
-                return View(ex.Message);
-            }
+            return View();   
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult SellerDashboard()
         {
             try
             {
+                string? currentUserID = _userManager.GetUserId(HttpContext.User);
+                var currentUser = _userService.GetById(currentUserID);
+                HttpContext.Session.SetString("CurrentUser", JsonConvert.SerializeObject(currentUser));
+
+
                 return View();
             }
             catch (Exception ex)
@@ -433,6 +456,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> WishList([FromQuery] Pagination pagination)
         {
             try
@@ -462,8 +486,8 @@ namespace LocalDropshipping.Web.Controllers
 
         }
 
-
-        [HttpPost]
+		[Authorize]
+		[HttpPost]
         public IActionResult WishList(int ProductId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -480,11 +504,12 @@ namespace LocalDropshipping.Web.Controllers
 
             return View();
         }
-        public IActionResult Productleftthumbnail()
+		[Authorize]
+		public IActionResult Productleftthumbnail()
         {
             return View();
         }
-
+        [Authorize]
         public IActionResult Cart()
         {
             var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
@@ -493,7 +518,7 @@ namespace LocalDropshipping.Web.Controllers
             ViewBag.totalCost = ViewBag.total + ViewBag.shipping;
             return View(cart);
         }
-
+        [Authorize]
         public IActionResult RemoveFromCart(int id)
         {
             var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
@@ -503,7 +528,7 @@ namespace LocalDropshipping.Web.Controllers
             return RedirectToAction("Cart");
         }
 
-
+        [Authorize]
         public IActionResult Checkout(CheckoutViewModel model)
         {
             string? currentUserID = _userManager.GetUserId(HttpContext.User);
@@ -545,7 +570,7 @@ namespace LocalDropshipping.Web.Controllers
 
             return RedirectToAction("Shop", "Seller");
         }
-
+        [Authorize]
         public IActionResult SellerOrders([FromQuery] Pagination pagination)
         {
             try
@@ -561,6 +586,7 @@ namespace LocalDropshipping.Web.Controllers
                 return View(ex.Message);
             }
         }
+        [Authorize]
         [HttpPost]
         public IActionResult PlaceOrder(CheckoutViewModel customer)
         {
@@ -626,7 +652,7 @@ namespace LocalDropshipping.Web.Controllers
             }
 
         }
-
+        [Authorize]
         public IActionResult Profile()
         {
             var userId = _userManager.GetUserId(User);
@@ -688,6 +714,7 @@ namespace LocalDropshipping.Web.Controllers
 
             return View("Profile");
         }
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> UpdateSellerPassword()
         {
@@ -777,7 +804,8 @@ namespace LocalDropshipping.Web.Controllers
 
             return RedirectToAction("Login", "Seller");
         }
-        public IActionResult Reports()
+		[Authorize]
+		public IActionResult Reports()
         {
             return View();
         }

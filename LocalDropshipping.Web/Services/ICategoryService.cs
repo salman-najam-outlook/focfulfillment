@@ -9,6 +9,7 @@ namespace LocalDropshipping.Web.Services
         Category Add(Category category);
 
         List<Category> GetAll();
+        Category? GetDeafultCategory();
 
         Category? GetById(int CategoryId);
 
