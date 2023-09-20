@@ -372,7 +372,7 @@ namespace LocalDropshipping.Web.Controllers
 
         [HttpGet]
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin, "AdminLogin", "Admin")]
-        public IActionResult Products([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
+        public IActionResult Products([FromQuery] Pagination pagination, string searchString, string sortProduct, string currentFilter)
         {
             //Add ViewBag to save SortOrder of table
             ViewBag.CurrentSort = sortProduct;
