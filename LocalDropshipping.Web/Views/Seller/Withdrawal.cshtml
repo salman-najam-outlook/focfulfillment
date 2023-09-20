@@ -47,35 +47,11 @@
                             @foreach (var withdrawal in Model.Data)
                             {
                                 <tr>
-                                    <td>@order.Id</td>
-                                    <td>@order.OrderDate</td>
-                                    @*  <td>
-
-                                @if (!string.IsNullOrEmpty(order.Name))
-                                {
-                                @order.Name
-                                }
-                                else
-                                {
-                                <p> < No Product Name > </p>
-
-                                }
-                                </td> *@
-                                    <td id="withdrawalName">@order.Name</td>
-                                  @*   <td>@order.OrderStatus</td> *@
-                                    <td>
-                                        @if (order.OrderStatus == LocalDropshipping.Web.Enums.OrderStatus.Delivered)
-                                        {
-                                            <label class="success">@order.OrderStatus</label>
-                                        }
-                                        else
-                                        {
-                                            <label class="danger">@order.OrderStatus</label>
-                                        }
-                                    </td>
-
-                                    @* <td>@order.GrandTotal</td> *@
-                                    <td>Rs.@order.GrandTotal.ToString("N0")/-</td>
+                                    <td>@withdrawal.TransactionId</td>
+                                    <td>Rs.@withdrawal.AmountInPkr/-</td>
+                                    <td>@withdrawal.PaymentStatus</td>
+                                    <td>@withdrawal.RequestDate</td>
+                                    <td>@withdrawal.Reason</td>
                                 </tr>
 
                             }
