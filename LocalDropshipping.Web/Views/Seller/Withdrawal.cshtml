@@ -4,7 +4,7 @@
 @* @model List<Order>; *@
 @model PageResponse<List<withdrawalModel>>;
 @{
-    ViewBag.Title = "FOC Fulfillment - Withdrawals";
+    ViewBag.Title = "FOC-FulFillment-Withdrawals";
     Layout = "_LayoutSellerDashboard";
 }
 
@@ -40,8 +40,31 @@
                                 <tr>
                                     <td>@order.Id</td>
                                     <td>@order.OrderDate</td>
-                                    <td>@order.Name</td>
-                                    <td>@order.OrderStatus</td>
+                                    @*  <td>
+
+                                @if (!string.IsNullOrEmpty(order.Name))
+                                {
+                                @order.Name
+                                }
+                                else
+                                {
+                                <p> < No Product Name > </p>
+
+                                }
+                                </td> *@
+                                    <td id="withdrawalName">@order.Name</td>
+                                  @*   <td>@order.OrderStatus</td> *@
+                                    <td>
+                                        @if (order.OrderStatus == LocalDropshipping.Web.Enums.OrderStatus.Delivered)
+                                        {
+                                            <label class="success">@order.OrderStatus</label>
+                                        }
+                                        else
+                                        {
+                                            <label class="danger">@order.OrderStatus</label>
+                                        }
+                                    </td>
+
                                     @* <td>@order.GrandTotal</td> *@
                                     <td>Rs.@order.GrandTotal.ToString("N0")/-</td>
                                 </tr>
@@ -78,32 +101,41 @@
                         }
                     </ul>
                 </nav>
-@*
+                @*
                 <nav class="custome-pagination">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="javascript:void(0)" tabindex="-1">
-                                <i class="fa-solid fa-angles-left"></i>
-                            </a>
-                        </li>
-                        <li class="page-item active">
-                            <a class="page-link" href="javascript:void(0)">1</a>
-                        </li>
-                        <li class="page-item" aria-current="page">
-                            <a class="page-link" href="javascript:void(0)">2</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="javascript:void(0)">3</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="javascript:void(0)">
-                                <i class="fa-solid fa-angles-right"></i>
-                            </a>
-                        </li>
-                    </ul>
+                <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                <a class="page-link" href="javascript:void(0)" tabindex="-1">
+                <i class="fa-solid fa-angles-left"></i>
+                </a>
+                </li>
+                <li class="page-item active">
+                <a class="page-link" href="javascript:void(0)">1</a>
+                </li>
+                <li class="page-item" aria-current="page">
+                <a class="page-link" href="javascript:void(0)">2</a>
+                </li>
+                <li class="page-item">
+                <a class="page-link" href="javascript:void(0)">3</a>
+                </li>
+                <li class="page-item">
+                <a class="page-link" href="javascript:void(0)">
+                <i class="fa-solid fa-angles-right"></i>
+                </a>
+                </li>
+                </ul>
                 </nav>*@
             </div>
         </div>
     </div>
 
+    <script>
+        var withdrawalNameElements = document.querySelectorAll("#withdrawalName");
+
+        withdrawalNameElements.forEach(function (element) {
+            if (element.textContent.trim() === "") {
+                element.textContent = "<No Product Name>";
+            }
+        });
+    </script>
 </body>

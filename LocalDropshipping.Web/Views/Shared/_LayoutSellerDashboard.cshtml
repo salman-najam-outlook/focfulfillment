@@ -2,6 +2,13 @@
 
     Layout = null;
 }
+@using Newtonsoft.Json;
+@using LocalDropshipping.Web.Data.Entities;
+
+@{
+    var data = Context.Session.GetString("CurrentUser");
+    var currentUserData = JsonConvert.DeserializeObject<User>(data);
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,6 +31,8 @@
           rel="stylesheet">
 
     <!-- bootstrap css -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
     <link id="rtl-link" rel="stylesheet" type="text/css" href="../assets/css/vendors/bootstrap.css">
 
     <!-- font-awesome css -->
@@ -41,6 +50,27 @@
 
     <!-- Template css -->
     <link id="color-link" rel="stylesheet" type="text/css" href="../assets/css/style.css">
+
+    <!-- ratio css -->
+    @* <link rel="stylesheet" type="text/css" href="~/backend-assets/css/ratio.css"> *@
+    <!-- Plugins css -->
+    @* <link rel="stylesheet" type="text/css" href="~/backend-assets/css/vendors/scrollbar.css"> *@
+    @* <link rel="stylesheet" type="text/css" href="~/backend-assets/css/vendors/animate.css"> *@
+
+    @* For Modal Run *@
+    <link rel="stylesheet" type="text/css" href="~/backend-assets/css/style.css">
+
+
+@*     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="~/backend-assets/css/vendors/bootstrap.css">
+ *@
+    @* <link rel="stylesheet" type="text/css" href="~/backend-assets/css/vendors/themify.css" rel="stylesheet"> *@
+
+    <style>
+        .nav-pills .nav-item .nav-link:after{
+            height: 0px !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -153,7 +183,7 @@
                                     </li>
 
                                     <li class="right-side">
-                                        <a asp-action="WishList" asp-controller="Seller" class="btn p-0 position-relative header-wishlist">
+                                        <a asp-action="WishList" asp-controller="Seller" id="wishListTab" class="btn p-0 position-relative header-wishlist">
                                             <i data-feather="heart"></i>
                                         </a>
                                     </li>
@@ -234,19 +264,36 @@
                                         <div class="onhover-div onhover-div-login">
                                             <ul class="user-box-name">
                                                 <li class="product-box-contain">
+                                                    <a asp-action="SellerDashboard" asp-controller="Seller">Dashboard</a>
+                                                </li>
+
+                                                <li class="product-box-contain">
+                                                    <a asp-action="Shop" asp-controller="Seller">Shop</a>
+                                                </li>
+                                                <li class="product-box-contain">
+                                                    <a asp-action="WishList" asp-controller="Seller">WishList</a>
+                                                </li>
+                                                <li class="product-box-contain">
                                                     <i></i>
                                                     @* <a href="login.html">Log In</a> *@
                                                     @* <a asp-action="SellerLogout" asp-controller="Seller">Logout</a> *@
-                                                    <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="nav-link" id="pills-out-tab" role="tab">Logout</a>
+                                                    @* <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" id="pills-out-tab" role="tab">Logout</a> *@
+                                                    <a data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                                                       href="javascript:void(0)">Logout
+                                                    </a>
+
+
                                                 </li>
 
                                                 <li class="product-box-contain">
                                                     @* <a href="sign-up.html">Register</a> *@
                                                 </li>
 
-                                                <li class="product-box-contain">
+                                                @* <li class="product-box-contain">
                                                     <a href="ForgotPassword">Forgot Password</a>
-                                                </li>
+                                                </li> *@
+
+
                                             </ul>
                                         </div>
                                     </li>
@@ -292,6 +339,39 @@
                             <button class="close-sidebar">
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
+                        </div>
+                         
+                        @* Image Box Div *@
+                        <div class="close-button d-flex d-lg-none">
+                            <button class="close-sidebar">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <div class="profile-box">
+                            <div class="cover-image">
+                                <img src="../assets/images/inner-page/cover-img.jpg" class="img-fluid blur-up lazyload"
+                                     alt="">
+                                    
+                            </div>
+
+                            <div class="profile-contain">
+                                <div class="profile-image">
+                                    <div class="position-relative">
+                                        @* <img src="../assets/images/vendor-page/logo.png"
+                                             class="blur-up lazyload update_img" alt=""> *@
+                                        <img src="../ProfileImages/default-profile-image.svg   "
+                                             class="blur-up lazyload update_img" alt="">
+                                    </div>
+                                </div>
+
+                                <div class="profile-name">
+
+                                
+                                    @* <h3>Joshua D. Bass</h3> *@
+                                    <h3>@currentUserData.Fullname</h3>
+                                    <h6 class="text-content">@currentUserData.Email</h6>
+                                </div>
+                            </div>
                         </div>
 
 
@@ -349,16 +429,16 @@
 
                             </li>
 
-                            
+
                             <li class="nav-item" role="presentation">
 
-                            <a asp-action="Profile" asp-controller="Seller" class="nav-link" id="pills-profile-tab" data-bs-target="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                            Profile
-                            </a>
+                                <a asp-action="Profile" asp-controller="Seller" class="nav-link" id="pills-profile-tab" data-bs-target="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                    Profile
+                                </a>
 
                             </li>
-                           
+
 
 
 
@@ -371,14 +451,14 @@
                             <span>Log out</span>
                             </a> *@
 
-                            
+
                             <li class="nav-item" role="presentation">
-                            <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="nav-link" id="pills-out-tab" role="tab" aria-selected="false">
-                            <i data-feather="log-out"></i>
-                            Log Out
-                            </a>
+                                <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" type="button" class="nav-link" id="pills-out-tab" role="tab" aria-selected="false">
+                                    <i data-feather="log-out"></i>
+                                    Log Out
+                                </button>
                             </li>
-                           
+
 
                             @* </form> *@
 
@@ -1159,7 +1239,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     <div class="button-box">
                         <form asp-action="SellerLogout" asp-controller="Seller">
-                            <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+                            <button type="button" class="btn btn--no" data-bs-dismiss="modal" style="float:left">No</button>
                             <button type="submit" class="btn  btn--yes btn-primary">Yes</button>
                         </form>
                     </div>
@@ -1176,9 +1256,13 @@
     <script src="../assets/js/jquery-ui.min.js"></script>
 
     <!-- Bootstrap js-->
+    <script src="~/backend-assets/js/bootstrap/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/bootstrap/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/bootstrap/bootstrap-notify.min.js"></script>
     <script src="../assets/js/bootstrap/popper.min.js"></script>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 
     <!-- feather icon js-->
     <script src="../assets/js/feather/feather.min.js"></script>
@@ -1195,30 +1279,88 @@
     <script src="../assets/js/apexchart.js"></script>
     <script src="../assets/js/custom-chart.js"></script>
 
+    <!-- Apexchar js -->
+    <script src="~/backend-assets/js/chart/apex-chart/apex-chart1.js"></script>
+    <script src="~/backend-assets/js/chart/apex-chart/moment.min.js"></script>
+    <script src="~/backend-assets/js/chart/apex-chart/apex-chart.js"></script>
+    <script src="~/backend-assets/js/chart/apex-chart/stock-prices.js"></script>
+    <script src="~/backend-assets/js/chart/apex-chart/chart-custom1.js"></script>
+
     <!-- Nav & tab upside js -->
     <script src="../assets/js/nav-tab.js"></script>
+    
+    <!-- slick slider js -->
+    <script src="~/backend-assets/js/slick.min.js"></script>
+    <script src="~/backend-assets/js/custom-slick.js"></script>
+
+    <!-- customizer js -->
+    <script src="~/backend-assets/js/customizer.js"></script>
+
+    <!-- ratio js -->
+    <script src="~/backend-assets/js/ratio.js"></script>
+
+    <!-- sidebar effect -->
+    <script src="~/backend-assets/js/sidebareffect.js"></script>
 
     <!-- script js -->
     <script src="../assets/js/script.js"></script>
 
     <!-- thme setting js -->
     <script src="../assets/js/theme-setting.js"></script>
-@*     <script>
-        // Get all navigation links
-        const navLinks = document.querySelectorAll('.nav-link');
+    @*     <script>
+    const navLinks = document.querySelectorAll('.nav-link');
 
-        // Add click event listener to each navigation link
-        navLinks.forEach(function (link) {
-            link.addEventListener('click', function () {
-                // Remove 'active' class from all links
-                navLinks.forEach(function (navLink) {
-                    navLink.classList.remove('active');
-                });
+    navLinks.forEach(function (link) {
+    link.addEventListener('click', function () {
+    navLinks.forEach(function (navLink) {
+    navLink.classList.remove('active');
+    });
 
-                // Add 'active' class to the clicked link
-                this.classList.add('active');
+    this.classList.add('active');
+    });
+    });
+    </script> *@
+    <script>
+
+        $(document).ready(function () {
+            var currentUrl = window.location.pathname;
+
+            $(".nav-link").removeClass("active").attr("aria-selected", "false");
+
+            if (currentUrl.includes("/Seller/SellerOrders")) {
+                $("#pills-orders-tab").addClass("active").attr("aria-selected", "true");
+            } 
+            else if (currentUrl.includes("/Seller/Withdrawal")) {
+                $("#pills-withdrawals-tab").addClass("active").attr("aria-selected", "true");
+            }
+            else if (currentUrl.includes("/Seller/WishList")) {
+                $("#pills-wishlist-tab").addClass("active").attr("aria-selected", "true");
+            }
+            else if (currentUrl.includes("/Seller/Reports")) {
+                $("#pills-report-tab").addClass("active").attr("aria-selected", "true");
+            }
+            else if (currentUrl.includes("/Seller/Profile")) {
+                $("#pills-profile-tab").addClass("active").attr("aria-selected", "true");
+            }
+            else {
+                $("#pills-dashboard-tab").addClass("active").attr("aria-selected", "true");
+            }
+
+            $(".nav-link").click(function () {
+                $(".nav-link").removeClass("active").attr("aria-selected", "false");
+
+                $(this).addClass("active").attr("aria-selected", "true");
             });
         });
-    </script> *@
-    </body>
+
+
+        // $(document).ready(function () {
+        //     $(".nav-link").click(function () {
+        //         $(".nav-link").removeClass("active").attr("aria-selected", "false");
+
+        //         $(this).addClass("active").attr("aria-selected", "true");
+        //     });
+        // });
+    </script>
+</body>
 </html>

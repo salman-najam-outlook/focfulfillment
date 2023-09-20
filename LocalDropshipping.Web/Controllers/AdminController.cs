@@ -412,7 +412,7 @@ namespace LocalDropshipping.Web.Controllers
                         Name = model.Name,
                         CategoryId = model.CategoryId,
                         IsBestSelling = model.IsBestSelling,
-                        IsFeatured = model.IsFeatured,
+                        IsTopRated = model.IsTopRated,
                         IsNewArravial = model.IsNewArravial,
                         Description = model.Description,
                         SKU = model.SKU,
@@ -442,7 +442,7 @@ namespace LocalDropshipping.Web.Controllers
                         Name = model.Name,
                         CategoryId = model.CategoryId,
                         IsBestSelling = model.IsBestSelling,
-                        IsFeatured = model.IsFeatured,
+                        IsTopRated = model.IsTopRated,
                         IsNewArravial = model.IsNewArravial,
                         Description = model.Description,
                         SKU = model.SKU,
@@ -476,7 +476,7 @@ namespace LocalDropshipping.Web.Controllers
                 product.Name = model.Name;
                 product.CategoryId = model.CategoryId;
                 product.IsBestSelling = model.IsBestSelling;
-                product.IsFeatured = model.IsFeatured;
+                product.IsTopRated = model.IsTopRated;
                 product.IsNewArravial = model.IsNewArravial;
                 product.Description = model.Description;
                 product.SKU = model.SKU;

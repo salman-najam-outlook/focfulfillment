@@ -1,7 +1,7 @@
 ﻿@model SignupViewModel
 
 @{
-    ViewBag.Title = "FOC Fulfillment - Register";
+    ViewBag.Title = "FOC-FulFillment-Register";
     Layout = null;
 }
 
@@ -208,7 +208,7 @@
                         </div>
 
                         <div class="input-box">
-                            <form asp-action="register" class="row g-4">
+                            <form asp-action="register" id="registerForm" class="row g-4">
 
                                 <div class="col-12">
                                     <div class="form-floating theme-form-floating">
@@ -573,18 +573,19 @@
 </body>
 </html>
 <script>
-  
-    document.addEventListener("DOMContentLoaded", function () {
-        debugger;
-        var rememberCheckbox = document.getElementById("flexCheckDefault");
-        var registerButton = document.getElementById("registerButton");
+    $(document).ready(function () {
+        function validateForm() {
+            var fullName = $("#FullName").val();
+            var email = $("#Email").val();
+            var password = $("#Password").val();
+            var agreeCheckbox = $("#flexCheckDefault").is(":checked");
 
-        rememberCheckbox.addEventListener("change", function () {
-            if (rememberCheckbox.checked) {
-                registerButton.disabled = false;
-            } else {
-                registerButton.disabled = true;
-            }
+            return fullName !== "" && email !== "" && password !== "" && agreeCheckbox;
+        }
+
+        $("#registerForm input, #flexCheckDefault").on("input change", function () {
+            var isValid = validateForm();
+            $("#registerButton").prop("disabled", !isValid);
         });
     });
 </script>

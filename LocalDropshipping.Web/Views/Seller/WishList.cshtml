@@ -2,7 +2,7 @@
 @using LocalDropshipping.Web.Helpers;
 @model PageResponse<List<AddProductVariantViewModel>>
 @{
-    ViewBag.Title = "FOC Fulfillment - WishList";
+    ViewBag.Title = "FOC-FulFillment-WishList";
     Layout = "_LayoutSellerDashboard";
 }
 <div class="row g-sm-3 g-2">
@@ -62,7 +62,7 @@
     }
     else
     {
-        <h3>No items in you Wishlist to display</h3>
+        <h3>No items in your Wishlist to display</h3>
         @*  <p>No products to display.</p> *@
     }
     @if (Model != null && Model.totalCount > 0)

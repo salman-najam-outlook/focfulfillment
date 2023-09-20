@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
@@ -64,18 +65,25 @@ namespace LocalDropshipping.Web.Controllers
         {
             return View();
         }
+
+        [Authorize]
         public IActionResult ForgotPassword()
         {
             return View();
         }
+
+        [Authorize]
         public IActionResult UpdatePassword(string userId, string token)
         {
             return View();
         }
+
+        [Authorize]
         public IActionResult UpdatePasswordMessage()
         {
             return View();
         }
+
         public IActionResult ForgotPasswordMessage()
         {
             return View();
@@ -88,6 +96,8 @@ namespace LocalDropshipping.Web.Controllers
         {
             return View();
         }
+        
+        [Authorize]
         public IActionResult contactUs()
         {
             return View();
@@ -96,7 +106,7 @@ namespace LocalDropshipping.Web.Controllers
         {
             return View();
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> contactUs(ContactUsViewModel contactUsViewModel)
         {
@@ -181,6 +191,7 @@ namespace LocalDropshipping.Web.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> UpdatePassword(NewPasswordViewModel model)
         {
             var isUpdated = await _accountService.UpdatePasswordAsync(model);
@@ -219,7 +230,8 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ForgotPassword(string email)
+		[Authorize]
+		public async Task<IActionResult> ForgotPassword(string email)
         {
             var isPasswordResetLinkSent = await _accountService.ForgotPasswordAsync(email);
             if (isPasswordResetLinkSent)
@@ -233,8 +245,8 @@ namespace LocalDropshipping.Web.Controllers
                 return View("ForgotPassword");
             }
         }
-
-        public IActionResult Subscribe()
+		[Authorize]
+		public IActionResult Subscribe()
         {
             var user = _userService.GetCurrentUserAsync().GetAwaiter().GetResult();
             if (user != null && user.IsSubscribed && user.IsActive)
@@ -251,7 +263,9 @@ namespace LocalDropshipping.Web.Controllers
             ViewBag.total = TotalCost();
             return View(cart);
         }
-        [HttpPost]
+
+		[Authorize]
+		[HttpPost]
         public JsonResult AddToCart(string id)
         {
             try
@@ -393,7 +407,7 @@ namespace LocalDropshipping.Web.Controllers
             ViewBag.total = TotalCost();
             return PartialView("_cartItem", cart);
         }
-
+		[Authorize]
         public IActionResult Withdrawal([FromQuery] Pagination pagination)
         {
             try
@@ -426,6 +440,11 @@ namespace LocalDropshipping.Web.Controllers
         {
             try
             {
+                string? currentUserID = _userManager.GetUserId(HttpContext.User);
+                var currentUser = _userService.GetById(currentUserID);
+                HttpContext.Session.SetString("CurrentUser", JsonConvert.SerializeObject(currentUser));
+
+
                 return View();
             }
             catch (Exception ex)
@@ -435,6 +454,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> WishList([FromQuery] Pagination pagination)
         {
             try
@@ -464,8 +484,8 @@ namespace LocalDropshipping.Web.Controllers
 
         }
 
-
-        [HttpPost]
+		[Authorize]
+		[HttpPost]
         public IActionResult WishList(int ProductId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -482,11 +502,12 @@ namespace LocalDropshipping.Web.Controllers
 
             return View();
         }
-        public IActionResult Productleftthumbnail()
+		[Authorize]
+		public IActionResult Productleftthumbnail()
         {
             return View();
         }
-
+        [Authorize]
         public IActionResult Cart()
         {
             var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
@@ -495,7 +516,7 @@ namespace LocalDropshipping.Web.Controllers
             ViewBag.totalCost = ViewBag.total + ViewBag.shipping;
             return View(cart);
         }
-
+        [Authorize]
         public IActionResult RemoveFromCart(int id)
         {
             var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
@@ -505,7 +526,7 @@ namespace LocalDropshipping.Web.Controllers
             return RedirectToAction("Cart");
         }
 
-
+        [Authorize]
         public IActionResult Checkout(CheckoutViewModel model)
         {
             string? currentUserID = _userManager.GetUserId(HttpContext.User);
@@ -547,7 +568,7 @@ namespace LocalDropshipping.Web.Controllers
 
             return RedirectToAction("Shop", "Seller");
         }
-
+        [Authorize]
         public IActionResult SellerOrders([FromQuery] Pagination pagination)
         {
             try
@@ -563,6 +584,7 @@ namespace LocalDropshipping.Web.Controllers
                 return View(ex.Message);
             }
         }
+        [Authorize]
         [HttpPost]
         public IActionResult PlaceOrder(CheckoutViewModel customer)
         {
@@ -628,7 +650,7 @@ namespace LocalDropshipping.Web.Controllers
             }
 
         }
-
+        [Authorize]
         public IActionResult Profile()
         {
             var userId = _userManager.GetUserId(User);
@@ -690,6 +712,7 @@ namespace LocalDropshipping.Web.Controllers
 
             return View("Profile");
         }
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> UpdateSellerPassword()
         {
@@ -731,7 +754,8 @@ namespace LocalDropshipping.Web.Controllers
 
             return RedirectToAction("Login", "Seller");
         }
-        public IActionResult Reports()
+		[Authorize]
+		public IActionResult Reports()
         {
             return View();
         }
