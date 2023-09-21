@@ -346,10 +346,10 @@ namespace LocalDropshipping.Web.Controllers
                         orders = orders.OrderByDescending(s => s.OrderStatus).ToList();
                         break;
                     case "Date":
-                        orders = orders.OrderBy(s => s.OrderDate).ToList();
+                        orders = orders.OrderBy(s => s.CreatedDate).ToList();
                         break;
                     case "date_desc":
-                        orders = orders.OrderByDescending(s => s.OrderDate).ToList();
+                        orders = orders.OrderByDescending(s => s.CreatedDate).ToList();
                         break;
                     case "price_asc":
                         orders = orders.OrderBy(s => s.GrandTotal).ToList();

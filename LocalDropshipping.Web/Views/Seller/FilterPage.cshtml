@@ -2,12 +2,12 @@
 @using static IEnumerable<LocalDropshipping.Web.Data.Entities.OrderItem>
 @model List<Product>;
 @{
-    Layout = null;
+    Layout = "~/Views/Shared/ShopPage.cshtml";
     ViewData["Title"] = "FOCFulFillment - Product Listing";
 }
 
-<!DOCTYPE htm"viewport" content="width=device-width" />
-<head>
+@* <!DOCTYPE htm"viewport" content="width=device-width" /> *@
+@* <head>
 	<title>@ViewBag.Title</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -56,9 +56,9 @@
 
 	<!-- jquery ui-->
 	<script src="../assets/js/jquery-ui.min.js"></script>
-</head>
-<body>
-<header class="pb-md-4 pb-0">
+</head> *@
+@* <body> *@
+@* <header class="pb-md-4 pb-0">
         <div class="header-top">
             <div class="container-fluid-lg">
                 <div class="row">
@@ -290,7 +290,7 @@
                 </div>
             </div>
         </div>
-    </header>
+    </header> 
 <div class="mobile-menu d-md-none d-block mobile-cart">
         <ul>
             <li class="active">
@@ -329,7 +329,7 @@
             </li>
         </ul>
     </div>
-
+    *@
 <!-- Breadcrumb Section Start -->
 <section class="breadscrumb-section pt-0">
     <div class="container-fluid-lg">
@@ -723,7 +723,7 @@
 
     </script>
 </section>
-<footer class="footer-sm">
+@* <footer class="footer-sm">
 		<div class="container-fluid-xs">
 			<div class="sub-footer">
 				<div class="reserve">
@@ -735,7 +735,7 @@
 				</div>
 			</div>
 		</div>
-	</footer>
+	</footer> *@
 	<!-- Footer Section End -->
 	<!-- Quick View Modal Box Start -->
 	<div class="modal fade theme-modal view-modal" id="view" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -1069,6 +1069,6 @@
 	<script src="../assets/js/theme-setting.js"></script>
     <!-- Range slidder js -->
 	<script src="../assets/js/ion.rangeSlider.min.js"></script>
-</body>
-</html>
+@* </body>
+</html> *@
 <!-- Shop Section End -->

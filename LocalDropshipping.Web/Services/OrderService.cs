@@ -25,7 +25,7 @@ namespace LocalDropshipping.Web.Services
             {
                 //OrderCode = abcd,
                 Seller = email,
-                OrderDate = DateTime.Now,
+				CreatedDate = DateTime.Now,
                 CreatedBy = email,
                 GrandTotal = Convert.ToDecimal(cart.Sum(s => s.Quantity * s.Price)),
                 OrderStatus = OrderStatus.Pending,

@@ -570,26 +570,6 @@ namespace LocalDropshipping.Web.Controllers
 
             return RedirectToAction("Shop", "Seller");
         }
-        //[Authorize]
-        //public IActionResult SellerOrders([FromQuery] Pagination pagination)
-        //{
-        //    try
-        //    {
-        //        //string? currentUserID = _userManager.GetUserId(HttpContext.User);
-        //        //List<Order> orders = _orderService.GetById(currentUserID);
-
-
-        //        List<Order> orders = _orderService.GetAll();
-        //        var count = orders.Count();
-        //        orders = orders.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
-        //        return View(new PageResponse<List<Order>>(orders, pagination.PageNumber, pagination.PageSize, count));
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //        return View(ex.Message);
-        //    }
-        //}
 
         [Authorize]
         public IActionResult SellerOrders([FromQuery] Pagination pagination)

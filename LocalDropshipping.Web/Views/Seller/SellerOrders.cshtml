@@ -34,7 +34,7 @@
                             <tr>
                                 <th scope="col">Order ID</th>
                                 <th scope="col">Order Date</th>
-                                <th scope="col">Product Name</th>
+                                @* <th scope="col">Product Name</th> *@
                                 <th scope="col">Status</th>
                                 <th scope="col">Price</th>
 
@@ -45,9 +45,9 @@
                             {
                                 <tr>
                                     <td>@order.Id</td>
-                                    <td>@order.OrderDate</td>
+                                    <td>@order.CreatedDate</td>
                                     @* <td>@order.Name</td> *@
-                                    <td id="orderName">@order.Name</td>
+                                    @* <td id="orderName">@order.Name</td> *@
                                     @* <td>@order.OrderStatus</td> *@
                                     <td>
                                         @if (order.OrderStatus == LocalDropshipping.Web.Enums.OrderStatus.Delivered)
