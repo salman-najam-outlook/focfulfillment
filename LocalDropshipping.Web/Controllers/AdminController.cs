@@ -441,6 +441,8 @@ namespace LocalDropshipping.Web.Controllers
         {
             SetRoleByCurrentUser();
             ViewBag.Category = _categoryService.GetDeafultCategory();
+
+
             var productVeiwModel = new ProductViewModel(_productsService.GetById(id));
             return View(productVeiwModel);
         }
