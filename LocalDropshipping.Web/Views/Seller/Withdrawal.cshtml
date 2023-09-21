@@ -21,16 +21,6 @@
                     </a>
                 </div>
             </div>
-                @* <div class="tab-pane fade active show" id="pills-order" role="tabpanel" aria-labelledby="pills-order-tab">
-                    <div class="dashboard-order">
-                        <div class="title">
-                            <h2>All Withdrawals</h2>
-                            <span class="title-leaf title-leaf-gray">
-                                <svg class="icon-width bg-gray">
-                                    <use xlink:href="https://themes.pixelstrap.com/fastkart/assets/svg/leaf.svg#leaf"></use>
-                                </svg>
-                            </span>
-                        </div> *@
             <div class="order-tab dashboard-bg-box">
                 <div class="table-responsive">
                     <table class="table order-table">
@@ -116,11 +106,24 @@
 
     <script>
         var withdrawalNameElements = document.querySelectorAll("#withdrawalName");
-
-        withdrawalNameElements.forEach(function (element) {
+                withdrawalNameElements.forEach(function (element) {
             if (element.textContent.trim() === "") {
                 element.textContent = "<No Product Name>";
             }
         });
     </script>
 </body>
+<style>
+    .request-btn {
+    background-color: #0DA487;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 500
+    }
+    .request-btn:hover {
+    background-color: #0DA487;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 500
+    }
+</style> 

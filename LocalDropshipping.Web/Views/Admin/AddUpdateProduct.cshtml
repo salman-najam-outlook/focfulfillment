@@ -43,7 +43,7 @@
                                             @Html.DropDownListFor(
                                             model => model.CategoryId,
                                             new List<SelectListItem> {
-                                                new SelectListItem((ViewBag.Category as Category).Name, Model.CategoryId.ToString(), true) 
+                                                new SelectListItem((ViewBag.Category as Category).Name, (ViewBag.Category as Category).CategoryId.ToString(), true) 
                                             },
                                             "Select Category",
                                             new { @class = "js-example-basic-single w-100 select2-hidden-accessible" })
