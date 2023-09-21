@@ -138,7 +138,8 @@ namespace LocalDropshipping.Web.Controllers
                 if (ModelState.IsValid)
                 {
                     var user = await _accountService.LoginAsync(model.Email, model.Password);
-                   
+                    HttpContext.Session.SetString("CurrentUser", JsonConvert.SerializeObject(user));
+
                     if(!String.IsNullOrEmpty(returnUrl))
                     {
                         return LocalRedirect(returnUrl);
