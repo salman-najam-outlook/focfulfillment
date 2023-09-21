@@ -1,5 +1,6 @@
 ﻿using LocalDropshipping.Web.Enums;
 using LocalDropshipping.Web.Services;
+using Newtonsoft.Json;
 
 namespace LocalDropshipping.Web.Middlewares
 {
@@ -22,6 +23,7 @@ namespace LocalDropshipping.Web.Middlewares
                 var user = await _userService.GetCurrentUserAsync();
                 if(user != null)
                 {
+                    context.Session.SetString("CURRENT_USER", JsonConvert.SerializeObject(user));
                     List<Roles> currentUserRoles = new List<Roles>();
                     if (user.IsSuperAdmin)
                     {
