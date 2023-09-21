@@ -27,7 +27,6 @@
                             <tr>
                                 <th scope="col">Order ID</th>
                                 <th scope="col">Order Date</th>
-                                <th scope="col">Product Name</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Price</th>
 
@@ -38,10 +37,7 @@
                             {
                                 <tr>
                                     <td>@order.Id</td>
-                                    <td>@order.OrderDate</td>
-                                    @* <td>@order.Name</td> *@
-                                    <td id="orderName">@order.Name</td>
-                                    @* <td>@order.OrderStatus</td> *@
+                                    <td>@order.CreatedDate</td>
                                     <td>
                                         @if (order.OrderStatus == LocalDropshipping.Web.Enums.OrderStatus.Delivered)
                                         {
@@ -52,8 +48,6 @@
                                             <label class="danger">@order.OrderStatus</label>
                                         }
                                     </td>
-
-                                    @* <td>@order.GrandTotal</td> *@
                                     <td>Rs.@order.GrandTotal.ToString("N0")/-</td>
                                 </tr>
                             }

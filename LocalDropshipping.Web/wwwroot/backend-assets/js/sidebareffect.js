@@ -106,8 +106,8 @@
         nodes.push(new Node(x, y, radius, fakeBlur, 1));
     }
 
-    document.getElementById('sidebarEffect').appendChild(canvas)
-    window.addEventListener("resize", redraw, false);
-    redraw();
-    render();
+    //document.getElementById('sidebarEffect').appendChild(canvas)
+    //window.addEventListener("resize", redraw, false);
+    //redraw();
+    //render();
 })();
