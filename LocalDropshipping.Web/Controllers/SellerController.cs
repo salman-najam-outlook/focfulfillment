@@ -37,9 +37,9 @@ namespace LocalDropshipping.Web.Controllers
         private readonly LocalDropshippingContext _context;
         private readonly ICategoryService _categoryService;
         private readonly SignInManager<User> _signInManager;
-        private readonly IWithdrawlsService _withdrawlsService;
+        private readonly IWithdrawalService _withdrawlsService;
 
-        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, UserManager<User> userManager, IWishListService wishList, IProductsService productsService, IProductVariantService productVariantService, IConsumerService consumerService, IOrderItemService orderItemService, IFocSettingService focSettingService,SignInManager<User>signInManager,ICategoryService categoryService,IWithdrawlsService withdrawlsService)
+        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, UserManager<User> userManager, IWishListService wishList, IProductsService productsService, IProductVariantService productVariantService, IConsumerService consumerService, IOrderItemService orderItemService, IFocSettingService focSettingService,SignInManager<User>signInManager,ICategoryService categoryService,IWithdrawalService withdrawlsService)
         {
             _accountService = accountService;
             _profileService = profileService;

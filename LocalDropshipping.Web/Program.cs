@@ -61,7 +61,7 @@ builder.Services.AddScoped<IProductsService, ProductsService>();
 builder.Services.AddScoped<IProductVariantService, ProductVariantService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IWishListService, WishListService>();
-builder.Services.AddScoped<IWithdrawlsService, WithdrawlsService>();
+builder.Services.AddScoped<IWithdrawalService, WithdrawalService>();
 builder.Services.AddScoped<ISubscriptionsService, SubscriptionsService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();

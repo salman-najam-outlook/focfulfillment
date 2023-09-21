@@ -9,139 +9,174 @@
 <div class="page-body">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-12">
-                <div class="card card-table">
-                    <div class="card-body">
-                        <div class="tab-pane fade active show" id="pills-order" role="tabpanel" aria-labelledby="pills-order-tab">
-                            <div class="dashboard-order">
-                            <div class="title">
-                            <h2>All Withdrawals</h2>
-                            <span class="title-leaf title-leaf-gray"></span>
-                        </div>
-
-                        <div class="order-tab dashboard-bg-box">
-                            <div class="table-responsive">
-                                <table class="table order-table">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Vendor/Seller</th>
-                                            <th scope="col">AmountInPkr</th>
-                                            <th scope="col">Payment Status</th>
-                                            <th scope="col">Processed By</th>
-                                            <th scope="col">Request Date</th>
-                                            <th scope="col">Account Title</th>
-                                            <th scope="col">Account no</th>
-                                            <th scope="col">Bank Name</th>
-                                            <th scope="col">Option</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var order in Model.Data)
-                                        {
-                                            <tr>
-                                                <td>@order.UserEmail</td>
-                                                <td>@order.AmountInPkr</td>
-                                                <td>@order.paymentStatus</td>
-                                                <td>@order.ProcessedBy</td>
-                                                <td>@order.CreatedDate</td>
-                                                <td>@order.AccountTitle</td>
-                                                <td>@order.BankAccountNumberOrIBAN</td>
-                                                <td>@order.BankName</td>
-                                                <td>
-                                                    <button class="btn btn-primary btn-pay" 
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#payPopup" 
-                                                    data-withdrawal-id="@order.WithDrawalId"
-                                                    data-amount-in-pkr="@order.AmountInPkr"
-                                                    onclick="openPopup(this)" type="button"
-                                                    >Pay</button>
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-
-                                <div id="payPopup" class="modal" style="display: none;">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-  
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="closePopup()" aria-label="Close">
-                                                    <i class="fa-solid fa-xmark"></i>
-                                                </button>
-                                            </div>
-
-                                            <form id="paymentForm" method="post" asp-action="Withdrawal" asp-controller="Admin">
-                                                <input type="hidden" name="WithdrawalId" id="WithdrawalIdHidden" />
-                                            <div class="modal-body">
-                                                <div class="deal-offer-box">
-                                                        <div class="form-group">
-                                                            <label for="withdrawalId">WithdrawalID:</label>
-                                                            <input type="number" name="WithdrawalId" class="form-control" disabled id="withdrawalId" placeholder="Withdrawal Id">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="AmountInPkr">AmountInPkr:</label>
-                                                            <input type="number" name="AmountInPkr" class="form-control" disabled id="AmountInPkr" placeholder="Amount In Pkr">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="PaymentStatus">Payment Staus</label>
-                                                            <select class="form-control" name="PaymentStatus" id="PaymentStatus">
-                                                                <option value="Unpaid">Unpaid</option>
-                                                                <option value="Paid">Paid</option>
-                                                            </select>
-                                                        </div>
-                                                        <br />
-                                                        <div class="form-group">
-                                                            <label for="TransactionId">TransactionID:</label>
-                                                            <input type="text" name="TransactionId" class="form-control" id="TransactionId" placeholder="TransactionID">
-                                                        </div>
-
-                                                        <div class="form-group">
-                                                            <label for="Reason">Reason:</label>
-                                                            <textarea class="form-control" name="Reason" id="Reason" rows="4" placeholder="Reason"></textarea>
-                                                        </div>
-                                                       
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closePopup()">Close</button>
-                                                    <button type="submit" class="btn btn-primary" onclick="closePopup()">Submit</button>
-                                                </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
+            <div class="card card-table">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="mb-3 d-flex justify-content-start align-items-center">
+                                <div class="col-6 me-2">
+                                        <select class="form-control form-select" id="filterBy" name="filterBy">
+                                            <option value="All">All</option>
+                                            <option value="Paid">Paid</option>
+                                            <option value="Unpaid">Unpaid</option>
+                                        </select>
+                                </div>
+                                <div class="col-6 me-2">
+                                    <input class="form-control" type="text" name="daterange" value="" id="daterange" placeholder="01/01/2023 - 01/15/2023" />
                                 </div>
                             </div>
                         </div>
-                        <nav aria-label="Page navigation" class="custome-pagination mt-2">
-                            <ul class="pagination justify-content-center">
-                                @if (Model.pageNumber > 1)
-                                {
-                                    <li class="page-item">
-                                        <a class="page-link" href="?pageNumber=@(Model.pageNumber - 1)&pageSize=@Model.pageSize" aria-label="Previous">
-                                            <i class="fa-solid fa-angles-left"></i>
-                                        </a>
-                                    </li>
-                                }
+                        <div class="col-md-5">
+                            <div class="d-flex justify-content-end align-items-center">
+                                <a href="javascript:void(0);" class="btn btn-solid text-white" id="applyFilter">
+                                    Apply
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-table">
+                <div class="card-body">
+                    <div class="col-sm-12">
+                        <div class="tab-pane fade active show" id="pills-order" role="tabpanel" aria-labelledby="pills-order-tab">
+                            <div class="dashboard-order">
+                                <div class="title">
+                                    <h2>All Withdrawals</h2>
+                                    <span class="title-leaf title-leaf-gray"></span>
+                                </div>
 
-                                @for (int i = 1; i <= Math.Ceiling((double)Model.totalCount / Model.pageSize); i++)
-                                {
-                                    <li class="page-item @(i == Model.pageNumber ? "active" : "")">
-                                        <a class="page-link" href="?pageNumber=@i&pageSize=@Model.pageSize">@i</a>
-                                    </li>
-                                }
+                                <div class="order-tab dashboard-bg-box">
+                                    <div id="table_id_wrapper" class="dataTables_wrapper no-footer">
+                                        <div class="table-responsive">
+                                          <table class="table all-package order-table theme-table dataTable no-footer">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Vendor/Seller</th>
+                                                    <th scope="col">AmountInPkr</th>
+                                                    <th scope="col">Payment Status</th>
+                                                    <th scope="col">Processed By</th>
+                                                    <th scope="col">CreatedDate</th>
+                                                    <th scope="col">Account Title</th>
+                                                    <th scope="col">Account no</th>
+                                                    <th scope="col">Bank Name</th>
+                                                    <th scope="col">Option</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="odd" data-bs-toggle="offcanvas">
+                                                @if (Model.Data.Any())
+                                                {
+                                                    @foreach (var order in Model.Data)
+                                                    {
+                                                        <tr>
+                                                            <td>@order.UserEmail</td>
+                                                            <td>@order.AmountInPkr</td>
+                                                            <td>@order.paymentStatus</td>
+                                                            <td>@order.ProcessedBy</td>
+                                                            <td>@order.CreatedDate</td>
+                                                            <td>@order.AccountTitle</td>
+                                                            <td>@order.BankAccountNumberOrIBAN</td>
+                                                            <td>@order.BankName</td>
+                                                            <td>
+                                                                <button class="btn btn-primary btn-pay text-white"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#payPopup"
+                                                                        data-withdrawal-id="@order.WithDrawalId"
+                                                                        data-amount-in-pkr="@order.AmountInPkr"
+                                                                        onclick="openPopup(this)" type="button">
+                                                                    Pay
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <tr class="mt-5 mb-5">
+                                                        <td colspan="9">No Withdrawal were found</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
 
-                                @if (Model.pageNumber < Math.Ceiling((double)Model.totalCount / Model.pageSize))
-                                {
-                                    <li class="page-item">
-                                        <a class="page-link" href="?pageNumber=@(Model.pageNumber + 1)&pageSize=@Model.pageSize" aria-label="Next">
-                                            <i class="fa-solid fa-angles-right"></i>
-                                        </a>
-                                    </li>
-                                }
-                                 </ul>
-                            </nav>
-                           </div>
+                                        <div id="payPopup" class="modal" style="display: none;">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header p-b-25">
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="closePopup()" aria-label="Close">
+                                                            @* <i class="fa-solid fa-xmark"></i> *@
+                                                        </button>
+                                                    </div>
+                                                    <form id="paymentForm" method="post" asp-action="Withdrawal" asp-controller="Admin">
+                                                        <input type="hidden" name="WithdrawalId" id="WithdrawalIdHidden" />
+                                                        <div class="modal-body">
+                                                            <div class="deal-offer-box">
+                                                                <div class="form-group">
+                                                                    <label for="withdrawalId">WithdrawalID:</label>
+                                                                    <input type="number" name="WithdrawalId" class="form-control" disabled id="withdrawalId" placeholder="Withdrawal Id">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="AmountInPkr">AmountInPkr:</label>
+                                                                    <input type="number" name="AmountInPkr" class="form-control" disabled id="AmountInPkr" placeholder="Amount In Pkr">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="PaymentStatus">Payment Staus</label>
+                                                                    <select class="form-select form-control" name="PaymentStatus" id="PaymentStatus">
+                                                                        <option value="Unpaid">Unpaid</option>
+                                                                        <option value="Paid">Paid</option>
+                                                                    </select>
+                                                                </div>
+                                                                <br />
+                                                                <div class="form-group">
+                                                                    <label for="TransactionId">TransactionID:</label>
+                                                                    <input type="text" name="TransactionId" class="form-control" id="TransactionId" placeholder="TransactionID">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="Reason">Reason:</label>
+                                                                    <textarea class="form-control" name="Reason" id="Reason" rows="4" placeholder="Reason"></textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary text-white" data-bs-dismiss="modal" onclick="closePopup()">Close</button>
+                                                                    <button type="submit" class="btn btn-solid text-white" onclick="closePopup()">Submit</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <nav aria-label="Page navigation" class="custome-pagination mt-2">
+                                    <ul class="pagination justify-content-center">
+                                        @if (Model.pageNumber > 1)
+                                        {
+                                            <li class="page-item">
+                                                <a class="page-link" href="?pageNumber=@(Model.pageNumber - 1)&pageSize=@Model.pageSize&filterBy=@Model.PaymentStatus&from=@Model.From&to=@Model.To" aria-label="Previous">
+                                                    <i class="fa-solid fa-angles-left"></i>
+                                                </a>
+                                            </li>
+                                        }
+
+                                        @for (int i = 1; i <= Math.Ceiling((double)Model.totalCount / Model.pageSize); i++)
+                                        {
+                                            <li class="page-item @(i == Model.pageNumber ? "active" : "")">
+                                                <a class="page-link" href="?pageNumber=@i&pageSize=@Model.pageSize&filterBy=@Model.PaymentStatus&from=@Model.From&to=@Model.To">@i</a>
+                                            </li>
+                                        }
+
+                                        @if (Model.pageNumber < Math.Ceiling((double)Model.totalCount / Model.pageSize))
+                                        {
+                                            <li class="page-item">
+                                                <a class="page-link" href="?pageNumber=@(Model.pageNumber + 1)&pageSize=@Model.pageSize&filterBy=@Model.PaymentStatus&from=@Model.From&to=@Model.To" aria-label="Next">
+                                                    <i class="fa-solid fa-angles-right"></i>
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </nav>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -173,4 +208,63 @@
     function confirmPayment() {
         closePopup();
     }
+
+    $(function () {
+        $('#daterange').daterangepicker({
+            opens: 'right'
+        });
+
+        $('#applyFilter').click(function () {
+            var paymentStatus = $('#filterBy').val();
+            var dateRange = $('#daterange').val();
+
+            var dateRangeParts = dateRange.split(' - ');
+            var fromDate = dateRangeParts[0];
+            var toDate = dateRangeParts[1];
+
+            window.location.href = '/Admin/Withdrawal' +
+                '?paymentStatus=' + paymentStatus +
+                '&from=' + fromDate +
+                '&to=' + toDate;
+        });
+        $('#daterange').val('');
+    });
 </script>
+
+<style>
+    
+    .form-select {
+    }
+
+
+    .daterangepicker .drp-buttons .drp-selected .applyBtn {
+        background-color: #0DA487;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 500;
+        margin-top: 5px;
+        padding: 2px 4px;
+    }
+
+   
+    .daterangepicker .drp-buttons .drp-selected .cancelBtn {
+        background-color: #333;
+        color: #000000; 
+        font-size: 14px;
+        font-weight: 500;
+        padding: 2px 4px;
+    }
+
+    .daterangepicker td.active {
+        background-color: #0DA487;
+    }
+
+    .daterangepicker td.active:hover {
+        background-color: #0DA487;
+        border-color: transparent;
+        color: #fff;
+    }
+    select .form-select option:hover{
+        background-color: #0DA487;
+    }
+</style>

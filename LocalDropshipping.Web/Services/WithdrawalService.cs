@@ -2,6 +2,7 @@
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
 using LocalDropshipping.Web.Enums;
+using LocalDropshipping.Web.Helpers;
 using LocalDropshipping.Web.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -11,11 +12,11 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace LocalDropshipping.Web.Services
 {
-    public class WithdrawlsService : IWithdrawlsService
+    public class WithdrawalService : IWithdrawalService
     {
         private readonly LocalDropshippingContext _context;
 
-        public WithdrawlsService(LocalDropshippingContext context)
+        public WithdrawalService(LocalDropshippingContext context)
         {
             _context = context;
         }
@@ -108,5 +109,27 @@ namespace LocalDropshipping.Web.Services
             var withdrawals = _context.Withdrawals.Where(x => x.UserEmail == email).ToList();
             return withdrawals;
         }
+
+        public List<Withdrawals> GetFilteredWithdrawals(Pagination pagination)
+        {
+                var query = _context.Withdrawals.AsQueryable();
+
+                if (pagination.PaymentStatus == "Paid")
+                {
+                    query = query.Where(x => x.PaymentStatus == PaymentStatus.Paid);
+                }
+                else if (pagination.PaymentStatus == "Unpaid")
+                {
+                    query = query.Where(x => x.PaymentStatus == PaymentStatus.UnPaid);
+                }
+
+                if (pagination.From != DateTime.MinValue && pagination.To != DateTime.MinValue)
+                {
+                    query = query.Where(x => x.CreatedDate >= pagination.From && x.CreatedDate <= pagination.To);
+                }
+
+                return query.ToList();
+        }
+
     }
 }

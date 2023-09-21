@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging;
 using System.Security.Claims;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LocalDropshipping.Web.Controllers
 {
@@ -31,10 +30,10 @@ namespace LocalDropshipping.Web.Controllers
         private readonly IAccountService _accountService;
         private readonly IOrderService _orderService;
         private readonly IConsumerService _consumerService;
-        private readonly IWithdrawlsService _withdrawlsService;
+        private readonly IWithdrawalService _withdrawlsService;
         private readonly IProfilesService _profilesService;
 
-        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService, IConsumerService consumerService,IWithdrawlsService withdrawlsService,IProfilesService profilesService)
+        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService, IConsumerService consumerService,IWithdrawalService withdrawlsService,IProfilesService profilesService)
         {
             _service = service;
             _productsService = productsService;
@@ -580,40 +579,28 @@ namespace LocalDropshipping.Web.Controllers
        
         public IActionResult Withdrawal([FromQuery] Pagination pagination)
         {
-            try
+            var withdrawals = new List<Withdrawals>();
+              
+            if(pagination.PaymentStatus != "All" || (pagination.From != DateTime.MinValue && pagination.To != DateTime.MinValue))
             {
-                var withdrawals = _withdrawlsService.GetAll();
-                var profiles = _profilesService.GetAllProfiles();
+               withdrawals = _withdrawlsService.GetFilteredWithdrawals(pagination);
+            }
+            else
+            {
+               withdrawals = _withdrawlsService.GetAll();
+            }
+              
+            var profiles = _profilesService.GetAllProfiles();
 
-                var combinedData = from withdrawal in withdrawals
-                                   join profile in profiles
-                                   on withdrawal.UserEmail equals profile.User.Email into joinedData
-                                   from profileData in joinedData.DefaultIfEmpty() 
-                                   select new AddWithdrawalUserViewModel
-                                   {
-                                       WithDrawalId = withdrawal.WithdrawalId,
-                                       UserEmail = withdrawal.UserEmail,
-                                       AmountInPkr = withdrawal.AmountInPkr,
-                                       paymentStatus = withdrawal.PaymentStatus,
-                                       ProcessedBy = withdrawal.ProcessedBy,
-                                       CreatedDate = withdrawal.CreatedDate,
-                                       AccountTitle = profileData?.BankAccountTitle,
-                                       BankAccountNumberOrIBAN = profileData?.BankAccountNumberOrIBAN, 
-                                       BankName = profileData?.BankName, 
-                                       Withdrawals = new List<Withdrawals> { withdrawal },
-                                       Profiles = profileData != null ? new List<Profiles> { profileData } : new List<Profiles>()
-                                   };
-                var count = combinedData.Count();
-                combinedData = combinedData.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
-                return View(new PageResponse<List<AddWithdrawalUserViewModel>>(combinedData.ToList(), pagination.PageNumber, pagination.PageSize, count));
-            }
-            catch (Exception ex)
-            {
-                return View(ex.Message);
-            }
+            var combinedData = getProfileAndWithdrawalData(withdrawals, profiles);
+                
+            var count = combinedData.Count();
+                
+            combinedData = combinedData.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+               
+            return View(new PageResponse<List<AddWithdrawalUserViewModel>>(combinedData.ToList(), pagination.PageNumber, pagination.PageSize, count));
         }
-
-
+       
         [HttpPost]
         public IActionResult Withdrawal(PaymentViewModel model)
         {
@@ -858,5 +845,32 @@ namespace LocalDropshipping.Web.Controllers
             SetRoleByCurrentUser();
             return View();
         }
+
+        #region private methods
+        private IEnumerable<AddWithdrawalUserViewModel> getProfileAndWithdrawalData(IEnumerable<Withdrawals> withdrawals, IEnumerable<Profiles> profiles)
+        {
+                 var combinedData = from withdrawal in withdrawals
+                       join profile in profiles
+                       on withdrawal.UserEmail equals profile.User.Email into joinedData
+                       from profileData in joinedData.DefaultIfEmpty()
+                       select new AddWithdrawalUserViewModel
+                       {
+                           WithDrawalId = withdrawal.WithdrawalId,
+                           UserEmail = withdrawal.UserEmail,
+                           AmountInPkr = withdrawal.AmountInPkr,
+                           paymentStatus = withdrawal.PaymentStatus,
+                           ProcessedBy = withdrawal.ProcessedBy,
+                           CreatedDate = withdrawal.CreatedDate,
+                           AccountTitle = profileData?.BankAccountTitle,
+                           BankAccountNumberOrIBAN = profileData?.BankAccountNumberOrIBAN,
+                           BankName = profileData?.BankName,
+                           Withdrawals = new List<Withdrawals> { withdrawal },
+                           Profiles = profileData != null ? new List<Profiles> { profileData } : new List<Profiles>()
+                       };
+
+                return combinedData;
+        
+         }
+        #endregion
     }
 }
