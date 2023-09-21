@@ -1,11 +1,12 @@
 ﻿using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
 using LocalDropshipping.Web.Enums;
+using LocalDropshipping.Web.Helpers;
 using LocalDropshipping.Web.Models;
 
 namespace LocalDropshipping.Web.Services
 {
-    public interface IWithdrawlsService
+    public interface IWithdrawalService
     {
         bool WithdrawalRequest(string email);
         Withdrawals GetWithdrawalRequestsById(int withdrawalId);
@@ -15,5 +16,6 @@ namespace LocalDropshipping.Web.Services
         Withdrawals UpdateWithdrawal(PaymentViewModel withdrawal);
         bool UpdateWithpaymentStatus(PaymentStatus paymentStatus,int WithdrawalId);
         List<Withdrawals> GetWithdrawalByUserEmail(string email);
+        List<Withdrawals> GetFilteredWithdrawals(Pagination pagination);
     }
 }
