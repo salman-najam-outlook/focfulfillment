@@ -457,7 +457,7 @@ namespace LocalDropshipping.Web.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> WishList([FromQuery] Pagination pagination)
+        public async Task<IActionResult> Wishlist([FromQuery] Pagination pagination)
         {
             try
             {
@@ -488,7 +488,7 @@ namespace LocalDropshipping.Web.Controllers
 
 		[Authorize]
 		[HttpPost]
-        public IActionResult WishList(int ProductId)
+        public IActionResult Wishlist(int ProductId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -570,19 +570,43 @@ namespace LocalDropshipping.Web.Controllers
 
             return RedirectToAction("Shop", "Seller");
         }
+        //[Authorize]
+        //public IActionResult SellerOrders([FromQuery] Pagination pagination)
+        //{
+        //    try
+        //    {
+        //        //string? currentUserID = _userManager.GetUserId(HttpContext.User);
+        //        //List<Order> orders = _orderService.GetById(currentUserID);
+
+
+        //        List<Order> orders = _orderService.GetAll();
+        //        var count = orders.Count();
+        //        orders = orders.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+        //        return View(new PageResponse<List<Order>>(orders, pagination.PageNumber, pagination.PageSize, count));
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        return View(ex.Message);
+        //    }
+        //}
+
         [Authorize]
         public IActionResult SellerOrders([FromQuery] Pagination pagination)
         {
             try
             {
-                List<Order> orders = _orderService.GetAll();
+                string currentUserEmail = User.Identity.Name;
+
+                var orders = _orderService.GetByEmail(currentUserEmail);
+
                 var count = orders.Count();
                 orders = orders.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+
                 return View(new PageResponse<List<Order>>(orders, pagination.PageNumber, pagination.PageSize, count));
             }
             catch (Exception ex)
             {
-
                 return View(ex.Message);
             }
         }
@@ -655,25 +679,30 @@ namespace LocalDropshipping.Web.Controllers
         [Authorize]
         public IActionResult Profile()
         {
-            var userId = _userManager.GetUserId(User);
+                var userId = _userManager.GetUserId(User);
 
-            var userProfile = _profileService.GetProfileById(userId);
-            var userProfileDto = new ProfilesDto
-            {
-                StoreName = userProfile.StoreName,
-                StoreURL = userProfile.StoreURL,
-                BankName = userProfile.BankName,
-                BankAccountTitle = userProfile.BankAccountTitle,
-                BankAccountNumberOrIBAN = userProfile.BankAccountNumberOrIBAN,
-                BankBranch = userProfile.BankBranch,
-                Address = userProfile.Address,
-                ImageLink = userProfile.ImageLink
+                var userProfile = _profileService.GetProfileById(userId);
+                var userProfileDto = new ProfilesDto
+                {
+                    StoreName = userProfile.StoreName,
+                    StoreURL = userProfile.StoreURL,
+                    BankName = userProfile.BankName,
+                    BankAccountTitle = userProfile.BankAccountTitle,
+                    BankAccountNumberOrIBAN = userProfile.BankAccountNumberOrIBAN,
+                    BankBranch = userProfile.BankBranch,
+                    Address = userProfile.Address,
+                    ImageLink = userProfile.ImageLink
 
-            };
+                };
 
-            var userProfileList = new List<ProfilesDto> { userProfileDto };
+                var userProfileList = new List<ProfilesDto> { userProfileDto };
 
-            return View(userProfileList);
+                return View(userProfileList);
+            
+
+                return View();
+        
+         
         }
 
         [HttpPost]

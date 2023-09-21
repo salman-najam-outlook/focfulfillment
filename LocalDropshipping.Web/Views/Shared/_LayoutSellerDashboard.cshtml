@@ -61,14 +61,18 @@
     <link rel="stylesheet" type="text/css" href="~/backend-assets/css/style.css">
 
 
-@*     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
+    @*     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="stylesheet" type="text/css" href="~/backend-assets/css/vendors/bootstrap.css">
- *@
+    *@
     @* <link rel="stylesheet" type="text/css" href="~/backend-assets/css/vendors/themify.css" rel="stylesheet"> *@
 
     <style>
-        .nav-pills .nav-item .nav-link:after{
+        .nav-pills .nav-item .nav-link:after {
             height: 0px !important;
+        }
+
+        .nav-pills {
+            border-bottom:none;  /* 1px solid #ddd; */ 
         }
     </style>
 </head>
@@ -183,7 +187,7 @@
                                     </li>
 
                                     <li class="right-side">
-                                        <a asp-action="WishList" asp-controller="Seller" id="wishListTab" class="btn p-0 position-relative header-wishlist">
+                                        <a asp-action="Wishlist" asp-controller="Seller" id="wishListTab" class="btn p-0 position-relative header-wishlist">
                                             <i data-feather="heart"></i>
                                         </a>
                                     </li>
@@ -271,7 +275,7 @@
                                                     <a asp-action="Shop" asp-controller="Seller">Shop</a>
                                                 </li>
                                                 <li class="product-box-contain">
-                                                    <a asp-action="WishList" asp-controller="Seller">WishList</a>
+                                                    <a asp-action="Wishlist" asp-controller="Seller">Wishlist</a>
                                                 </li>
                                                 <li class="product-box-contain">
                                                     <i></i>
@@ -279,7 +283,8 @@
                                                     @* <a asp-action="SellerLogout" asp-controller="Seller">Logout</a> *@
                                                     @* <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" id="pills-out-tab" role="tab">Logout</a> *@
                                                     <a data-bs-toggle="modal" data-bs-target="#staticBackdrop"
-                                                       href="javascript:void(0)">Logout
+                                                       href="javascript:void(0)">
+                                                        Logout
                                                     </a>
 
 
@@ -290,7 +295,7 @@
                                                 </li>
 
                                                 @* <li class="product-box-contain">
-                                                    <a href="ForgotPassword">Forgot Password</a>
+                                                <a href="ForgotPassword">Forgot Password</a>
                                                 </li> *@
 
 
@@ -340,7 +345,7 @@
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
                         </div>
-                         
+
                         @* Image Box Div *@
                         <div class="close-button d-flex d-lg-none">
                             <button class="close-sidebar">
@@ -351,14 +356,14 @@
                             <div class="cover-image">
                                 <img src="../assets/images/inner-page/cover-img.jpg" class="img-fluid blur-up lazyload"
                                      alt="">
-                                    
+
                             </div>
 
                             <div class="profile-contain">
                                 <div class="profile-image">
                                     <div class="position-relative">
                                         @* <img src="../assets/images/vendor-page/logo.png"
-                                             class="blur-up lazyload update_img" alt=""> *@
+                                        class="blur-up lazyload update_img" alt=""> *@
                                         <img src="../ProfileImages/default-profile-image.svg   "
                                              class="blur-up lazyload update_img" alt="">
                                     </div>
@@ -366,7 +371,7 @@
 
                                 <div class="profile-name">
 
-                                
+
                                     @* <h3>Joshua D. Bass</h3> *@
                                     <h3>@currentUserData.Fullname</h3>
                                     <h6 class="text-content">@currentUserData.Email</h6>
@@ -406,7 +411,7 @@
                             </li>
 
                             <li class="nav-item" role="presentation">
-                                <a asp-controller="Seller" asp-action="WishList" class="nav-link" id="pills-wishlist-tab"
+                                <a asp-controller="Seller" asp-action="Wishlist" class="nav-link" id="pills-wishlist-tab"
                                    role="tab" aria-controls="pills-wishlist" aria-selected="false">
                                     <i data-feather="shopping-bag"></i> Wishlist
                                 </a>
@@ -1288,7 +1293,7 @@
 
     <!-- Nav & tab upside js -->
     <script src="../assets/js/nav-tab.js"></script>
-    
+
     <!-- slick slider js -->
     <script src="~/backend-assets/js/slick.min.js"></script>
     <script src="~/backend-assets/js/custom-slick.js"></script>
@@ -1329,11 +1334,11 @@
 
             if (currentUrl.includes("/Seller/SellerOrders")) {
                 $("#pills-orders-tab").addClass("active").attr("aria-selected", "true");
-            } 
+            }
             else if (currentUrl.includes("/Seller/Withdrawal")) {
                 $("#pills-withdrawals-tab").addClass("active").attr("aria-selected", "true");
             }
-            else if (currentUrl.includes("/Seller/WishList")) {
+            else if (currentUrl.includes("/Seller/Wishlist")) {
                 $("#pills-wishlist-tab").addClass("active").attr("aria-selected", "true");
             }
             else if (currentUrl.includes("/Seller/Reports")) {
@@ -1354,13 +1359,13 @@
         });
 
 
-        // $(document).ready(function () {
-        //     $(".nav-link").click(function () {
-        //         $(".nav-link").removeClass("active").attr("aria-selected", "false");
+                // $(document).ready(function () {
+                //     $(".nav-link").click(function () {
+                //         $(".nav-link").removeClass("active").attr("aria-selected", "false");
 
-        //         $(this).addClass("active").attr("aria-selected", "true");
-        //     });
-        // });
+                //         $(this).addClass("active").attr("aria-selected", "true");
+                //     });
+                // });
     </script>
 </body>
 </html>

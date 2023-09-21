@@ -76,7 +76,7 @@
 	<script src="../assets/js/jquery-ui.min.js"></script>
 </head>
 
-<body class="theme-color-4 bg-gradient-color">
+<body class="theme-color-4 bg-gradient-color container-fluid"> <!--Add Container fluid class in body-->
 
 	<!-- Loader Start -->
 	<div class="fullpage-loader">
@@ -89,7 +89,9 @@
 	</div>
 	<!-- Loader End -->
 	<!-- Header Start -->
-	<header class="pb-0 fixed-header">
+
+	<header> <!--class="pb-0 fixed-header" -->  
+	
 		<div class="top-nav top-header">
 			<div class="container-fluid-xs">
 				<div class="row">
@@ -156,7 +158,7 @@
 											</a>
 										</li>
 										<li class="right-side">
-											<a asp-action="WishList" asp-controller="Seller" class="btn p-0 position-relative header-wishlist">
+											<a asp-action="Wishlist" asp-controller="Seller" class="btn p-0 position-relative header-wishlist">
 												<i data-feather="heart"></i>
 											</a>
 										</li>
@@ -185,7 +187,7 @@
                                                 </li>
 
 												<li class="product-box-contain">
-                                                   <a asp-action="WishList" asp-controller="Seller">WishList</a>
+                                                   <a asp-action="Wishlist" asp-controller="Seller">Wishlist</a>
                                                 </li>
 
 												@* <li class="product-box-contain">
@@ -265,8 +267,10 @@
 	<!-- Product Section Start -->
 	<section class="product-section pt-0">
 		<div class="container-fluid p-0">
-			<div class="custom-row">
-				<div class="sidebar-col">
+
+			<div> <!--  class="custom-row" -->
+
+		@* 		<div class="sidebar-col">
 					<div class="category-menu">
 						<a href="Shop" class="web-logo nav-logo">
 							<img src="../assets/images/logo/1.png" class="img-fluid blur-up lazyload" alt="">
@@ -284,7 +288,7 @@
 							}
 						</ul>
 					</div>
-				</div>
+				</div> *@
 
 				<div class="content-col">
 					<div class="section-b-space">
@@ -300,27 +304,6 @@
 											<p class="text-content banner-text text-white opacity-75 d-md-block d-none">
 												In publishing and graphic design, Lorem ipsum is a placeholder text
 												commonly used to demonstrate.
-											</p>
-											<button onclick="location.href = 'shop-left-sidebar.html';"
-													class="btn btn-animation btn-sm mend-auto">
-												Shop Now <i class="fa-solid fa-arrow-right icon"></i>
-											</button>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<div class="col-xxl-4 col-xl-12 col-md-5">
-								<div class="banner-contain hover-effect h-100">
-									<img src="../assets/images/grocery/banner/12.jpg" class="bg-img blur-up lazyload"
-										 alt="">
-									<div class="banner-details p-center-left p-4 h-100">
-										<div>
-											<h2 class="text-kaushan fw-normal orange-color">Organic</h2>
-											<h3 class="mt-2 mb-3">Fresh</h3>
-											<p class="text-content banner-text w-100">
-												Super Offer to 50%
-												Off
 											</p>
 											<button onclick="location.href = 'shop-left-sidebar.html';"
 													class="btn btn-animation btn-sm mend-auto">
