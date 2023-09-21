@@ -61,6 +61,7 @@
         <span></span>
     </div>
     <!-- Loader End -->
+
     <!-- Breadcrumb Section Start -->
     <section class="breadscrumb-section pt-0">
         <div class="container-fluid-lg">
@@ -85,6 +86,7 @@
         </div>
     </section>
     <!-- Breadcrumb Section End -->
+
     <!-- Product Left Sidebar Start -->
     <section class="product-section">
         <div class="container-fluid-lg">
@@ -94,55 +96,151 @@
                         <div class="col-xl-6 wow fadeInUp">
                             <div class="product-left-box">
                                 <div class="row g-sm-4 g-2">
-                                    <div class="col-12">
-                                        <div class="product-main no-arrow">
-                                            <div>
-                                            <div class="slider-image">
-                                                <img src="@if(Context.Request.IsHttps) {<text>https://</text>} else {<text>http://</text>}@Context.Request.Host@Model.Variants.First().FeatureImageLink" id="img-1"
-                                                     data-zoom-image="@if(Context.Request.IsHttps) { <text>https://</text> } else { <text>http://</text> }@Context.Request.Host@Model.Variants.First().FeatureImageLink" class="
-                                                        img-fluid image_zoom_cls-0 blur-up lazyload" alt="">
-                                            </div>
-                                            </div>
-                                            @{
-                                                var images = Model.Variants.First().Images;
-                                                for (var i = 2; i <= images.Count; i++)
-                                                {
+                                    @if(Model.Variants.Any()){
+                                    
+                                        @foreach(var variant in Model.Variants)
+                                        { 
+                                            <div class="col-12 product-variant-image-gallery product-variant-image-gallery-@variant.ProductVariantId">
+                                                <div class="product-main no-arrow">
+                                                    <div>
+                                                        <div class="slider-image">
+                                                            <img src="@if(Context.Request.IsHttps) {<text>https://</text>} else {<text>http://</text>}@Context.Request.Host@variant.FeatureImageLink" id="img-1"
+                                                                 data-zoom-image="@if(Context.Request.IsHttps) { <text>https://</text> } else { <text>http://</text> }@Context.Request.Host@variant.FeatureImageLink" class="
+                                                                    img-fluid image_zoom_cls-0 blur-up lazyload" alt="">
+                                                        </div>
+                                                    </div>
+                                                @{
+                                                        var images = variant.Images;
+                                                        for (var i = 2; i <= images.Count; i++)
+                                                    {
                                                     <div>
                                                         <div class="slider-image">
                                                             <img src="@if (Context.Request.IsHttps) { <text>https://</text>} else {<text>http://</text>}@Context.Request.Host@images[i-1].Link" id="img-@i"
-                                                                 data-zoom-image="@if (Context.Request.IsHttps) {  <text>https://</text> } else { <text>http://</text> }@Context.Request.Host@images[i-1].Link" class="
+                                                                    data-zoom-image="@if (Context.Request.IsHttps) {  <text>https://</text> } else { <text>http://</text> }@Context.Request.Host@images[i-1].Link" class="
                                                                     img-fluid image_zoom_cls-@(i - 1) blur-up lazyload" alt="">
                                                         </div>
                                                     </div>
+                                                    }
                                                 }
-                                            }
-                                        </div>
-                                    </div>
-
-                                    <div class="col-12">
-                                        <div class="left-slider-image  left-slider no-arrow slick-top">
-                                            <div>
-                                                <div class="slider-image">
-                                                    <img src="@if(Context.Request.IsHttps) { <text>https://</text> } else { <text>http://</text> }@Context.Request.Host@Model.Variants.First().FeatureImageLink" id="img-1"
-                                                         data-zoom-image="@if(Context.Request.IsHttps){ <text>https://</text> } else { <text>http://</text> })@Context.Request.Host@Model.Variants.First().FeatureImageLink" class="img-fluid blur-up lazyload" alt="">
                                                 </div>
                                             </div>
-                                            @{
-                                                images = Model.Variants.First().Images;
-                                                for (var i = 2; i <= images.Count; i++)
-                                                {
+                                            <div class="col-12 product-variant-image-gallery product-variant-image-gallery-@variant.ProductVariantId">
+                                                <div class="left-slider-image  left-slider no-arrow slick-top">
                                                     <div>
                                                         <div class="slider-image">
-                                                            <img src="@if(Context.Request.IsHttps) { <text>https://</text> } else { <text>http://</text> }@Context.Request.Host@images[i-1].Link" id="img-@i" class="
-                                                                img-fluid blur-up lazyload" alt="">
+                                                            <img src="@if(Context.Request.IsHttps) { <text>https://</text> } else { <text>http://</text> }@Context.Request.Host@variant.FeatureImageLink" id="img-1"
+                                                                 data-zoom-image="@if(Context.Request.IsHttps){ <text>https://</text> } else { <text>http://</text> })@Context.Request.Host@variant.FeatureImageLink" class="img-fluid blur-up lazyload" alt="">
                                                         </div>
-                                                    </div>                                               
+                                                    </div>
+                                                    @{
+                                                        images = variant.Images;
+                                                        for (var i = 2; i <= images.Count; i++)
+                                                        {
+                                                            <div>
+                                                                <div class="slider-image">
+                                                                    <img src="@if(Context.Request.IsHttps) { <text>https://</text> } else { <text>http://</text> }@Context.Request.Host@images[i-1].Link" id="img-@i" class="
+                                                                        img-fluid blur-up lazyload" alt="">
+                                                                </div>
+                                                            </div>                                               
+                                                        }
+                                                      }
+                                                </div>
+                                            </div>
+
+                                    }
+                                    }
+                                    else 
+                                    {
+
+                                        <div class="col-12">
+                                            <div class="product-main no-arrow">
+                                                <div>
+                                                    <div class="slider-image">
+                                                        <img src="@if(Context.Request.IsHttps) {
+                                                    <text>https://</text>
+} else {
+                                                    <text>http://</text>
+}@Context.Request.Host@Model.Variants.First().FeatureImageLink" id="img-1"
+                                                             data-zoom-image="@if (Context.Request.IsHttps)
+                                                        {
+                                                            <text>https://</text>
+                                                        }
+                                                        else
+                                                        {
+                                                            <text>http://</text>
+                                                        }@Context.Request.Host@Model.Variants.First().FeatureImageLink" class="
+                                                            img-fluid image_zoom_cls-0 blur-up lazyload" alt="">
+                                                    </div>
+                                                </div>
+                                                @{
+                                                    var images = Model.Variants.First().Images;
+                                                    for (var i = 2; i <= images.Count; i++)
+                                                    {
+                                                        <div>
+                                                            <div class="slider-image">
+                                                                <img src="@if (Context.Request.IsHttps) {
+                                                        <text>https://</text>
+} else {
+                                                        <text>http://</text>
+}@Context.Request.Host@images[i-1].Link" id="img-@i"
+                                                                     data-zoom-image="@if (Context.Request.IsHttps)
+                                                                {
+                                                                    <text>https://</text>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <text>http://</text>
+                                                                }@Context.Request.Host@images[i-1].Link" class="
+                                                                            img-fluid image_zoom_cls-@(i - 1) blur-up lazyload" alt="">
+                                                            </div>
+                                                        </div>
+                                                    }
                                                 }
-                                              }
+                                            </div>
                                         </div>
-                                    </div>
+
+                                        <div class="col-12">
+                                            <div class="left-slider-image  left-slider no-arrow slick-top">
+                                                <div>
+                                                    <div class="slider-image">
+                                                        <img src="@if(Context.Request.IsHttps) {
+                                                    <text>https://</text>
+ } else {
+                                                    <text>http://</text>
+ }@Context.Request.Host@Model.Variants.First().FeatureImageLink" id="img-1"
+                                                             data-zoom-image="@if (Context.Request.IsHttps)
+                                                        {
+                                                            <text>https://</text>
+                                                        }
+                                                        else
+                                                        {
+                                                            <text>http://</text>
+                                                        })@Context.Request.Host@Model.Variants.First().FeatureImageLink" class="img-fluid blur-up lazyload" alt="">
+                                                    </div>
+                                                </div>
+                                                @{
+                                                    images = Model.Variants.First().Images;
+                                                    for (var i = 2; i <= images.Count; i++)
+                                                    {
+                                                        <div>
+                                                            <div class="slider-image">
+                                                                <img src="@if(Context.Request.IsHttps) {
+                                                        <text>https://</text>
+ } else {
+                                                        <text>http://</text>
+ }@Context.Request.Host@images[i-1].Link" id="img-@i" class="
+                                                                    img-fluid blur-up lazyload" alt="">
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+                                    }
                                 </div>
                             </div>
+                       
                         </div>
 
                         <div class="col-xl-6 wow fadeInUp">
@@ -150,7 +248,7 @@
                                 <h2 class="name data-pname">@Model.Name</h2>
                                 <div class="price-rating">
                                     <h3 class="theme-color price">
-                                        <span class="data-pprice">Rs @Model.Variants.First().VariantPrice/-</span>
+                                        <span>Rs <span class="data-pprice">@Model.Variants.First().VariantPrice</span>/-</span>
                                     </h3>
                                 </div>
 
@@ -169,7 +267,8 @@
                                             @foreach (var variant in Model.Variants)
                                             {
                                                 <li>
-                                                    <a href="javascript:void(0)" onclick="updateUI(event)">@variant.Variant</a>
+                                                    <a href="javascript:void(0)" class="@if(Model.Variants.First() == variant) { <text>active</text> }" 
+                                                        onclick="UpdateUI(@variant.Quantity, @variant.VariantPrice, @variant.ProductVariantId)">@variant.Variant</a>
                                                 </li>
                                             }
                                         </ul>
@@ -2031,6 +2130,53 @@
     <script src="~/assets/js/slick/slick-animation.min.js"></script>
     <script src="~/assets/js/custom-slick-animated.js"></script>
     <script src="~/assets/js/slick/custom_slick.js"></script>
+    @if(Model.Variants.Any())
+    {
+        <script>
+            $('.product-main').slick({
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                arrows: false,
+                fade: true,
+                asNavFor: '.left-slider-image'
+            });
+
+            $('.left-slider-image').slick({
+                slidesToShow: 4,
+                slidesToScroll: 1,
+                asNavFor: '.product-main',
+                dots: false,
+                focusOnSelect: true,
+                // vertical: false,
+                responsive: [{
+                        breakpoint: 1400,
+                        settings: {
+                            vertical: false,
+                        }
+                    },
+                    {
+                        breakpoint: 992,
+                        settings: {
+                            vertical: false,
+                        }
+                    },
+                    {
+                        breakpoint: 768,
+                        settings: {
+                            vertical: false,
+                        }
+                    }, {
+                        breakpoint: 430,
+                        settings: {
+                            slidesToShow: 3,
+                            vertical: false,
+                        }
+                    },
+                ]
+            });
+            </script>
+    }
+
 
     <!-- Price Range Js -->
     <script src="~/assets/js/ion.rangeSlider.min.js"></script>
@@ -2060,6 +2206,14 @@
 
     <!-- thme setting js -->
     <script src="~/assets/js/theme-setting.js"></script>
+
+    <script>
+        function UpdateUI(quantity, price, variantId) {
+            $('.data-pprice').text(price)
+            $('.product-variant-image-gallery').hide();
+            $('.product-variant-image-gallery-' + variantId ).show();
+        }
+    </script>
 
 </body>
 
