@@ -66,6 +66,16 @@
  *@
     @* <link rel="stylesheet" type="text/css" href="~/backend-assets/css/vendors/themify.css" rel="stylesheet"> *@
 
+    @* For Logout vModal *@
+    <link rel="stylesheet" type="text/css" href="~/backend-assets/css/style.css">
+
+
+    <!-- latest jquery-->
+    <script src="../assets/js/jquery-3.6.0.min.js"></script>
+
+    <!-- jquery ui-->
+    <script src="../assets/js/jquery-ui.min.js"></script>
+
     <style>
         .nav-pills .nav-item .nav-link:after{
             height: 0px !important;
@@ -147,7 +157,7 @@
 
 
 
-                            <div class="header-nav col-lg-6">
+                           @*  <div class="header-nav col-lg-6">
                                 <div class="header-nav-left">
                                     <a asp-controller="Seller" asp-action="Shop" class="text-content">
                                         <button class="dropdown-category" style="float: left;">
@@ -155,7 +165,7 @@
                                         </button>
                                     </a>
                                 </div>
-                            </div>
+                            </div> *@
 
 
 
@@ -187,72 +197,7 @@
                                             <i data-feather="heart"></i>
                                         </a>
                                     </li>
-                                    <li class="right-side">
-                                        <div class="onhover-dropdown header-badge">
-                                            <button type="button" class="btn p-0 position-relative header-wishlist">
-                                                <i data-feather="shopping-cart"></i>
-                                                <span class="position-absolute top-0 start-100 translate-middle badge">
-                                                    2
-                                                    <span class="visually-hidden">unread messages</span>
-                                                </span>
-                                            </button>
-
-                                            <div class="onhover-div">
-                                                <ul class="cart-list">
-                                                    <li class="product-box-contain">
-                                                        <div class="drop-cart">
-                                                            <a href="product-left-thumbnail.html" class="drop-image">
-                                                                <img src="../assets/images/vegetable/product/1.png"
-                                                                     class="blur-up lazyload" alt="">
-                                                            </a>
-
-                                                            <div class="drop-contain">
-                                                                <a href="product-left-thumbnail.html">
-                                                                    <h5>Fantasy Crunchy Choco Chip Cookies</h5>
-                                                                </a>
-                                                                <h6><span>1 x</span> $80.58</h6>
-                                                                <button class="close-button close_button">
-                                                                    <i class="fa-solid fa-xmark"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-
-                                                    <li class="product-box-contain">
-                                                        <div class="drop-cart">
-                                                            <a href="product-left-thumbnail.html" class="drop-image">
-                                                                <img src="../assets/images/vegetable/product/2.png"
-                                                                     class="blur-up lazyload" alt="">
-                                                            </a>
-
-                                                            <div class="drop-contain">
-                                                                <a href="product-left-thumbnail.html">
-                                                                    <h5>
-                                                                        Peanut Butter Bite Premium Butter Cookies 600 g
-                                                                    </h5>
-                                                                </a>
-                                                                <h6><span>1 x</span> $25.68</h6>
-                                                                <button class="close-button close_button">
-                                                                    <i class="fa-solid fa-xmark"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-
-                                                <div class="price-box">
-                                                    <h5>Total :</h5>
-                                                    <h4 class="theme-color fw-bold">$106.58</h4>
-                                                </div>
-
-                                                <div class="button-group">
-                                                    <a href="Cart" class="btn btn-sm cart-button">View Cart</a>
-                                                    <a href="checkout.html" class="btn btn-sm cart-button theme-bg-color
-                                                    text-white">Checkout</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
+                                    @Html.Partial("_ShoppingCart")
                                     <li class="right-side onhover-dropdown">
                                         <div class="delivery-login-box">
                                             <div class="delivery-icon">
@@ -703,51 +648,6 @@
     <!-- Deal Box Modal End -->
     <!-- Tap to top start -->
     <div class="theme-option">
-        <div class="setting-box">
-            <button class="btn setting-button">
-                <i class="fa-solid fa-gear"></i>
-            </button>
-
-            <div class="theme-setting-2">
-                <div class="theme-box">
-                    <ul>
-                        <li>
-                            <div class="setting-name">
-                                <h4>Color</h4>
-                            </div>
-                            <div class="theme-setting-button color-picker">
-                                <form class="form-control">
-                                    <label for="colorPick" class="form-label mb-0">Theme Color</label>
-                                    <input type="color" class="form-control form-control-color" id="colorPick"
-                                           value="#0da487" title="Choose your color">
-                                </form>
-                            </div>
-                        </li>
-
-                        <li>
-                            <div class="setting-name">
-                                <h4>Dark</h4>
-                            </div>
-                            <div class="theme-setting-button">
-                                <button class="btn btn-2 outline" id="darkButton">Dark</button>
-                                <button class="btn btn-2 unline" id="lightButton">Light</button>
-                            </div>
-                        </li>
-
-                        <li>
-                            <div class="setting-name">
-                                <h4>RTL</h4>
-                            </div>
-                            <div class="theme-setting-button rtl">
-                                <button class="btn btn-2 rtl-unline">LTR</button>
-                                <button class="btn btn-2 rtl-outline">RTL</button>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
         <div class="back-to-top">
             <a id="back-to-top" href="#">
                 <i class="fas fa-chevron-up"></i>
@@ -1261,8 +1161,11 @@
     <script src="../assets/js/bootstrap/bootstrap-notify.min.js"></script>
     <script src="../assets/js/bootstrap/popper.min.js"></script>
 
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+    <!-- Bootstrap js-->
+    <script src="../assets/js/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/bootstrap/popper.min.js"></script>
+    <script src="../assets/js/bootstrap/bootstrap-notify.min.js"></script>
 
     <!-- feather icon js-->
     <script src="../assets/js/feather/feather.min.js"></script>
@@ -1275,38 +1178,15 @@
     <script src="../assets/js/slick/slick.js"></script>
     <script src="../assets/js/slick/custom_slick.js"></script>
 
-    <!-- Apexchart Js -->
-    <script src="../assets/js/apexchart.js"></script>
-    <script src="../assets/js/custom-chart.js"></script>
-
-    <!-- Apexchar js -->
-    <script src="~/backend-assets/js/chart/apex-chart/apex-chart1.js"></script>
-    <script src="~/backend-assets/js/chart/apex-chart/moment.min.js"></script>
-    <script src="~/backend-assets/js/chart/apex-chart/apex-chart.js"></script>
-    <script src="~/backend-assets/js/chart/apex-chart/stock-prices.js"></script>
-    <script src="~/backend-assets/js/chart/apex-chart/chart-custom1.js"></script>
-
-    <!-- Nav & tab upside js -->
-    <script src="../assets/js/nav-tab.js"></script>
-    
-    <!-- slick slider js -->
-    <script src="~/backend-assets/js/slick.min.js"></script>
-    <script src="~/backend-assets/js/custom-slick.js"></script>
-
-    <!-- customizer js -->
-    <script src="~/backend-assets/js/customizer.js"></script>
-
-    <!-- ratio js -->
-    <script src="~/backend-assets/js/ratio.js"></script>
-
-    <!-- sidebar effect -->
-    <script src="~/backend-assets/js/sidebareffect.js"></script>
+    <!-- Quantity js -->
+    <script src="../assets/js/quantity.js"></script>
 
     <!-- script js -->
     <script src="../assets/js/script.js"></script>
 
     <!-- thme setting js -->
     <script src="../assets/js/theme-setting.js"></script>
+
     @*     <script>
     const navLinks = document.querySelectorAll('.nav-link');
 
@@ -1353,7 +1233,22 @@
             });
         });
 
-
+        $(".cartBtn").mouseover(function () {
+            $.ajax({
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                url: '/Seller/GetCartItems',
+                success: function (data) {
+                    $('#exampleModal').html(data);
+                    $('#exampleModal').modal({
+                        backdrop: false
+                    });
+                },
+                error: function (data) {
+                    alert("Error is facing for fetching data");
+                }
+            });
+        });
         // $(document).ready(function () {
         //     $(".nav-link").click(function () {
         //         $(".nav-link").removeClass("active").attr("aria-selected", "false");

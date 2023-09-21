@@ -240,7 +240,7 @@ namespace LocalDropshipping.Web.Controllers
 
         [HttpPost]
         [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
-        public IActionResult ActivateUser(string userId)
+        public IActionResult ActivateUser(string userId, [FromQuery] Pagination pagination)
         {
             if (!string.IsNullOrEmpty(userId))
             {
@@ -252,8 +252,10 @@ namespace LocalDropshipping.Web.Controllers
 
             SetRoleByCurrentUser();
 
-
-            return View("StaffMember", sellers);
+            var count = sellers.Count();
+            sellers = sellers.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+            return View("GetAllSellers", new PageResponse<List<User>>(sellers, pagination.PageNumber, pagination.PageSize, count));
+            //return View("StaffMember", sellers);
         }
 
         [HttpPost]
@@ -355,10 +357,10 @@ namespace LocalDropshipping.Web.Controllers
                         orders = orders.OrderByDescending(s => s.OrderStatus).ToList();
                         break;
                     case "Date":
-                        orders = orders.OrderBy(s => s.OrderDate).ToList();
+                        orders = orders.OrderBy(s => s.CreatedDate).ToList();
                         break;
                     case "date_desc":
-                        orders = orders.OrderByDescending(s => s.OrderDate).ToList();
+                        orders = orders.OrderByDescending(s => s.CreatedDate).ToList();
                         break;
                     case "price_asc":
                         orders = orders.OrderBy(s => s.GrandTotal).ToList();

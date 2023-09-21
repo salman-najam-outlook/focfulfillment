@@ -21,8 +21,9 @@ namespace LocalDropshipping.Web.Services
 			Order order = new Order()
 			{
 				//OrderCode = abcd,
+				Id = GenerateOrderId(),
 				Seller = email,
-				OrderDate = DateTime.Now,
+				CreatedDate = DateTime.Now,
 				CreatedBy = email,
 				GrandTotal = Convert.ToDecimal(cart.Sum(s => s.Quantity * s.Price)),
 				OrderStatus= OrderStatus.Pending,
@@ -113,6 +114,19 @@ namespace LocalDropshipping.Web.Services
         Order? IOrderService.Add(Order order)
         {
             throw new NotImplementedException();
+        }
+        
+        private int GenerateOrderId()
+        {
+			int orderId;
+			do
+			{
+				Random random = new Random();
+				orderId = random.Next(10000000, 99999999);
+			}
+			while (GetById(orderId)!= null ? true:false);
+
+            return orderId;
         }
     }
 }

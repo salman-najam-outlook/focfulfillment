@@ -16,8 +16,8 @@
                         <a href="product-left-thumbnail.html">
                             <h5>@cart.Name</h5>
                         </a>
-                        <h6><span>@cart.Quantity x</span> @cart.Price</h6>
-                        <button id="cartDel" class="close-button close_button" data-id="@cart.ProductId">
+                        <h6 class="text-dark"><span>@cart.Quantity x</span>Rs.@cart.Price/-</h6>
+                        <button class="close-button close_button cartDel" data-id="@cart.ProductId">
                             <i class="fa-solid fa-xmark "></i> 
                         </button>
                        
@@ -40,8 +40,7 @@
 else
 {
     <div class="text-center">
-        <i data-feather="shopping-cart" style="width:20px; height:20px;"></i>
-        <p>Shopping cart is empty!</p>
+        <p class="text-dark">Shopping cart is empty!</p>
 
         <div class="button-group" style="justify-content: center">
             <a asp-action="Shop" asp-controller="Seller" class="btn btn-sm cart-button">Continue Shopping</a>
@@ -49,6 +48,55 @@ else
     </div>
 
 }
+<script>
+    $(".cartDel").click(function () {
+        var itemId = $(this).data("id");
+        var formData = new FormData();
+        formData.append("id", itemId)
+        $.ajax(
+            {
+                async: true,
+                type: "post",
+                contentType: false,
+                processData: false,
+                data: formData,
+                url: "/Seller/DeleteFromCart",
+                success: function (data) {
+                    location.reload();
+                    $('#exampleModal').html(data);
+                    // $('#spnCart').html($(data).find('#cartList tbody tr').length);
+                    $('#exampleModal').modal({
+                        backdrop: false
+                    });
+                },
+                error: function (data) {
+                    alert(data);
+                }
+
+            }
+        );
+        return false;
+    });
+    // $("#cartDel").click(function () {
+    //     debugger;
+    //     console.log("Hello");
+    //     alert("Hello World");
+    //     // $.ajax({
+    //     //     type: 'POST',
+    //     //     contentType: 'application/json; charset=utf-8',
+    //     //     url: '/Seller/GetCartItems',
+    //     //     success: function (data) {
+    //     //         $('#exampleModal').html(data);
+    //     //         $('#exampleModal').modal({
+    //     //             backdrop: false
+    //     //         });
+    //     //     },
+    //     //     error: function (data) {
+    //     //         alert("Error is facing for fetching data");
+    //     //     }
+    //     // });
+    // });
+</script>
 
 
 

@@ -121,27 +121,9 @@
                                 <li>
                                     <a >
                                         <i data-feather="users"></i>
-                                        <strong>@currentUserData.Fullname</strong>
+                                        <span>@currentUserData.Fullname</span>
                                     </a>
                                 </li>
-                                @if (@currentUserData.IsSuperAdmin)
-                                {
-                                    <li>
-                                        <a >
-                                            <i class="ri-user-3-line"></i>
-                                            <span>LoggedIn as: SuperAdmin </span>
-                                        </a>
-                                    </li>
-                                }
-                                else
-                                {
-                                    <li>
-                                        <a >
-                                            <i class="ri-user-3-line"></i>
-                                            <span>LoggedIn as: Admin </span>
-                                        </a>
-                                    </li>
-                                }
                                 <li>
                                     <a data-bs-toggle="modal" data-bs-target="#staticBackdrop"
                                        href="javascript:void(0)">

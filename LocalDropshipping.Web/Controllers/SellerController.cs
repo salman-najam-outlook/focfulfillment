@@ -522,11 +522,22 @@ namespace LocalDropshipping.Web.Controllers
         [Authorize]
         public IActionResult RemoveFromCart(int id)
         {
+            var cart = DeleteItemFromCart(id);
+            return RedirectToAction("Cart");
+        }
+        public PartialViewResult DeleteFromCart(int id)
+        {
+
+            var cart = DeleteItemFromCart(id);
+            return GetCartItems();
+        }
+        private List<OrderItem> DeleteItemFromCart(int id)
+        {
             var cart = HttpContext.Session.Get<List<OrderItem>>("cart");
             int index = cart.FindIndex(w => w.ProductId == id);
             cart.RemoveAt(index);
             HttpContext.Session.Set<List<OrderItem>>("cart", cart);
-            return RedirectToAction("Cart");
+            return cart;
         }
 
         [Authorize]
