@@ -21,24 +21,27 @@ namespace LocalDropshipping.Web.Attributes
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            if (context.HttpContext.Items.ContainsKey("CurrentUserRoles"))
+            if (context.HttpContext.Items.ContainsKey("IsSignedIn") )
             {
-                var currentUserRoles = (List<Roles>)context.HttpContext.Items["CurrentUserRoles"]!;
+                if (Convert.ToBoolean(context.HttpContext.Items["IsSignedIn"].ToString()) && context.HttpContext.Items.ContainsKey("CurrentUserRoles"))
+                {
+                    var currentUserRoles = (List<Roles>)context.HttpContext.Items["CurrentUserRoles"]!;
 
-                if ((_allowedUserRoles & Roles.Admin) != 0 && currentUserRoles.Contains(Roles.Admin))
-                {
-                    return;
-                }
-                if ((_allowedUserRoles & Roles.SuperAdmin) != 0 && currentUserRoles.Contains(Roles.SuperAdmin))
-                {
-                    return;
-                }
-                if ((_allowedUserRoles & Roles.Seller) != 0 && currentUserRoles.Contains(Roles.Seller))
-                {
-                    return;
+                    if ((_allowedUserRoles & Roles.Admin) != 0 && currentUserRoles.Contains(Roles.Admin))
+                    {
+                        return;
+                    }
+                    if ((_allowedUserRoles & Roles.SuperAdmin) != 0 && currentUserRoles.Contains(Roles.SuperAdmin))
+                    {
+                        return;
+                    }
+                    if ((_allowedUserRoles & Roles.Seller) != 0 && currentUserRoles.Contains(Roles.Seller))
+                    {
+                        return;
+                    }
                 }
             }
-            context.Result = new RedirectToActionResult(_redirectToAction, _redirectToController, null);
+            context.Result = new RedirectToActionResult(_redirectToAction, _redirectToController, new { returnUrl = context.HttpContext.Request.Path });
         }
     }
 }

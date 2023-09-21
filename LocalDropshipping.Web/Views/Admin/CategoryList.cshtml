@@ -5,7 +5,7 @@
 @using LocalDropshipping.Web.Helpers;
 @model PageResponse<List<Category>>;
 @{
-    ViewBag.Title = "FOC Fulfillment - Category List";
+    ViewBag.Title = "FOC-FulFillment-Category List";
 
     Layout = "_LayoutDashboard";
 }
@@ -54,6 +54,11 @@
             color:red;
             border:red;
         }
+
+    .colorBtn:hover {
+        color: red;
+        border: red;
+    }
 </style>
 <div class="page-body">
     <!-- All User Table Start -->
@@ -110,13 +115,13 @@
                                                     <ul class="horizontal-buttons">
                                                         <li>
                                                                 <a asp-controller="Admin" asp-action="UpdateCategory" asp-route-id="@category.CategoryId">
-                                                                    <i class="ri-pencil-line"></i>
+                                                                <i class="ri-pencil-line" style="color:#0DA487"></i>
                                                                 </a>
                                                         </li>
 
                                                         <li>
                                                             <form method="post" id="txtdelete" asp-controller="Admin" asp-action="DeleteCategory" asp-route-id="@category.CategoryId">
-                                                                <button type="submit" class="btn btn-link colorBtn">
+                                                                <button type="submit" class="btn colorBtn">
                                                                     <i class="ri-delete-bin-line"></i>
                                                                 </button>
                                                             </form>

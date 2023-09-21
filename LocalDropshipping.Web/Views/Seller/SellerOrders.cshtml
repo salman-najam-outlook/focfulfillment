@@ -2,7 +2,7 @@
 @using LocalDropshipping.Web.Helpers;
 @model PageResponse<List<Order>>;
 @{
-    ViewBag.Title = "FOC Fulfillment - Seller Orders";
+    ViewBag.Title = "FOC-FulFillment-Seller Orders";
 
     Layout = "_LayoutSellerDashboard";
 }
@@ -39,8 +39,20 @@
                                 <tr>
                                     <td>@order.Id</td>
                                     <td>@order.OrderDate</td>
-                                    <td>@order.Name</td>
-                                    <td>@order.OrderStatus</td>
+                                    @* <td>@order.Name</td> *@
+                                    <td id="orderName">@order.Name</td>
+                                    @* <td>@order.OrderStatus</td> *@
+                                    <td>
+                                        @if (order.OrderStatus == LocalDropshipping.Web.Enums.OrderStatus.Delivered)
+                                        {
+                                            <label class="success">@order.OrderStatus</label>
+                                        }
+                                        else
+                                        {
+                                            <label class="danger">@order.OrderStatus</label>
+                                        }
+                                    </td>
+
                                     @* <td>@order.GrandTotal</td> *@
                                     <td>Rs.@order.GrandTotal.ToString("N0")/-</td>
                                 </tr>
@@ -83,4 +95,13 @@
         </div>
     </div>
 
+    <script>
+        var orderNameElements = document.querySelectorAll("#orderName");
+
+        orderNameElements.forEach(function (element) {
+            if (element.textContent.trim() === "") {
+                element.textContent = "<No Product Name>";
+            }
+        });
+    </script>
 </body>

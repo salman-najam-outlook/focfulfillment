@@ -105,9 +105,9 @@ app.UseAuthorization();
 app.UseSession();
 
 app.MapControllerRoute(
-    name: "default",
-     pattern: "{controller=Seller}/{action=Shop}/{id?}"
-//pattern: "{controller=Admin}/{action=AdminLogin}"
+    name: "default",    
+    pattern: "{controller=Seller}/{action=Shop}/{id?}"
+    //pattern: "{controller=Admin}/{action=AdminLogin}"
 );
 
 app.Run();

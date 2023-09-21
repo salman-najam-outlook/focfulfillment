@@ -4,7 +4,7 @@
 
 @model PageResponse<List<WithdrawalModel>>;
 @{
-    ViewBag.Title = "FOC Fulfillment - Withdrawals";
+    ViewBag.Title = "FOC-FulFillment-Withdrawals";
     Layout = "_LayoutSellerDashboard";
 }
 <body>
@@ -38,7 +38,7 @@
                             {
                                 <tr>
                                     <td>@withdrawal.TransactionId</td>
-                                    <td>Rs.@withdrawal.AmountInPkr.ToString("N0")/-</td>
+                                    <td>Rs.@withdrawal.AmountInPkr/-</td>
                                     <td>@withdrawal.PaymentStatus</td>
                                     <td>@withdrawal.RequestDate</td>
                                     <td>@withdrawal.Reason</td>
@@ -76,36 +76,43 @@
                         }
                     </ul>
                 </nav>
-@*
+                @*
                 <nav class="custome-pagination">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="javascript:void(0)" tabindex="-1">
-                                <i class="fa-solid fa-angles-left"></i>
-                            </a>
-                        </li>
-                        <li class="page-item active">
-                            <a class="page-link" href="javascript:void(0)">1</a>
-                        </li>
-                        <li class="page-item" aria-current="page">
-                            <a class="page-link" href="javascript:void(0)">2</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="javascript:void(0)">3</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="javascript:void(0)">
-                                <i class="fa-solid fa-angles-right"></i>
-                            </a>
-                        </li>
-                    </ul>
+                <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                <a class="page-link" href="javascript:void(0)" tabindex="-1">
+                <i class="fa-solid fa-angles-left"></i>
+                </a>
+                </li>
+                <li class="page-item active">
+                <a class="page-link" href="javascript:void(0)">1</a>
+                </li>
+                <li class="page-item" aria-current="page">
+                <a class="page-link" href="javascript:void(0)">2</a>
+                </li>
+                <li class="page-item">
+                <a class="page-link" href="javascript:void(0)">3</a>
+                </li>
+                <li class="page-item">
+                <a class="page-link" href="javascript:void(0)">
+                <i class="fa-solid fa-angles-right"></i>
+                </a>
+                </li>
+                </ul>
                 </nav>*@
             </div>
         </div>
     </div>
 
+    <script>
+        var withdrawalNameElements = document.querySelectorAll("#withdrawalName");
+                withdrawalNameElements.forEach(function (element) {
+            if (element.textContent.trim() === "") {
+                element.textContent = "<No Product Name>";
+            }
+        });
+    </script>
 </body>
-
 <style>
     .request-btn {
     background-color: #0DA487;
