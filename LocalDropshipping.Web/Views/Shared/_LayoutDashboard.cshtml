@@ -6,6 +6,7 @@
     bool isSuperAdmin = TempData["IsSuperAdmin"] as bool? ?? false;
     var data = Context.Session.GetString("CurrentUser");
     var currentUserData = JsonConvert.DeserializeObject<User>(data);
+
 }
 
 <!DOCTYPE html>
@@ -67,6 +68,10 @@
 
    <!-- Template css -->
     <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    
+    <!--DatePicker Css -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
 
 </head>
 
@@ -116,27 +121,9 @@
                                 <li>
                                     <a >
                                         <i data-feather="users"></i>
-                                        <strong>@currentUserData.Fullname</strong>
+                                        <span>@currentUserData.Fullname</span>
                                     </a>
                                 </li>
-                                @if (@currentUserData.IsSuperAdmin)
-                                {
-                                    <li>
-                                        <a >
-                                            <i data-feather="archive"></i>
-                                            <span>LoggedIn as: SuperAdmin </span>
-                                        </a>
-                                    </li>
-                                }
-                                else
-                                {
-                                    <li>
-                                        <a >
-                                            <i data-feather="archive"></i>
-                                            <span>LoggedIn as: Admin </span>
-                                        </a>
-                                    </li>
-                                }
                                 <li>
                                     <a data-bs-toggle="modal" data-bs-target="#staticBackdrop"
                                        href="javascript:void(0)">
@@ -498,6 +485,9 @@
     </script>
 
 
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
 
 

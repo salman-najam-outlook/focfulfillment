@@ -16,24 +16,23 @@ namespace LocalDropshipping.Web.Services
             _context = context;
         }
 
-        public Order AddOrder(List<OrderItem> cart, string email, decimal sellPrice)
-        {
-
-
-
-            Order order = new Order()
-            {
-                //OrderCode = abcd,
-                Seller = email,
+		public Order AddOrder(List<OrderItem> cart, string email, decimal sellPrice)
+		{
+			
+			Order order = new Order()
+			{
+				//OrderCode = abcd,
+				Id = GenerateOrderId(),
+				Seller = email,
 				CreatedDate = DateTime.Now,
-                CreatedBy = email,
-                GrandTotal = Convert.ToDecimal(cart.Sum(s => s.Quantity * s.Price)),
-                OrderStatus = OrderStatus.Pending,
-                SellPrice = sellPrice
-
-            };
-            _context.Orders.Add(order);
-            _context.SaveChanges();
+				CreatedBy = email,
+				GrandTotal = Convert.ToDecimal(cart.Sum(s => s.Quantity * s.Price)),
+				OrderStatus= OrderStatus.Pending,
+				SellPrice=sellPrice
+				
+			};
+			_context.Orders.Add(order);
+			_context.SaveChanges();
 
             foreach (var items in cart)
             {
@@ -122,6 +121,19 @@ namespace LocalDropshipping.Web.Services
         Order? IOrderService.Add(Order order)
         {
             throw new NotImplementedException();
+        }
+        
+        private int GenerateOrderId()
+        {
+			int orderId;
+			do
+			{
+				Random random = new Random();
+				orderId = random.Next(10000000, 99999999);
+			}
+			while (GetById(orderId)!= null ? true:false);
+
+            return orderId;
         }
     }
 }

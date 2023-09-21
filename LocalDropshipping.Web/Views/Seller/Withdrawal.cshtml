@@ -52,7 +52,7 @@
                             {
                                 <tr>
                                     <td>@withdrawal.TransactionId</td>
-                                    <td>rs.@withdrawal.AmountInPkr</td>
+                                    <td>Rs.@withdrawal.AmountInPkr/-</td>
                                     <td>@withdrawal.PaymentStatus</td>
                                     <td>@withdrawal.RequestDate</td>
                                     <td>@withdrawal.Reason</td>
@@ -118,20 +118,26 @@
         </div>
     </div>
 
+    <script>
+        var withdrawalNameElements = document.querySelectorAll("#withdrawalName");
+                withdrawalNameElements.forEach(function (element) {
+            if (element.textContent.trim() === "") {
+                element.textContent = "<No Product Name>";
+            }
+        });
+    </script>
 </body>
-
 <style>
     .request-btn {
-        background-color: #0DA487;
-        color: #ffffff;
-        font-size: 18px;
-        font-weight: 600
+    background-color: #0DA487;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 500
     }
-
-        .request-btn:hover {
-            background-color: #0DA487;
-            color: #ffffff;
-            font-size: 18px;
-            font-weight: 600
-        }
-</style>
+    .request-btn:hover {
+    background-color: #0DA487;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 500
+    }
+</style> 

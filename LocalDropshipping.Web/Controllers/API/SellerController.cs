@@ -10,9 +10,9 @@ namespace LocalDropshipping.Web.Controllers.API
     public class SellerController : ControllerBase
     {
         private readonly IOrderService orderService;
-        private readonly IWithdrawlsService withdrawalsService;
+        private readonly IWithdrawalService withdrawalsService;
 
-        public SellerController(IOrderService orderService, IWithdrawlsService withdrawalsService)
+        public SellerController(IOrderService orderService, IWithdrawalService withdrawalsService)
         {
             this.orderService = orderService;
             this.withdrawalsService = withdrawalsService;

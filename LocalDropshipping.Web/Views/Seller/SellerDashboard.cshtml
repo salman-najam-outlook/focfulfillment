@@ -1,7 +1,11 @@
-﻿@{
+﻿@using Newtonsoft.Json
+@using LocalDropshipping.Web.Data.Entities;
+@{
     ViewBag.Title = "FOCFulFillment - Seller Dashboard";
 
     Layout = "_LayoutSellerDashboard";
+    var data = Context.Session.GetString("CurrentUser");
+    var currentUserData = JsonConvert.DeserializeObject<User>(data);
 }
 <style>
     .title-leaf {
@@ -20,13 +24,13 @@
                 <h2>My Dashboard</h2>
                 <span class="title-leaf">
                     <svg class="icon-width bg-gray">
-                        <use xlink:href="https://themes.pixelstrap.com/fastkart/assets/svg/leaf.svg#leaf"></use>
+                        @* <use xlink:href="https://themes.pixelstrap.com/fastkart/assets/svg/leaf.svg#leaf"></use> *@
                     </svg>
                 </span>
             </div>
 
             <div class="dashboard-user-name">
-                <h6 class="text-content">Hello, <b class="text-title">Vicki E. Pope</b></h6>
+                <h6 class="text-content">Hello, <b class="text-title">@currentUserData.Fullname</b></h6>
                 <p class="text-content">
                     From your My Account Dashboard you have the ability to
                     view a snapshot of your recent account activity and update your account
@@ -76,197 +80,6 @@
                     </div>
                 </div>
             </div>
-
-            <div class="row g-4">
-                <div class="col-xxl-6">
-                    <div class="dashboard-bg-box">
-                        <div id="chart"></div>
-                    </div>
-                </div>
-
-                <div class="col-xxl-6">
-                    <div class="dashboard-bg-box">
-                        <div id="sale"></div>
-                    </div>
-                </div>
-
-                <div class="col-xxl-6">
-                    <div class="table-responsive dashboard-bg-box">
-                        <div class="dashboard-title mb-4">
-                            <h3>Trending Products</h3>
-                        </div>
-
-                        <table class="table product-table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Images</th>
-                                    <th scope="col">Product Name</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Sales</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="product-image">
-                                        <img src="../assets/images/vegetable/product/1.png"
-                                             class="img-fluid" alt="">
-                                    </td>
-                                    <td>
-                                        <h6>Fantasy Crunchy Choco Chip Cookies</h6>
-                                    </td>
-                                    <td>
-                                        <h6>$25.69</h6>
-                                    </td>
-                                    <td>
-                                        <h6>152</h6>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td class="product-image">
-                                        <img src="../assets/images/vegetable/product/2.png"
-                                             class="img-fluid" alt="">
-                                    </td>
-                                    <td>
-                                        <h6>Peanut Butter Bite Premium Butter Cookies 600 g</h6>
-                                    </td>
-                                    <td>
-                                        <h6>$35.36</h6>
-                                    </td>
-                                    <td>
-                                        <h6>34</h6>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td class="product-image">
-                                        <img src="../assets/images/vegetable/product/3.png"
-                                             class="img-fluid" alt="">
-                                    </td>
-                                    <td>
-                                        <h6>Yumitos Chilli Sprinkled Potato Chips 100 g</h6>
-                                    </td>
-                                    <td>
-                                        <h6>$78.55</h6>
-                                    </td>
-                                    <td>
-                                        <h6>78</h6>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td class="product-image">
-                                        <img src="../assets/images/vegetable/product/4.png"
-                                             class="img-fluid" alt="">
-                                    </td>
-                                    <td>
-                                        <h6>healthy Long Life Toned Milk 1 L</h6>
-                                    </td>
-                                    <td>
-                                        <h6>$32.98</h6>
-                                    </td>
-                                    <td>
-                                        <h6>135</h6>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="col-xxl-6">
-                    <div class="order-tab dashboard-bg-box">
-                        <div class="dashboard-title mb-4">
-                            <h3>Recent Order</h3>
-                        </div>
-
-                        <div class="table-responsive">
-                            <table class="table order-table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Order ID</th>
-                                        <th scope="col">Product Name</th>
-                                        <th scope="col">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="product-image">#254834</td>
-                                        <td>
-                                            <h6>Choco Chip Cookies</h6>
-                                        </td>
-                                        <td>
-                                            <label class="success">Shipped</label>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="product-image">#355678</td>
-                                        <td>
-                                            <h6>Premium Butter Cookies</h6>
-                                        </td>
-                                        <td>
-                                            <label class="danger">Pending</label>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="product-image">#647536</td>
-                                        <td>
-                                            <h6>Sprinkled Potato Chips</h6>
-                                        </td>
-                                        <td>
-                                            <label class="success">Shipped</label>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="product-image">#125689</td>
-                                        <td>
-                                            <h6>Milk 1 L</h6>
-                                        </td>
-                                        <td>
-                                            <label class="danger">Pending</label>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="product-image">#215487</td>
-                                        <td>
-                                            <h6>Raw Mutton Leg</h6>
-                                        </td>
-                                        <td>
-                                            <label class="danger">Pending</label>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="product-image">#365474</td>
-                                        <td>
-                                            <h6>Instant Coffee</h6>
-                                        </td>
-                                        <td>
-                                            <label class="success">Shipped</label>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="product-image">#368415</td>
-                                        <td>
-                                            <h6>Jowar Stick and Jowar Chips</h6>
-                                        </td>
-                                        <td>
-                                            <label class="danger">Pending</label>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
-
-
 </body>

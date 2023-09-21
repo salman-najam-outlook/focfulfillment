@@ -33,10 +33,10 @@ namespace LocalDropshipping.Web.Controllers
         private readonly IAccountService _accountService;
         private readonly IOrderService _orderService;
         private readonly IConsumerService _consumerService;
-        private readonly IWithdrawlsService _withdrawlsService;
+        private readonly IWithdrawalService _withdrawlsService;
         private readonly IProfilesService _profilesService;
 
-        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService, IConsumerService consumerService,IWithdrawlsService withdrawlsService,IProfilesService profilesService)
+        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService, IConsumerService consumerService, IWithdrawalService withdrawlsService, IProfilesService profilesService)
         {
             _service = service;
             _productsService = productsService;
@@ -73,6 +73,8 @@ namespace LocalDropshipping.Web.Controllers
 
                 if (result.Succeeded)
                 {
+                    HttpContext.Session.SetString("CurrentUser", JsonConvert.SerializeObject(await _service.GetUserByEmail(model.Email)));
+
                     // Check if the user is an admin
                     bool isAdmin = await _service.IsUserAdminAsync(model.Email);
 
@@ -87,7 +89,9 @@ namespace LocalDropshipping.Web.Controllers
                         if (isActive)
                         {
                             if (!returnUrl.IsNullOrEmpty())
+                            {
                                 return LocalRedirect(returnUrl);
+                            }
                             return RedirectToAction("Dashboard", "Admin");
                         }
                         else
@@ -109,7 +113,7 @@ namespace LocalDropshipping.Web.Controllers
 
             return View(model);
         }
-
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult AddNewUser()
         {
             try
@@ -141,6 +145,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public async Task<IActionResult> AddNewUser(UserViewModel model)
         {
             try
@@ -208,6 +213,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         #endregion
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult StaffMember([FromQuery] Pagination pagination)
         {
             SetRoleByCurrentUser();
@@ -216,6 +222,7 @@ namespace LocalDropshipping.Web.Controllers
             staffMembers = staffMembers.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
             return View(new PageResponse<List<User>>(staffMembers, pagination.PageNumber, pagination.PageSize, count));
         }
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult EditUser()
         {
             return View();
@@ -223,6 +230,7 @@ namespace LocalDropshipping.Web.Controllers
 
 
         [HttpPost]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult DeleteUser(string userId)
         {
             _userService.Delete(userId);
@@ -231,7 +239,8 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult ActivateUser(string userId)
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
+        public IActionResult ActivateUser(string userId, [FromQuery] Pagination pagination)
         {
             if (!string.IsNullOrEmpty(userId))
             {
@@ -243,19 +252,21 @@ namespace LocalDropshipping.Web.Controllers
 
             SetRoleByCurrentUser();
 
-
-            return View("StaffMember", sellers);
+            var count = sellers.Count();
+            sellers = sellers.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+            return View("GetAllSellers", new PageResponse<List<User>>(sellers, pagination.PageNumber, pagination.PageSize, count));
+            //return View("StaffMember", sellers);
         }
 
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            HttpContext.Session.Remove("CurrentUser");
+
             return RedirectToAction("AdminLogin", "Admin");
         }
 
-
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult GetAllSellers([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
         {
             SetRoleByCurrentUser();
@@ -298,7 +309,6 @@ namespace LocalDropshipping.Web.Controllers
 
 
         [HttpGet]
-        [Authorize]
         [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult Dashboard()
         {
@@ -312,6 +322,7 @@ namespace LocalDropshipping.Web.Controllers
 
 
         [HttpGet]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult OrdersList([FromQuery] Pagination pagination, string searchString, string sortOrder, string currentFilter)
         {
             try
@@ -334,8 +345,8 @@ namespace LocalDropshipping.Web.Controllers
                 List<Order> orders = _orderService.GetAll();
                 if (!string.IsNullOrEmpty(searchString))
                 {
-                    if(Enum.TryParse<OrderStatus>(searchString.ApplyCase(LetterCasing.Sentence), out OrderStatus status))
-                    orders = orders.Where(x => x.OrderStatus == status).ToList();
+                    if (Enum.TryParse<OrderStatus>(searchString.ApplyCase(LetterCasing.Sentence), out OrderStatus status))
+                        orders = orders.Where(x => x.OrderStatus == status).ToList();
                 }
                 switch (sortOrder)
                 {
@@ -362,7 +373,7 @@ namespace LocalDropshipping.Web.Controllers
                         orders = orders.OrderBy(s => s.Id).ToList();
                         break;
                 }
-                
+
                 var count = orders.Count();
                 orders = orders.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
                 return View(new PageResponse<List<Order>>(orders, pagination.PageNumber, pagination.PageSize, count));
@@ -379,6 +390,7 @@ namespace LocalDropshipping.Web.Controllers
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin, "AdminLogin", "Admin")]
         public IActionResult Products([FromQuery] Pagination pagination, string searchString, string sortProduct, string currentFilter)
         {
+            var user = HttpContext.Session.Get<User>("CurrentUser");
             //Add ViewBag to save SortOrder of table
             ViewBag.CurrentSort = sortProduct;
             ViewBag.NameSortParm = string.IsNullOrEmpty(sortProduct) ? "name_asc" : (sortProduct == "name_asc" ? "name_desc" : "name_asc");
@@ -437,8 +449,7 @@ namespace LocalDropshipping.Web.Controllers
 
 
         [HttpPost]
-        [Authorize]
-        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin), ]
+        [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin),]
         public IActionResult AddUpdateProduct(ProductViewModel model)
         {
             SetRoleByCurrentUser();
@@ -557,7 +568,7 @@ namespace LocalDropshipping.Web.Controllers
                         var newImagesUploaded = form.Files.Any(x => x.Name == $"variant-{variantNo}-updated-images");
                         var newVideosUploaded = form.Files.Any(x => x.Name == $"variant-{variantNo}-updated-videos");
                         var newFeaturedImage = form.Files.Any(x => x.Name == $"variant-{variantNo}-updated-image");
-                        
+
                         product.Variants.Add(new ProductVariant
                         {
                             ProductVariantId = variantId,
@@ -567,7 +578,7 @@ namespace LocalDropshipping.Web.Controllers
                             Quantity = Convert.ToInt32(form["variant-" + variantNo + "-quantity"]),
                             IsMainVariant = false,
                             Images = newImagesUploaded ? formFiles.GetFiles($"variant-{variantNo}-updated-images").ToArray().SaveTo("images/products", model.Name + " " + form["variant-type"]).Select(x => new ProductVariantImage { Link = x }).ToList() : new List<ProductVariantImage>(),
-                            Videos = newVideosUploaded? formFiles.GetFiles($"variant-{variantNo}-updated-videos").ToArray()!.SaveTo("videos/products", model.Name + " " + form["variant-type"]).Select(x => new ProductVariantVideo {  Link = x}).ToList(): new List<ProductVariantVideo>(),
+                            Videos = newVideosUploaded ? formFiles.GetFiles($"variant-{variantNo}-updated-videos").ToArray()!.SaveTo("videos/products", model.Name + " " + form["variant-type"]).Select(x => new ProductVariantVideo { Link = x }).ToList() : new List<ProductVariantVideo>(),
                             FeatureImageLink = newFeaturedImage ? formFiles[$"variant-{variantNo}-updated-image"]!.SaveTo("images/products", model.Name + " " + form["variant-type"]) : "",
                         });
                     }
@@ -597,44 +608,33 @@ namespace LocalDropshipping.Web.Controllers
                 return RedirectToAction("Products");
             }
         }
-       
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult Withdrawal([FromQuery] Pagination pagination)
         {
-            try
-            {
-                var withdrawals = _withdrawlsService.GetAll();
-                var profiles = _profilesService.GetAllProfiles();
+            var withdrawals = new List<Withdrawals>();
 
-                var combinedData = from withdrawal in withdrawals
-                                   join profile in profiles
-                                   on withdrawal.UserEmail equals profile.User.Email into joinedData
-                                   from profileData in joinedData.DefaultIfEmpty() 
-                                   select new AddWithdrawalUserViewModel
-                                   {
-                                       WithDrawalId = withdrawal.WithdrawalId,
-                                       UserEmail = withdrawal.UserEmail,
-                                       AmountInPkr = withdrawal.AmountInPkr,
-                                       paymentStatus = withdrawal.PaymentStatus,
-                                       ProcessedBy = withdrawal.ProcessedBy,
-                                       CreatedDate = withdrawal.CreatedDate,
-                                       AccountTitle = profileData?.BankAccountTitle,
-                                       BankAccountNumberOrIBAN = profileData?.BankAccountNumberOrIBAN, 
-                                       BankName = profileData?.BankName, 
-                                       Withdrawals = new List<Withdrawals> { withdrawal },
-                                       Profiles = profileData != null ? new List<Profiles> { profileData } : new List<Profiles>()
-                                   };
-                var count = combinedData.Count();
-                combinedData = combinedData.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
-                return View(new PageResponse<List<AddWithdrawalUserViewModel>>(combinedData.ToList(), pagination.PageNumber, pagination.PageSize, count));
-            }
-            catch (Exception ex)
+            if (pagination.PaymentStatus != "All" || (pagination.From != DateTime.MinValue && pagination.To != DateTime.MinValue))
             {
-                return View(ex.Message);
+                withdrawals = _withdrawlsService.GetFilteredWithdrawals(pagination);
             }
+            else
+            {
+                withdrawals = _withdrawlsService.GetAll();
+            }
+
+            var profiles = _profilesService.GetAllProfiles();
+
+            var combinedData = getProfileAndWithdrawalData(withdrawals, profiles);
+
+            var count = combinedData.Count();
+
+            combinedData = combinedData.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+
+            return View(new PageResponse<List<AddWithdrawalUserViewModel>>(combinedData.ToList(), pagination.PageNumber, pagination.PageSize, count));
         }
 
-
         [HttpPost]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult Withdrawal(PaymentViewModel model)
         {
             if (ModelState.IsValid)
@@ -709,6 +709,7 @@ namespace LocalDropshipping.Web.Controllers
             return currentUserEmail;
         }
 
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult CategoryList([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
         {
             ViewBag.CurrentSort = sortByName;
@@ -746,6 +747,7 @@ namespace LocalDropshipping.Web.Controllers
             return View(new PageResponse<List<Category>>(category, pagination.PageNumber, pagination.PageSize, count));
         }
 
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult AddNewCategory()
         {
             SetRoleByCurrentUser();
@@ -753,6 +755,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult AddNewCategory(Category categoryModel)
         {
             SetRoleByCurrentUser();
@@ -780,6 +783,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult DeleteCategory(int id)
         {
             SetRoleByCurrentUser();
@@ -788,6 +792,7 @@ namespace LocalDropshipping.Web.Controllers
             return View("CategoryList", _categoryService.GetAll());
         }
         [HttpGet]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult UpdateCategory()//int id
         {
             SetRoleByCurrentUser();
@@ -795,6 +800,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult UpdateCategory(int categoryId, CategoryDto categoryDto)
         {
             SetRoleByCurrentUser();
@@ -821,7 +827,7 @@ namespace LocalDropshipping.Web.Controllers
             }
             return View();
         }
-
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult GetAllConsumers([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
         {
             SetRoleByCurrentUser();
@@ -862,6 +868,7 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult BlockOrUnblockConsumer(int userId)
         {
             SetRoleByCurrentUser();
@@ -870,11 +877,38 @@ namespace LocalDropshipping.Web.Controllers
             SetRoleByCurrentUser();
             return View("GetAllConsumers", consumers);
         }
-
+        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult Reports()
         {
             SetRoleByCurrentUser();
             return View();
         }
+
+        #region private methods
+        private IEnumerable<AddWithdrawalUserViewModel> getProfileAndWithdrawalData(IEnumerable<Withdrawals> withdrawals, IEnumerable<Profiles> profiles)
+        {
+            var combinedData = from withdrawal in withdrawals
+                               join profile in profiles
+                               on withdrawal.UserEmail equals profile.User.Email into joinedData
+                               from profileData in joinedData.DefaultIfEmpty()
+                               select new AddWithdrawalUserViewModel
+                               {
+                                   WithDrawalId = withdrawal.WithdrawalId,
+                                   UserEmail = withdrawal.UserEmail,
+                                   AmountInPkr = withdrawal.AmountInPkr,
+                                   paymentStatus = withdrawal.PaymentStatus,
+                                   ProcessedBy = withdrawal.ProcessedBy,
+                                   CreatedDate = withdrawal.CreatedDate,
+                                   AccountTitle = profileData?.BankAccountTitle,
+                                   BankAccountNumberOrIBAN = profileData?.BankAccountNumberOrIBAN,
+                                   BankName = profileData?.BankName,
+                                   Withdrawals = new List<Withdrawals> { withdrawal },
+                                   Profiles = profileData != null ? new List<Profiles> { profileData } : new List<Profiles>()
+                               };
+
+            return combinedData;
+
+        }
+        #endregion
     }
 }

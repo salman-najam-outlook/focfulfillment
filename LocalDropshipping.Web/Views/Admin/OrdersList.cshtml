@@ -2,7 +2,7 @@
 @using LocalDropshipping.Web.Helpers;
 @model PageResponse<List<Order>>;
 @{
-    ViewBag.Title = "FOCFulFillment - Order Lists";
+    ViewBag.Title = "FOCFulFillment - Orders List";
 
     Layout = "_LayoutDashboard";
 }
@@ -36,10 +36,13 @@
                                         <tr>
                                             <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Order Id</th>
                                             <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">
-                                        @Html.ActionLink("Order Date", "OrdersList","Admin", new { sortOrder =  ViewBag.DateSortParm, searchString=ViewBag.CurrentFilter })</th>
+                                                @Html.ActionLink("Order Date", "OrdersList","Admin", new { sortOrder =  ViewBag.DateSortParm, searchString=ViewBag.CurrentFilter })
+                                                <i class="fas fa-sort"></i>
+                                            </th>
                                             <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Delivery Status </th>
                                             <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">
                                                 @Html.ActionLink("Price", "OrdersList","Admin", new { sortOrder = ViewBag.PriceSortParm, searchString=ViewBag.CurrentFilter })
+                                                <i class="fas fa-sort"></i>
                                             </th>
                                             <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 180.938px;">Option</th>
                                         </tr>
@@ -49,18 +52,20 @@
                                         {
                                             <tr data-bs-toggle="offcanvas" href="#order-details" class="odd">
                                                 <td>@order.Id</td>
-                                                <td>@order.CreatedDate</td>
-                                                <td>
-                                                    @if (order.OrderStatus == LocalDropshipping.Web.Enums.OrderStatus.Delivered)
-                                                    {
-                                                        <label class="success">@order.OrderStatus</label>
-                                                    }
-                                                    else
-                                                    {
-                                                        <label class="danger" >@order.OrderStatus</label>
-                                                    }
-                                                </td>
-                                                <td>@order.GrandTotal</td>
+                                                <td>@order.CreatedDate.ToString("MMM dd yyyy")</td>
+                                                @if (order.OrderStatus == LocalDropshipping.Web.Enums.OrderStatus.Delivered)
+                                                {
+                                                    <td class="order-success">
+                                                        <span >@order.OrderStatus</span> 
+                                                    </td>
+                                                }
+                                                else 
+                                                {
+                                                    <td class="order-cancle">
+                                                        <span>@order.OrderStatus</span>
+                                                    </td>
+                                                }
+                                                <td>Rs.@order.GrandTotal.ToString("N0")/-</td>
                                                 <td>
                                                     <ul>
                                                         <li>

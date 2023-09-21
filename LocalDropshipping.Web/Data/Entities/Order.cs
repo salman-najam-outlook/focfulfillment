@@ -7,7 +7,6 @@ namespace LocalDropshipping.Web.Data.Entities
         public string Seller { get; set; }
         public decimal GrandTotal { get; set; }
         public decimal SellPrice { get; set; }
-        //public string? Name { get; set; }
         public string? SpecialInstructions { get; set; }
         //public string? OrderCode { get; set; }
         public bool IsDeleted { get; set; } = false;

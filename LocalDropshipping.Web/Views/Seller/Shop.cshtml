@@ -208,42 +208,23 @@
                             return false;
                         });
 
-                        $(".cartBtn").mouseover(function () {
-                            $.ajax({
-                                type: 'POST',
-                                contentType: 'application/json; charset=utf-8',
-                                url: '/Seller/GetCartItems',
-                                success: function (data) {
-                                    $('#exampleModal').html(data);
-                                    $('#exampleModal').modal({
-                                        backdrop: false
-                                    });
-                                },
-                                error: function (data) {
-                                    alert("Error is facing for fetching data");
-                                }
-                            });
-                        });
-
-                        $("#cartDel").click(function () {
-                            debugger;
-                            console.log("Hello");
-                            alert("Hello World");
-                            // $.ajax({
-                            //     type: 'POST',
-                            //     contentType: 'application/json; charset=utf-8',
-                            //     url: '/Seller/GetCartItems',
-                            //     success: function (data) {
-                            //         $('#exampleModal').html(data);
-                            //         $('#exampleModal').modal({
-                            //             backdrop: false
-                            //         });
-                            //     },
-                            //     error: function (data) {
-                            //         alert("Error is facing for fetching data");
-                            //     }
-                            // });
-                        });
+        $(".cartBtn").mouseover(function () {
+            $.ajax({
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                url: '/Seller/GetCartItems',
+                success: function (data) {
+                    $('#exampleModal').html(data);
+                    $('#exampleModal').modal({
+                        backdrop: false
+                    });
+                },
+                error: function (data) {
+                    alert("Error is facing for fetching data");
+                }
+            });
+        });
+       
 
                     </script>
                 </div>

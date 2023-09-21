@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using LocalDropshipping.Web.Data.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace LocalDropshipping.Web.Services
 {
@@ -10,5 +11,6 @@ namespace LocalDropshipping.Web.Services
 
 		Task<bool> IsUserSuperAdminAsync(string email);
 		Task<bool> IsUserActiveAsync(string email);
-	}
+        Task<User> GetUserByEmail(string email);
+    }
 }
