@@ -18,6 +18,8 @@ using System.Net;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.OpenApi.Validations;
+using LocalDropshipping.Web.Models.ProductViewModels;
 using LocalDropshipping.Web.Helpers.Constants;
 using System.Reflection.Metadata;
 
@@ -29,6 +31,7 @@ namespace LocalDropshipping.Web.Controllers
 
         private readonly IAdminService _service;
         private readonly IProductsService _productsService;
+        private readonly IProductVariantService _productVariantService;
         private readonly IUserService _userService;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
@@ -40,10 +43,11 @@ namespace LocalDropshipping.Web.Controllers
         private readonly IWithdrawalService _withdrawlsService;
         private readonly IProfilesService _profilesService;
 
-        public AdminController(IAdminService service, IProductsService productsService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService, IConsumerService consumerService, IWithdrawalService withdrawlsService, IProfilesService profilesService)
+        public AdminController(IAdminService service, IProductsService productsService, IProductVariantService productVariantService, IUserService userService, UserManager<User> userManager, SignInManager<User> signInManager, LocalDropshippingContext context, ICategoryService categoryService, IAccountService accountService, IOrderService orderService, IConsumerService consumerService, IWithdrawalService withdrawlsService, IProfilesService profilesService)
         {
             _service = service;
             _productsService = productsService;
+            this._productVariantService = productVariantService;
             _userService = userService;
             _userManager = userManager;
             _signInManager = signInManager;
@@ -532,6 +536,7 @@ namespace LocalDropshipping.Web.Controllers
                                 IsMainVariant = true,
                                 VariantPrice = model.Price,
                                 FeatureImageLink = featureImageLink,
+                                DiscountedPrice = model.DiscountedPrice,
                                 Images = otherImagesLinks.Select(imageLink => new ProductVariantImage { Link = imageLink }).ToList(),
                                 Videos = videoLinks.Select(videoLink => new ProductVariantVideo { Link = videoLink }).ToList(),
                                 Quantity = model.Quantity
@@ -565,6 +570,7 @@ namespace LocalDropshipping.Web.Controllers
                             VariantType = form["variant-type"],
                             Variant = form["variant-" + variantNo + "-value"],
                             VariantPrice = Convert.ToInt32(form["variant-" + variantNo + "-price"]),
+                            DiscountedPrice = Convert.ToInt32(form["variant-" + variantNo + "-discounted-price"]),
                             FeatureImageLink = formFiles["variant-" + variantNo + "-feature-image"]!.SaveTo("images/products", model.Name + " " + form["variant-type"]),
                             Images = formFiles.GetFiles("variant-" + variantNo + "-images").ToArray().SaveTo("images/products", model.Name + " " + form["variant-type"]).Select(x => new ProductVariantImage { Link = x }).ToList(),
                             Videos = formFiles.GetFiles("variant-" + variantNo + "-videos").ToArray().SaveTo("videos/products", model.Name + " " + form["variant-type"]).Select(x => new ProductVariantVideo { Link = x }).ToList(),
@@ -606,6 +612,7 @@ namespace LocalDropshipping.Web.Controllers
                             ProductVariantId = variantId,
                             VariantType = form["variant-type"],
                             Variant = form["variant-" + variantNo + "-value"],
+                            DiscountedPrice = Convert.ToInt32(form["variant-" + variantNo + "-discounted-price"]),
                             VariantPrice = Convert.ToInt32(form["variant-" + variantNo + "-price"]),
                             Quantity = Convert.ToInt32(form["variant-" + variantNo + "-quantity"]),
                             IsMainVariant = false,
@@ -628,6 +635,7 @@ namespace LocalDropshipping.Web.Controllers
                         ProductVariantId = model.MainVariantId,
                         IsMainVariant = true,
                         VariantPrice = model.Price,
+                        DiscountedPrice = model.DiscountedPrice,
                         Quantity = model.Quantity,
                         Images = newImagesUploaded ? formFiles.GetFiles($"main-variant-updated-images").ToArray().SaveTo("images/products", model.Name).Select(x => new ProductVariantImage { Link = x }).ToList() : new List<ProductVariantImage>(),
                         Videos = newVideosUploaded ? formFiles.GetFiles($"main-variant-updated-videos").ToArray()!.SaveTo("videos/products", model.Name).Select(x => new ProductVariantVideo { Link = x }).ToList() : new List<ProductVariantVideo>(),
@@ -726,13 +734,21 @@ namespace LocalDropshipping.Web.Controllers
         public IActionResult Product(int id)
         {
             Product? product = _productsService.GetById(id);
+            List<Product>? products = _productsService.GetAll();
             if (product != null)
             {
-                return View(product);
+                return View(new ProductPageViewModel { RelatedProducts = products, Product = product } );
             }
 
             TempData["Message"] = "Product does not exist.";
             return RedirectToAction("Products");
+        }
+
+        [HttpGet]
+        public async Task<PartialViewResult> ProductVariantImageSliderAsync(int id)
+        {
+            var variant = await _productVariantService.GetByIdAsync(id);
+            return PartialView("_ProductVariantImageSliderPartial", variant);
         }
 
 

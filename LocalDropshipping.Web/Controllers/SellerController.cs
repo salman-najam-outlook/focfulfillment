@@ -6,6 +6,7 @@ using LocalDropshipping.Web.Exceptions;
 using LocalDropshipping.Web.Extensions;
 using LocalDropshipping.Web.Helpers;
 using LocalDropshipping.Web.Models;
+using LocalDropshipping.Web.Models.ProductViewModels;
 using LocalDropshipping.Web.Services;
 using MailKit.Search;
 using Microsoft.AspNetCore.Authorization;
@@ -493,7 +494,7 @@ namespace LocalDropshipping.Web.Controllers
                 List<AddProductVariantViewModel> data = new List<AddProductVariantViewModel>();
                 foreach (var item in cartData)
                 {
-                    var temp = await _productVariantService.GetById(item.ProductId);
+                    var temp = await _productVariantService.GetByIdAsync(item.ProductId);
                     data.Add(new AddProductVariantViewModel
                     {
                         FeatureImageLink = temp.FeatureImageLink == null ? "" : temp.FeatureImageLink,
@@ -531,10 +532,19 @@ namespace LocalDropshipping.Web.Controllers
 
             return View();
         }
-		[Authorize]
-		public IActionResult Productleftthumbnail()
+	
+        [Authorize]
+		public IActionResult Product(int id)
         {
-            return View();
+            Product? product = _productsService.GetById(id);
+            List<Product>? products = _productsService.GetAll();
+            if (product != null)
+            {
+                return View(new ProductPageViewModel { RelatedProducts = products, Product = product });
+            }
+
+            TempData["Message"] = "Product does not exist.";
+            return RedirectToAction("Shop");
         }
         [Authorize]
         public IActionResult Cart()

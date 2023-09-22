@@ -4,15 +4,15 @@ using Microsoft.CodeAnalysis;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace LocalDropshipping.Web.Models
+namespace LocalDropshipping.Web.Models.ProductViewModels
 {
     public class ProductViewModel
     {
         public int ProductId { get; set; }
 
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
-        public string? Description { get; set; }
+        public string Description { get; set; }
 
         public bool IsNewArravial { get; set; }
 
@@ -24,7 +24,7 @@ namespace LocalDropshipping.Web.Models
 
         public int MainVariantId { get; set; }
 
-        public string? SKU { get; set; }
+        public string SKU { get; set; }
 
 
         [DisplayName("Category")]
@@ -33,6 +33,9 @@ namespace LocalDropshipping.Web.Models
 
         [Range(0, int.MaxValue)]
         public int Price { get; set; }
+
+        [Range(0, int.MaxValue)]
+        public int DiscountedPrice { get; set; }
 
 
         [ValidateNever]
@@ -61,6 +64,7 @@ namespace LocalDropshipping.Web.Models
                     Description = product.Description;
                     SKU = product.SKU;
                     Price = product.Variants.First().VariantPrice;
+                    DiscountedPrice = product.Variants.First().DiscountedPrice;
                     Quantity = product.Variants.First().Quantity;
                     MainVariantId = product.Variants.First().ProductVariantId;
                     Variants = product.Variants.Select(x => new ProductVariantViewModel
@@ -70,6 +74,7 @@ namespace LocalDropshipping.Web.Models
                         VariantType = x.VariantType,
                         VariantId = x.ProductVariantId,
                         Variant = x.Variant,
+                        DiscountedPrice = x.DiscountedPrice,
                         FeatureImageLink = x.FeatureImageLink,
                         Images = x.Images.Select(x => x.Link).ToList(),
                         Videos = x.Videos.Select(x => x.Link).ToList()
@@ -87,15 +92,18 @@ namespace LocalDropshipping.Web.Models
                     Description = product.Description;
                     SKU = product.SKU;
                     Price = product.Variants.First().VariantPrice;
+                    DiscountedPrice = product.Variants.First().DiscountedPrice;
                     Variants = new List<ProductVariantViewModel>();
                     Variants.AddRange(
                         product.Variants
-                        .Select(x => new ProductVariantViewModel { 
-                            Quantity = x.Quantity, 
-                            VariantPrice = x.VariantPrice, 
-                            VariantType = x.VariantType, 
-                            VariantId = x.ProductVariantId, 
+                        .Select(x => new ProductVariantViewModel
+                        {
+                            Quantity = x.Quantity,
+                            VariantPrice = x.VariantPrice,
+                            VariantType = x.VariantType,
+                            VariantId = x.ProductVariantId,
                             Variant = x.Variant,
+                            DiscountedPrice = x.DiscountedPrice,
                             FeatureImageLink = x.FeatureImageLink,
                             Images = x.Images.Select(x => x.Link).ToList(),
                             Videos = x.Videos.Select(x => x.Link).ToList()

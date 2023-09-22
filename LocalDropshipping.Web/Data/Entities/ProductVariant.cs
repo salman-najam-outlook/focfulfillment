@@ -8,6 +8,7 @@
         public string? VariantType { get; set; }
         public string Variant { get; set; }
         public int VariantPrice { get; set; }
+        public int DiscountedPrice { get; set; }
         public string FeatureImageLink { get; set; }
         public int Quantity { get; set; }
         public bool IsMainVariant { get; set; }

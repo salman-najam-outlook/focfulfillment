@@ -50,16 +50,15 @@
                                     <table class="table all-package theme-table table-product dataTable no-footer" id="table_id">
                                         <thead>
                                             <tr>
-                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Product Image</th>
-                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">
+                                                <th class="sorting_disabled" rowspan="1" colspan="1">Product Image</th>
+                                                <th class="sorting_disabled" rowspan="1" colspan="1" >
                                                     @Html.ActionLink("Name", "Products","Admin", new { sortProduct = ViewBag.NameSortParm})
                                                 </th>
-                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Category</th>
-                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Current Qty</th>
-                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">
+                                                <th class="sorting_disabled" rowspan="1" colspan="1">Category</th>
+                                                <th class="sorting_disabled" rowspan="1" colspan="1">
                                                     @Html.ActionLink("Price", "Products","Admin", new { sortProduct = ViewBag.PriceSortParm})
                                                 </th>
-                                                <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Action</th>
+                                                <th class="sorting_disabled" rowspan="1" colspan="1">Action</th>
                                             </tr>
                                         </thead>
 
@@ -68,10 +67,9 @@
                                             @foreach (var product in Model.Data)
                                             {
                                                 <tr>
-                                                    <td><img style="width: 150px;" src="@product.Variants.First().FeatureImageLink" alt="Image of product @product.Name" /></td>
-                                                    <td>@product.Name</td>
+                                                    <td><img style="width: 75px; border-radius: 10px;" src="@product.Variants.First().FeatureImageLink" alt="Image of product @product.Name" /></td>
+                                                    <td>@if(product.Name.Length > 20) { <text>@product.Name.Substring(0,20)...</text> } else {<text>@product.Name</text> }</td>
                                                     <td style="color:black;">@product.Category!.Name</td>
-                                                    <td>@product.Variants.First().Quantity</td>
                                                     <td>Rs.@product.Variants.First().VariantPrice.ToString("N0")/-</td>
                                                     <td>
                                                         <ul>

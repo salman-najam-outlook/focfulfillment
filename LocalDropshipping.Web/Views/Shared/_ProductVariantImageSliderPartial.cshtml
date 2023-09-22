@@ -1,0 +1,44 @@
+﻿@using LocalDropshipping.Web.Data.Entities;
+@model ProductVariant
+
+
+<div class="col-12">
+    <div class="product-main no-arrow">
+        <div>
+            <div class="slider-image">
+                <img src="@Model.FeatureImageLink" id="img-1"
+                     data-zoom-image="@Model.FeatureImageLink" class="
+                                                        img-fluid image_zoom_cls-0 blur-up lazyload" alt="">
+            </div>
+        </div>
+        @foreach(var variantImage in Model.Images) {
+            <div>
+                <div class="slider-image">
+                    <img src="@variantImage.Link"
+                         data-zoom-image="@variantImage.Link" class="
+                                                            img-fluid image_zoom_cls-1 blur-up lazyload" alt="">
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="col-12">
+    <div class="left-slider-image left-slider no-arrow slick-top">
+        <div>
+            <div class="sidebar-image">
+                <img src="@Model.FeatureImageLink"
+                     class="img-fluid blur-up lazyload" alt="">
+            </div>
+        </div>
+        @foreach(var variantImage in Model.Images)   {
+            <div>
+                <div class="sidebar-image">
+                    <img src="@variantImage.Link"
+                         class="img-fluid blur-up lazyload" alt="">
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

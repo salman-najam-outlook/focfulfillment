@@ -5,10 +5,10 @@ namespace LocalDropshipping.Web.Services
 {
     public interface IProductVariantService
     {
-        Task<ProductVariant> Add(ProductVariant productvariant);
+        Task<ProductVariant> Add(ProductVariant productVariant);
         List<ProductVariant> GetAll();
-        Task<ProductVariant?> GetById(int productvariantId);
-        Task<ProductVariant> Delete(int productvariantId);
-        Task<ProductVariant?> Update(int productvariantId, ProductVariant productvariant);
+        Task<ProductVariant?> GetByIdAsync(int productVariantId);
+        Task<ProductVariant> Delete(int productVariantId);
+        Task<ProductVariant?> Update(int productVariantId, ProductVariant productVariant);
     }
 }
