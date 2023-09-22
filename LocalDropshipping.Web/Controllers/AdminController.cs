@@ -18,6 +18,8 @@ using System.Net;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using LocalDropshipping.Web.Helpers.Constants;
+using System.Reflection.Metadata;
 
 namespace LocalDropshipping.Web.Controllers
 {
@@ -324,7 +326,7 @@ namespace LocalDropshipping.Web.Controllers
 
 
         [HttpGet]
-        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
+       // [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult OrdersList([FromQuery] Pagination pagination, string searchString, string sortOrder, string currentFilter)
         {
             try
@@ -387,6 +389,32 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         #endregion
+
+        [HttpPost]
+        //[AuthorizeOnly(Roles.SuperAdmin | Roles.Admin, "AdminLogin", "Admin")]
+        public IActionResult OrdersList(OrderViewModel orderViewModel)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                    var email = _userService.GetUserEmailById(userId);
+                    orderViewModel.UpdatedBy = email;
+                    var result = _orderService.UpdateOrder(orderViewModel);
+                    return RedirectToAction("OrdersList");
+                }
+                else
+                {
+                    return RedirectToAction("OrdersList");
+                }
+            }
+            catch (Exception)
+            {
+                TempData["notificationMessage"] = Constants.ErrorMessage.FailedToUpdateOrder;
+                return RedirectToAction("OrdersList");
+            }
+        }
 
         [HttpGet]
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin, "AdminLogin", "Admin")]
@@ -618,6 +646,7 @@ namespace LocalDropshipping.Web.Controllers
             {
                 var withdrawals = new List<Withdrawals>();
 
+
                 if (pagination.PaymentStatus != "All" || (pagination.From != DateTime.MinValue && pagination.To != DateTime.MinValue))
                 {
                     withdrawals = _withdrawlsService.GetFilteredWithdrawals(pagination);
@@ -635,7 +664,7 @@ namespace LocalDropshipping.Web.Controllers
                     Succeeded = true,
                     Message = "Data retrieved successfully",
                 };
-                return View(pageResponse);
+                return View("Withdrawal",pageResponse);
             }
             catch (Exception)
             {
@@ -645,23 +674,33 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
-        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
+        // [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult Withdrawal(PaymentViewModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
-                var email = _userService.GetUserEmailById(userId);
-                model.UpdatedBy = email;
-                model.ProcessedBy = email;
-                var result = _withdrawlsService.UpdateWithdrawal(model);
-                if (result != null) return RedirectToAction("Withdrawal");
-                return RedirectToAction("Withdrawal");
+                if (ModelState.IsValid)
+                {
+                    var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                    var email = _userService.GetUserEmailById(userId);
+                    model.UpdatedBy = email;
+                    model.ProcessedBy = email;
+                    var result = _withdrawlsService.UpdateWithdrawal(model);
+                    if (result != null) return RedirectToAction("Withdrawal");
+                    return RedirectToAction("Withdrawal");
+                }
+                else
+                {
+                    return View("Withdrawal");
+                }
             }
-            else
+            catch (Exception)
             {
-                return View();
+
+                TempData["notificationMessage"] = "Failed To Update";
+                return RedirectToAction("Withdrawal", "Admin");
             }
+
         }
 
         [HttpGet]
@@ -723,39 +762,50 @@ namespace LocalDropshipping.Web.Controllers
         [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult CategoryList([FromQuery] Pagination pagination, string searchString, string sortByName, string currentFilter)
         {
-            ViewBag.CurrentSort = sortByName;
-            ViewBag.NameSortParm = string.IsNullOrEmpty(sortByName) ? "name_asc" : (sortByName == "name_asc" ? "name_desc" : "name_asc");
-            if (searchString != null)
+
+            try
             {
-                pagination.PageNumber = 1;
-            }
-            else
-            {
-                searchString = currentFilter;
+                ViewBag.CurrentSort = sortByName;
+                ViewBag.NameSortParm = string.IsNullOrEmpty(sortByName) ? "name_asc" : (sortByName == "name_asc" ? "name_desc" : "name_asc");
+                if (searchString != null)
+                {
+                    pagination.PageNumber = 1;
+                }
+                else
+                {
+                    searchString = currentFilter;
+                }
+
+                ViewBag.CurrentFilter = searchString;
+                List<Category> category = _categoryService.GetAll();
+                if (!string.IsNullOrEmpty(searchString))
+                {
+                    category = category.Where(c => c.Name.ToLower().Contains(searchString.ToLower())).ToList();
+                }
+                switch (sortByName)
+                {
+                    case "name_asc":
+                        category = category.OrderBy(s => s.Name).ToList();
+                        break;
+                    case "name_desc":
+                        category = category.OrderByDescending(s => s.Name).ToList();
+                        break;
+
+                    default:
+                        category = category.OrderBy(s => s.CategoryId).ToList();
+                        break;
+                }
+                var count = category.Count();
+                category = category.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+                return View(new PageResponse<List<Category>>(category, pagination.PageNumber, pagination.PageSize, count));
             }
 
-            ViewBag.CurrentFilter = searchString;
-            List<Category> category = _categoryService.GetAll();
-            if (!string.IsNullOrEmpty(searchString))
+            catch (Exception)
             {
-                category = category.Where(c => c.Name.ToLower().Contains(searchString.ToLower())).ToList();
+                TempData[Constants.AdminTempData.NotificationMessage] = Constants.ErrorMessage.OrderNotFound;
+                return RedirectToAction(Constants.AdminActionMethods.Dashboard,Constants.AdminActionMethods.Admin);
             }
-            switch (sortByName)
-            {
-                case "name_asc":
-                    category = category.OrderBy(s => s.Name).ToList();
-                    break;
-                case "name_desc":
-                    category = category.OrderByDescending(s => s.Name).ToList();
-                    break;
 
-                default:
-                    category = category.OrderBy(s => s.CategoryId).ToList();
-                    break;
-            }
-            var count = category.Count();
-            category = category.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
-            return View(new PageResponse<List<Category>>(category, pagination.PageNumber, pagination.PageSize, count));
         }
 
         [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
@@ -769,28 +819,37 @@ namespace LocalDropshipping.Web.Controllers
         [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult AddNewCategory(Category categoryModel)
         {
-            SetRoleByCurrentUser();
-
-            if (ModelState.IsValid)
+            try
             {
-                var createdBy = GetCurrentLoggedInUserEmail();
-                var category = new Category
+                SetRoleByCurrentUser();
+
+                if (ModelState.IsValid)
                 {
-                    Name = categoryModel.Name,
-                    ImagePath = categoryModel.ImagePath,
-                    CreatedDate = DateTime.Now,
-                    CreatedBy = createdBy,
-                    ModifiedDate = DateTime.Today,
-                    ModifiedBy = createdBy,
-                    IsActive = true,
-                    IsDeleted = false
+                    var createdBy = GetCurrentLoggedInUserEmail();
+                    var category = new Category
+                    {
+                        Name = categoryModel.Name,
+                        ImagePath = categoryModel.ImagePath,
+                        CreatedDate = DateTime.Now,
+                        CreatedBy = createdBy,
+                        ModifiedDate = DateTime.Today,
+                        ModifiedBy = createdBy,
+                        IsActive = true,
+                        IsDeleted = false
 
-                };
-                _categoryService.Add(category);
-                RedirectToAction("CategoryList", "Admin");
+                    };
+                    _categoryService.Add(category);
+                    RedirectToAction("CategoryList", "Admin");
+                }
+
+                return View();
             }
-
-            return View();
+            catch (Exception)
+            {
+                TempData[Constants.AdminTempData.NotificationMessage] = Constants.ErrorMessage.AddNewCategory;
+                return RedirectToAction(Constants.AdminActionMethods.Dashboard,Constants.AdminActionMethods.Admin);
+            }
+           
         }
 
         [HttpPost]

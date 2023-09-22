@@ -132,30 +132,6 @@ namespace LocalDropshipping.Web.Controllers
             return View("ContactUs", contactUsViewModel);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Login(LoginViewModel model, string returnUrl)
-        //{
-        //    try
-        //    {
-        //        if (ModelState.IsValid)
-        //        {
-        //            var user = await _accountService.LoginAsync(model.Email, model.Password);
-        //            HttpContext.Session.SetString("CurrentUser", JsonConvert.SerializeObject(user));
-
-        //            if(!String.IsNullOrEmpty(returnUrl))
-        //            {
-        //                return LocalRedirect(returnUrl);
-        //            }
-
-        //            return RedirectToAction("Shop", "Seller");
-        //        }
-        //    }
-        //    catch (IdentityException ex)
-        //    {
-        //        ModelState.AddModelError("Login Failed", ex.Message);
-        //    }
-        //    return View(model);
-        //}
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl)
         {
@@ -614,7 +590,7 @@ namespace LocalDropshipping.Web.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> ProfileVerificationAsync(ProfileVerificationViewModel profileVerificationViewModel)
+        public async Task<IActionResult> ProfileVerification(ProfileVerificationViewModel profileVerificationViewModel)
         {
             if (ModelState.IsValid == false)
             {
@@ -645,7 +621,7 @@ namespace LocalDropshipping.Web.Controllers
                 var count = orders.Count();
                 orders = orders.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
 
-                return View(new PageResponse<List<Order>>(orders, pagination.PageNumber, pagination.PageSize, count));
+                return View("SellerOrders", new PageResponse<List<Order>>(orders, pagination.PageNumber, pagination.PageSize, count));
             }
             catch (Exception ex)
             {

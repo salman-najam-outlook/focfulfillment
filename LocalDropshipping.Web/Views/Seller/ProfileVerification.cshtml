@@ -145,7 +145,7 @@
                                         <input asp-for="StoreURL" type="text" class="form-control" id="storeUrl" placeholder="StoreURL">
                                         <label>StoreURL</label>
                                         <span asp-validation-for="StoreURL" class="text-danger"></span>
-
+                                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
                                     </div>
                                 </div>
@@ -165,7 +165,8 @@
                                     <div class="form-floating theme-form-floating log-in-form">
                                         <input asp-for="BankAccountTitle" type="text" class="form-control" id="bankAccountTitle" placeholder="BankAccountTitle">
                                         <label>BankAccountTitle</label>
-                                        <span asp-validation-for="StoreURL" class="text-danger"></span>
+                                        <span asp-validation-for="BankAccountTitle" class="text-danger"></span>
+                                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                                     </div>
                                 </div>
 
@@ -185,6 +186,7 @@
                                         <input asp-for="BankBranch" type="text" class="form-control" id="bankBranch" placeholder="BankBranch">
                                         <label>BankBranch</label>
                                         <span asp-validation-for="BankBranch" class="text-danger"></span>
+                                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                                     </div>
                                 </div>
 
@@ -193,6 +195,7 @@
                                         <input asp-for="Address" type="text" class="form-control" id="address" placeholder="Address">
                                         <label>Address</label>
                                         <span asp-validation-for="Address" class="text-danger"></span>
+                                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                                     </div>
                                 </div>
 

@@ -23,8 +23,23 @@
             public const string _401 = "You are not authorized";
             public const string ErrorDuringMigration = "An error occured during migration";
             public const string UserNotFound = "User Not Found!Please create new account";
+            public const string FailedToUpdateOrder = "Failed to update order please try later...";
+            public const string OrderNotFound = "Something went wrong in order list";
+            public const string AddNewCategory = "Something went wrong while adding product";
         }
 
+        public static class AdminActionMethods
+        {
+            public const string OrdersList = "OrdersList";
+            public const string Dashboard = "Dashboard";
+            public const string Admin = "Admin";
+
+
+        }
+        public static class AdminTempData
+        {
+            public const string NotificationMessage = "notificationMessage";
+        }
         public static class ContentTypeFiles
         {
             public const string ApplicationJson = "application/json";
