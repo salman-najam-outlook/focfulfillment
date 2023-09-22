@@ -72,7 +72,7 @@ namespace LocalDropshipping.Web.Services
 
         public Category? GetDeafultCategory()
         {
-            return _context.Categories.FirstOrDefault(x => x.Name.ToUpper() == "UNMANAGED");
+            return _context.Categories.FirstOrDefault(x => x.Name.ToUpper() == "Un-managed");
         }
     }
 
