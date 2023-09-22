@@ -39,9 +39,11 @@ namespace LocalDropshipping.Web.Controllers
         private readonly ICategoryService _categoryService;
         private readonly SignInManager<User> _signInManager;
         private readonly IWithdrawalService _withdrawlsService;
+        private readonly IAdminService _service;
 
-        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, UserManager<User> userManager, IWishListService wishList, IProductsService productsService, IProductVariantService productVariantService, IConsumerService consumerService, IOrderItemService orderItemService, IFocSettingService focSettingService,SignInManager<User>signInManager,ICategoryService categoryService,IWithdrawalService withdrawlsService)
+        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, UserManager<User> userManager, IWishListService wishList, IProductsService productsService, IProductVariantService productVariantService, IConsumerService consumerService, IOrderItemService orderItemService, IFocSettingService focSettingService,SignInManager<User>signInManager,ICategoryService categoryService,IWithdrawalService withdrawlsService, IAdminService service)
         {
+            _service = service;
             _accountService = accountService;
             _profileService = profileService;
             _userService = userService;
@@ -130,6 +132,30 @@ namespace LocalDropshipping.Web.Controllers
             return View("ContactUs", contactUsViewModel);
         }
 
+        //[HttpPost]
+        //public async Task<IActionResult> Login(LoginViewModel model, string returnUrl)
+        //{
+        //    try
+        //    {
+        //        if (ModelState.IsValid)
+        //        {
+        //            var user = await _accountService.LoginAsync(model.Email, model.Password);
+        //            HttpContext.Session.SetString("CurrentUser", JsonConvert.SerializeObject(user));
+
+        //            if(!String.IsNullOrEmpty(returnUrl))
+        //            {
+        //                return LocalRedirect(returnUrl);
+        //            }
+
+        //            return RedirectToAction("Shop", "Seller");
+        //        }
+        //    }
+        //    catch (IdentityException ex)
+        //    {
+        //        ModelState.AddModelError("Login Failed", ex.Message);
+        //    }
+        //    return View(model);
+        //}
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl)
         {
@@ -140,12 +166,25 @@ namespace LocalDropshipping.Web.Controllers
                     var user = await _accountService.LoginAsync(model.Email, model.Password);
                     HttpContext.Session.SetString("CurrentUser", JsonConvert.SerializeObject(user));
 
-                    if(!String.IsNullOrEmpty(returnUrl))
-                    {
-                        return LocalRedirect(returnUrl);
-                    }
+                    // Check if the user is an admin
+                    bool isAdmin = await _service.IsUserAdminAsync(model.Email);
 
-                    return RedirectToAction("Shop", "Seller");
+                    // Check if the user is superadmin
+                    bool isSuperAdmin = await _service.IsUserSuperAdminAsync(model.Email);
+
+                    if (!isAdmin && !isSuperAdmin)
+                    {
+                        if (!String.IsNullOrEmpty(returnUrl))
+                        {
+                            return LocalRedirect(returnUrl);
+                        }
+
+                        return RedirectToAction("Shop", "Seller");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Oops, it seems like you're not a seller.");
+                    }
                 }
             }
             catch (IdentityException ex)
@@ -164,8 +203,9 @@ namespace LocalDropshipping.Web.Controllers
                 {
                     Email = model.Email,
                     UserName = model.Email,
-                    Fullname = model.FullName,//string.Join(" ", model.FirstName, model.LastName),
-                    IsSeller = true
+                    Fullname = model.FullName,
+                    IsSeller = true,
+                    NormalizedEmail = model.Email.ToUpper()
                 };
 
                 var result = await _accountService.RegisterAsync(user, model.Password);
@@ -177,15 +217,26 @@ namespace LocalDropshipping.Web.Controllers
                 }
                 else
                 {
+                    //foreach (var error in result.Errors)
+                    //{
+                    //    if (error.Code == "DuplicateUserName")
+                    //    {
+                    //        ModelState.AddModelError("CustomErrorMessage", string.Join(": ", "DuplicateEmail", "Email already exist"));
+                    //    }
+                    //    else
+                    //    {
+                    //        ModelState.AddModelError("CustomErrorMessage", string.Join(": ", error.Code, error.Description));
+                    //    }
+                    //}
                     foreach (var error in result.Errors)
                     {
                         if (error.Code == "DuplicateUserName")
                         {
-                            ModelState.AddModelError("CustomErrorMessage", string.Join(": ", "DuplicateEmail", "Email already exist"));
+                            ModelState.AddModelError("", string.Join(": ", "DuplicateEmail", "Email already exists"));
                         }
                         else
                         {
-                            ModelState.AddModelError("CustomErrorMessage", string.Join(": ", error.Code, error.Description));
+                            ModelState.AddModelError("", string.Join(": ", error.Code, error.Description));
                         }
                     }
                 }

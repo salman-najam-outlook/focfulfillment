@@ -15,5 +15,6 @@ namespace LocalDropshipping.Web.Data.Entities
         public bool IsSubscribed { get; set; }
         public string? DeletedBy { get; set; }   
         public bool IsProfileCompleted { get; set; }
+        public string? NormalizedEmail { get; set; }
     }
 }

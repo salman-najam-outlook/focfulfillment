@@ -208,18 +208,18 @@
                         </div>
 
                         <div class="input-box">
-                            <form asp-action="register" id="registerForm" class="row g-4">
+                            <form asp-action="register" id="registerForm" class="row g-4" novalidate>
 
                                 <div class="col-12">
                                     <div class="form-floating theme-form-floating">
-                                        <input asp-for="FullName" class="form-control" placeholder="Full Name" />
+                                        <input asp-for="FullName" class="form-control" placeholder="Full Name" name="FullName" />
                                         <label>Full Name</label>
                                         <span asp-validation-for="FullName" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-floating theme-form-floating">
-                                        <input asp-for="Email" class="form-control" placeholder="Email" />
+                                        <input asp-for="Email" class="form-control" placeholder="Email" name="Email"/>
                                         <label>Email</label>
                                         <span asp-validation-for="Email" class="text-danger"></span>
                                     </div>
@@ -227,7 +227,7 @@
 
                                 <div class="col-12">
                                     <div class="form-floating theme-form-floating">
-                                        <input asp-for="Password" class="form-control" placeholder="Password" />
+                                        <input asp-for="Password" type="password" class="form-control" placeholder="Password" name="Password" />
                                         <label>Password</label>
                                         <span asp-validation-for="Password" class="text-danger"></span>
                                     </div>
@@ -247,6 +247,7 @@
                                 </div>
                                 <div class="validation-summary-errors col-12">
                                     @* @Html.ValidationSummary(false, "", new { @class = "text-danger" }) *@
+                                    <div asp-validation-summary="All" class="text-danger"></div>
                                 </div>
                                 <div class="col-12">
                                     <button class="btn btn-animation w-100" type="submit" id="registerButton" disabled>Register</button>
