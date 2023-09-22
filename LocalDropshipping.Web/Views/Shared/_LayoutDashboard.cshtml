@@ -4,7 +4,7 @@
     Layout = null;
     bool isAdmin = TempData["IsAdmin"] as bool? ?? false;
     bool isSuperAdmin = TempData["IsSuperAdmin"] as bool? ?? false;
-    var data = Context.Session.GetString("CurrentUser");
+    var data = Context.Items["CurrentUser"].ToString();
     var currentUserData = JsonConvert.DeserializeObject<User>(data);
 
 }
