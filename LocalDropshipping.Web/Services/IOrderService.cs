@@ -12,5 +12,6 @@ namespace LocalDropshipping.Web.Services
         List<Order> GetByEmail(string sellerEMail);
         Order? Delete(int orderId);
         Order? Update(int orderid, OrderDto order);
+        decimal? GetProfit(string email);
     }
 }

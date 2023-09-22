@@ -10,10 +10,12 @@ namespace LocalDropshipping.Web.Services
     public class OrderService : IOrderService
     {
         private readonly LocalDropshippingContext _context;
+        private readonly IFocSettingService _focSettingService;
 
-        public OrderService(LocalDropshippingContext context)
+        public OrderService(LocalDropshippingContext context, IFocSettingService focSettingService)
         {
             _context = context;
+            _focSettingService = focSettingService;
         }
 
 		public Order AddOrder(List<OrderItem> cart, string email, decimal sellPrice)
@@ -113,16 +115,25 @@ namespace LocalDropshipping.Web.Services
             return _context.Orders.Count(x => x.OrderStatus == status);
         }
 
-        //Order? IOrderService.AddOrder(List<OrderItem> cart, string email)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
         Order? IOrderService.Add(Order order)
         {
             throw new NotImplementedException();
         }
-        
+        public decimal? GetProfit(string email)
+        {
+            decimal profit = 0;
+            decimal cost = 0;
+            int totalPendingOrders = 0;
+            var orders=_context.Orders.Where(o=>o.OrderStatus==OrderStatus.Pending && o.Seller==email).ToList();
+            if (orders.Any())
+            {
+                profit = orders.Sum(o => o.SellPrice - o.GrandTotal - ShippingCost());
+            }
+            cost = _context.Orders.Where(o => o.OrderStatus == OrderStatus.Return && o.Seller == email).Sum(o => -ShippingCost());
+            totalPendingOrders = _context.Orders.Count(o => o.OrderStatus == 0 && o.Seller == email);
+            profit -= cost;
+            return profit;
+        }
         private int GenerateOrderId()
         {
 			int orderId;
@@ -134,6 +145,11 @@ namespace LocalDropshipping.Web.Services
 			while (GetById(orderId)!= null ? true:false);
 
             return orderId;
+        }
+        private decimal ShippingCost()
+        {
+            string shippingCost = "Shipping Cost";
+            return Convert.ToDecimal(_focSettingService.GetShippingCost(shippingCost));
         }
     }
 }
