@@ -18,6 +18,7 @@ using System.Net;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using LocalDropshipping.Web.Helpers.Constants;
 
 namespace LocalDropshipping.Web.Controllers
 {
@@ -324,7 +325,7 @@ namespace LocalDropshipping.Web.Controllers
 
 
         [HttpGet]
-        [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
+       // [AuthorizeOnly(Roles.Admin | Roles.SuperAdmin, "AdminLogin", "Admin")]
         public IActionResult OrdersList([FromQuery] Pagination pagination, string searchString, string sortOrder, string currentFilter)
         {
             try
@@ -387,6 +388,32 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         #endregion
+
+        [HttpPost]
+        //[AuthorizeOnly(Roles.SuperAdmin | Roles.Admin, "AdminLogin", "Admin")]
+        public IActionResult OrdersList(OrderViewModel orderViewModel)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                    var email = _userService.GetUserEmailById(userId);
+                    orderViewModel.UpdatedBy = email;
+                    var result = _orderService.UpdateOrder(orderViewModel);
+                    return RedirectToAction("OrdersList");
+                }
+                else
+                {
+                    return RedirectToAction("OrdersList");
+                }
+            }
+            catch (Exception)
+            {
+                TempData["notificationMessage"] = Constants.ErrorMessage.FailedToUpdateOrder;
+                return RedirectToAction("OrdersList");
+            }
+        }
 
         [HttpGet]
         [AuthorizeOnly(Roles.SuperAdmin | Roles.Admin, "AdminLogin", "Admin")]
@@ -635,7 +662,7 @@ namespace LocalDropshipping.Web.Controllers
                     Succeeded = true,
                     Message = "Data retrieved successfully",
                 };
-                return View(pageResponse);
+                return View("Withdrawal",pageResponse);
             }
             catch (Exception)
             {

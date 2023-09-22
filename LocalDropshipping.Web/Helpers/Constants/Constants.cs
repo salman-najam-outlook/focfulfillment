@@ -23,6 +23,7 @@
             public const string _401 = "You are not authorized";
             public const string ErrorDuringMigration = "An error occured during migration";
             public const string UserNotFound = "User Not Found!Please create new account";
+            public const string FailedToUpdateOrder = "Failed to update order please try later...";
         }
 
         public static class ContentTypeFiles

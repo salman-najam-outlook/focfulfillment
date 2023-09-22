@@ -622,7 +622,7 @@ namespace LocalDropshipping.Web.Controllers
                 var count = orders.Count();
                 orders = orders.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
 
-                return View(new PageResponse<List<Order>>(orders, pagination.PageNumber, pagination.PageSize, count));
+                return View("SellerOrders", new PageResponse<List<Order>>(orders, pagination.PageNumber, pagination.PageSize, count));
             }
             catch (Exception ex)
             {
