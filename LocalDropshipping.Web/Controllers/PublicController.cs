@@ -49,10 +49,12 @@ namespace LocalDropshipping.Web.Controllers
         }
         #endregion
 
+        #region AuthrizationFailed
         public IActionResult AuthorizationFailed()
         {
             return View();
         }
+        #endregion
 
     }
 }

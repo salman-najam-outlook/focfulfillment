@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -39,7 +45,7 @@
     <link id="color-link" rel="stylesheet" type="text/css" href="~/assets/css/style.css">
 </head>
 
-<body >
+<body>
 
     <!-- Header Start -->
     <header class="pb-md-4 pb-0">
@@ -82,6 +88,8 @@
                             </div>
                         </div>
                     </div>
+
+
                 </div>
             </div>
         </div>
@@ -91,161 +99,9 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="navbar-top">
-                            <button class="navbar-toggler d-xl-none d-inline navbar-menu-button" type="button"
-                                    data-bs-toggle="offcanvas" data-bs-target="#primaryMenu">
-                                <span class="navbar-toggler-icon">
-                                    <i class="fa-solid fa-bars"></i>
-                                </span>
-                            </button>
-                            <a href="Shop" class="web-logo nav-logo">
-                                <img src="../assets/images/logo/1.png" class="img-fluid blur-up lazyload" alt="">
+                            <a asp-action="Shop" asp-controller="Seller" class="web-logo nav-logo">
+                                <img src="~/assets/images/logo/1.png" class="img-fluid blur-up lazyload" alt="">
                             </a>
-
-
-
-                            <div class="header-nav col-lg-6">
-                                <div class="header-nav-left">
-                                    <a asp-controller="Seller" asp-action="Shop" class="text-content">
-                                        <button class="dropdown-category" style="float: left;">
-                                            <span>Shop</span>
-                                        </button>
-                                    </a>
-                                </div>
-                            </div>
-
-
-
-                            <div class="rightside-box">
-                                <div class="search-full">
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <i data-feather="search" class="font-light"></i>
-                                        </span>
-                                        <input type="text" class="form-control search-type" placeholder="Search here..">
-                                        <span class="input-group-text close-search">
-                                            <i data-feather="x" class="font-light"></i>
-                                        </span>
-                                    </div>
-                                </div>
-                                <ul class="right-side-menu">
-                                    <li class="right-side">
-                                        <div class="delivery-login-box">
-                                            <div class="delivery-icon">
-                                                <div class="search-box">
-                                                    <i data-feather="search"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-
-                                    <li class="right-side">
-                                        <a asp-action="Wishlist" asp-controller="Seller" id="wishListTab" class="btn p-0 position-relative header-wishlist">
-                                            <i data-feather="heart"></i>
-                                        </a>
-                                    </li>
-                                    <li class="right-side">
-                                        <div class="onhover-dropdown header-badge">
-                                            <button type="button" class="btn p-0 position-relative header-wishlist">
-                                                <i data-feather="shopping-cart"></i>
-                                                <span class="position-absolute top-0 start-100 translate-middle badge">
-                                                    2
-                                                    <span class="visually-hidden">unread messages</span>
-                                                </span>
-                                            </button>
-
-                                            <div class="onhover-div">
-                                                <ul class="cart-list">
-                                                    <li class="product-box-contain">
-                                                        <div class="drop-cart">
-                                                            <a href="product-left-thumbnail.html" class="drop-image">
-                                                                <img src="../assets/images/vegetable/product/1.png"
-                                                                     class="blur-up lazyload" alt="">
-                                                            </a>
-
-                                                            <div class="drop-contain">
-                                                                <a href="product-left-thumbnail.html">
-                                                                    <h5>Fantasy Crunchy Choco Chip Cookies</h5>
-                                                                </a>
-                                                                <h6><span>1 x</span> $80.58</h6>
-                                                                <button class="close-button close_button">
-                                                                    <i class="fa-solid fa-xmark"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-
-                                                    <li class="product-box-contain">
-                                                        <div class="drop-cart">
-                                                            <a href="product-left-thumbnail.html" class="drop-image">
-                                                                <img src="../assets/images/vegetable/product/2.png"
-                                                                     class="blur-up lazyload" alt="">
-                                                            </a>
-
-                                                            <div class="drop-contain">
-                                                                <a href="product-left-thumbnail.html">
-                                                                    <h5>
-                                                                        Peanut Butter Bite Premium Butter Cookies 600 g
-                                                                    </h5>
-                                                                </a>
-                                                                <h6><span>1 x</span> $25.68</h6>
-                                                                <button class="close-button close_button">
-                                                                    <i class="fa-solid fa-xmark"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-
-                                                <div class="price-box">
-                                                    <h5>Total :</h5>
-                                                    <h4 class="theme-color fw-bold">$106.58</h4>
-                                                </div>
-
-                                                <div class="button-group">
-                                                    <a href="Cart" class="btn btn-sm cart-button">View Cart</a>
-                                                    <a href="checkout.html" class="btn btn-sm cart-button theme-bg-color
-                                                    text-white">Checkout</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="right-side onhover-dropdown">
-                                        <div class="delivery-login-box">
-                                            <div class="delivery-icon">
-                                                <i data-feather="user"></i>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="onhover-div onhover-div-login">
-                                            <ul class="user-box-name">
-                                                <li class="product-box-contain">
-                                                    <a asp-action="SellerDashboard" asp-controller="Seller">Dashboard</a>
-                                                </li>
-
-                                                <li class="product-box-contain">
-                                                    <a asp-action="Shop" asp-controller="Seller">Shop</a>
-                                                </li>
-                                                <li class="product-box-contain">
-                                                    <a asp-action="Wishlist" asp-controller="Seller">Wishlist</a>
-                                                </li>
-                                                <li class="product-box-contain">
-                                                    <i></i>
-                                                    <a data-bs-toggle="modal" data-bs-target="#staticBackdrop"
-                                                       href="javascript:void(0)">
-                                                        Logout
-                                                    </a>
-
-
-                                                </li>
-
-                                                <li class="product-box-contain">
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -253,20 +109,15 @@
         </div>
     </header>
     <!-- Header End -->
-
-
-
     <!-- About Section Start -->
-     @RenderBody()
+    @RenderBody()
     <!-- About Section End -->
-
     <!-- Footer Section Start -->
     <footer class="section-t-space">
         <div class="container-fluid-lg">
             <div class="service-section">
                 <div class="row g-3">
                     <div class="col-12">
-                      
                     </div>
                 </div>
             </div>
@@ -287,12 +138,12 @@
                                     perfect place for a couple.
                                 </p>
 
-                            
+
                             </div>
                         </div>
                     </div>
 
-         
+
 
                     <div class="col-xl-4 col-lg-2 col-sm-3">
                         <div class="footer-title">
@@ -324,7 +175,7 @@
                         </div>
                     </div>
 
-                   
+
 
                     <div class="col-xl-4 col-lg-4 col-sm-6">
                         <div class="footer-title">
@@ -367,6 +218,11 @@
                         </p>
                     </h6>
                 </div>
+                @*
+                <div class="payment">
+                <img src="~/assets/images/payment/1.png" class="blur-up lazyload" alt="">
+                </div>*@
+
                 <div class="social-link">
                     <h6 class="text-content">Stay connected :</h6>
                     <ul>
@@ -385,7 +241,7 @@
                                 <i class="fa-brands fa-instagram"></i>
                             </a>
                         </li>
-                   
+
                     </ul>
                 </div>
             </div>
