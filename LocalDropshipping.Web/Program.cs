@@ -69,6 +69,8 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IConsumerService, ConsumerService>();
 
+
+
 builder.Services.Configure<SMTPConfigModel>(builder.Configuration.GetSection("SMTPConfig"));
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
@@ -94,6 +96,7 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Foc Fulfilment");
 });
 
+
 app.UseSession();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -103,6 +106,9 @@ app.UseAuthentication();
 app.UseMiddleware<AuthenticationMiddleware>();
 app.UseAuthorization();
 app.UseSession();
+
+app.UseMiddleware<ExceptionMiddleware>();
+
 
 app.MapControllerRoute(
     name: "default",

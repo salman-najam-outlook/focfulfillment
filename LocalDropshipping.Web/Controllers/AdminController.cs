@@ -9,9 +9,11 @@ using LocalDropshipping.Web.Helpers;
 using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging;
+using System.Net;
 using System.Security.Claims;
 
 namespace LocalDropshipping.Web.Controllers
@@ -576,31 +578,38 @@ namespace LocalDropshipping.Web.Controllers
             ViewBag.Categories = _categoryService.GetAll();
             return View(model);
         }
-       
         public IActionResult Withdrawal([FromQuery] Pagination pagination)
         {
-            var withdrawals = new List<Withdrawals>();
-              
-            if(pagination.PaymentStatus != "All" || (pagination.From != DateTime.MinValue && pagination.To != DateTime.MinValue))
+            try
             {
-               withdrawals = _withdrawlsService.GetFilteredWithdrawals(pagination);
-            }
-            else
-            {
-               withdrawals = _withdrawlsService.GetAll();
-            }
-              
-            var profiles = _profilesService.GetAllProfiles();
+                var withdrawals = new List<Withdrawals>();
 
-            var combinedData = getProfileAndWithdrawalData(withdrawals, profiles);
-                
-            var count = combinedData.Count();
-                
-            combinedData = combinedData.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
-               
-            return View(new PageResponse<List<AddWithdrawalUserViewModel>>(combinedData.ToList(), pagination.PageNumber, pagination.PageSize, count));
+                if (pagination.PaymentStatus != "All" || (pagination.From != DateTime.MinValue && pagination.To != DateTime.MinValue))
+                {
+                    withdrawals = _withdrawlsService.GetFilteredWithdrawals(pagination);
+                }
+                else
+                {
+                    withdrawals = _withdrawlsService.GetAll();
+                }
+                var profiles = _profilesService.GetAllProfiles();
+                var combinedData = getProfileAndWithdrawalData(withdrawals, profiles);
+                var count = combinedData.Count();
+                combinedData = combinedData.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+                var pageResponse = new PageResponse<List<AddWithdrawalUserViewModel>>(combinedData.ToList(), pagination.PageNumber, pagination.PageSize, count)
+                {
+                    Succeeded = true,
+                    Message = "Data retrieved successfully",
+                };
+                return View(pageResponse);
+            }
+            catch (Exception)
+            {
+                TempData["notificationMessage"] = "Something went wrong";
+                return RedirectToAction("Dashboard", "Admin");
+            }
         }
-       
+
         [HttpPost]
         public IActionResult Withdrawal(PaymentViewModel model)
         {
