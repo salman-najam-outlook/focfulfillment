@@ -165,8 +165,9 @@
                                                                             <div class="form-floating theme-form-floating">
                                                                                 <input type="text" asp-for="@Model.City" placeholder="City" class="form-control" required />
                                                                                 <label>City</label>
-                                                                                <span asp-validation-for="@Model.City" class="text-danger"></span>
-                                                                            </div>
+                                                                               @*  <span asp-validation-for="@Model.City" class="text-danger"></span> *@
+                                                                            <span asp-validation-for="City" class="text-danger"></span>
+                                                                        </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -677,5 +678,6 @@
             });
         });
     </script>
+
 @* </body>
 </html> *@

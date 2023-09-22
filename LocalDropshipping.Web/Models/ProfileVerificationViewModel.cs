@@ -10,6 +10,7 @@ namespace LocalDropshipping.Web.Models
         [StringLength(100, ErrorMessage = "Store Name cannot be longer than 100 characters.")]
         public string StoreName { get; set; }
 
+        [Required(ErrorMessage = "Store URL is required.")]
         [StringLength(100, ErrorMessage = "Store URL cannot be longer than 100 characters.")]
         public string StoreURL { get; set; }
 
@@ -25,9 +26,11 @@ namespace LocalDropshipping.Web.Models
         [StringLength(100, ErrorMessage = "Bank Account Number/IBAN cannot be longer than 100 characters.")]
         public string BankAccountNumberOrIBAN { get; set; }
 
+        [Required(ErrorMessage = "Bank branch is required.")]
         [StringLength(250, ErrorMessage = "Bank Branch cannot be longer than 250 characters.")]
         public string BankBranch { get; set; }
 
+        [Required(ErrorMessage = "Address is required.")]
         [StringLength(250, ErrorMessage = "Address cannot be longer than 250 characters.")]
         public string Address { get; set; }
 
