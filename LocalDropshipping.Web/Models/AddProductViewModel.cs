@@ -7,7 +7,7 @@
         public decimal Price { get; set; }
         public string? ImageLink { get; set; }
         public int Stock { get; set; }
-        public bool IsFeatured { get; set; }
+        public bool IsTopRated { get; set; }
         public int CategoryId { get; set; }
     }
 }

@@ -5,7 +5,7 @@
 @using LocalDropshipping.Web.Helpers;
 @model PageResponse<List<User>>;
 @{
-    ViewBag.Title = "FOC Fulfillment - Get All Sellers";
+    ViewBag.Title = "FOCFulfillment - Vendors";
 
     Layout = "_LayoutDashboard";
 }
@@ -70,6 +70,11 @@
         }
 
     .colorBtn {
+        color: red;
+        border: red;
+    }
+
+    .colorBtn:hover {
         color: red;
         border: red;
     }
@@ -138,7 +143,7 @@
                                                 </li>
                                                 <li>
                                                     <form method="post" id="txtdelete" asp-controller="Admin" asp-action="DeleteUser" asp-route-id="@user.Id">
-                                                        <button type="submit" class="btn btn-link colorBtn">
+                                                        <button type="submit" class="btn colorBtn">
                                                             <i class="ri-delete-bin-line"></i>
                                                         </button>
                                                     </form>
