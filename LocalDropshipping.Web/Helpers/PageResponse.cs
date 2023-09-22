@@ -15,10 +15,10 @@
         public int pageNumber { get; set; }
         public int pageSize { get; set; }
         public int totalCount { get; set; }
-        public string PaymentStatus { get; set; }
-        public DateTime From { get; set; }
-        public DateTime To { get; set; }
-        public int StatusCode { get; set; }
+        public string? PaymentStatus { get; set; }
+        public DateTime? From { get; set; }
+        public DateTime? To { get; set; }
+        public int? StatusCode { get; set; }
         //public string Search { get; set; }
     }
 }

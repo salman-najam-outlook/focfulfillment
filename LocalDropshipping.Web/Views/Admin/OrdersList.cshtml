@@ -35,15 +35,18 @@
                                     <thead>
                                         <tr>
                                             <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Order Id</th>
+                                            <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Order Tracking Id</th>
                                             <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">
                                                 @Html.ActionLink("Order Date", "OrdersList","Admin", new { sortOrder =  ViewBag.DateSortParm, searchString=ViewBag.CurrentFilter })
                                                 <i class="fas fa-sort"></i>
                                             </th>
-                                            <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Delivery Status </th>
+                                            <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Delivery Status</th>
+                                            <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Courier Service</th>
                                             <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">
                                                 @Html.ActionLink("Price", "OrdersList","Admin", new { sortOrder = ViewBag.PriceSortParm, searchString=ViewBag.CurrentFilter })
                                                 <i class="fas fa-sort"></i>
                                             </th>
+                                            <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 170px;">Sell Price</th>
                                             <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 180.938px;">Option</th>
                                         </tr>
                                     </thead>
@@ -52,6 +55,7 @@
                                         {
                                             <tr data-bs-toggle="offcanvas" href="#order-details" class="odd">
                                                 <td>@order.Id</td>
+                                                <td>@order.OrderTrackingId</td>
                                                 <td>@order.CreatedDate.ToString("MMM dd yyyy")</td>
                                                 @if (order.OrderStatus == LocalDropshipping.Web.Enums.OrderStatus.Delivered)
                                                 {
@@ -65,7 +69,9 @@
                                                         <span>@order.OrderStatus</span>
                                                     </td>
                                                 }
+                                                <td>@order.CourierServiceType</td>
                                                 <td>Rs.@order.GrandTotal.ToString("N0")/-</td>
+                                                <td>Rs.@order.SellPrice.ToString("N0")/-</td>
                                                 <td>
                                                     <ul>
                                                         <li>
@@ -73,32 +79,79 @@
                                                                 <i class="ri-eye-line" style="color:#0DA487"></i>
                                                             </a>
                                                         </li>
-
                                                         <li>
                                                             <a href="javascript:void(0)">
-                                                                <i class="ri-pencil-line" style="color:#0DA487"></i>
+                                                                <i class="ri-pencil-line" style="color:#0DA487"
+                                                                   data-bs-toggle="modal"
+                                                                   data-bs-target="#editPopup"
+                                                                   data-order-id="@order.Id"
+                                                                   onclick="openPopup(this)">
+                                                                </i>
                                                             </a>
                                                         </li>
-
                                                         <li>
                                                             <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle">
                                                                 <i class="ri-delete-bin-line"></i>
                                                             </a>
                                                         </li>
-                                                        <li>
-                                                            <a class="btn btn-sm btn-solid text-white" href="order-tracking.html">
-                                                                Tracking
-                                                            </a>
-                                                        </li>
                                                     </ul>
                                                 </td>
-
                                             </tr>
                                         }
                                     </tbody>
                                 </table>
+                                <div id="editPopup" class="modal" style="display: none;">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header p-b-25">
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="closePopup()" aria-label="Close">
+                                                </button>
+                                            </div>
+                                            <form id="orderForm" method="post" asp-action="OrdersList" asp-controller="Admin">
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="OrderId" id="OrderIdHidden" />
+                                                    <div class="deal-offer-box">
+                                                        <div class="form-group">
+                                                            <label for="OrderId">Order Id:</label>
+                                                            <input type="number" name="OrderId" class="form-control" disabled id="OrderId" placeholder="Order Id">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="OrderStatus">Order Status:</label>
+                                                            <select class="form-select form-control" name="OrderStatus" id="OrderStatus">
+                                                                <option value="Pending">Pending</option>
+                                                                <option value="InProcess">InProcess</option>
+                                                                <option value="Delivered">Delivered</option>
+                                                                <option value="Cancelled">Cancelled</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="CourierServiceType">Courier Service:</label>
+                                                            <select class="form-select form-control" name="CourierServiceType" id="CourierServiceType">
+                                                                <option value="Leopard">Leopard</option>
+                                                                <option value="Trax">Trax</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="OrderTrackingId">Order Tracking Id:</label>
+                                                            <input type="number" name="OrderTrackingId" class="form-control" id="OrderTrackingId" placeholder="Order Tracking Id">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="Reason">Special Instructions:</label>
+                                                            <textarea class="form-control" name="SpecialInstructions" id="SpecialInstructions" rows="4" placeholder="Special Instructions"></textarea>
+                                                        </div>
+                                                        <br />
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary text-white" data-bs-dismiss="modal" onclick="closePopup()">Close</button>
+                                                        <button type="submit" class="btn btn-solid text-white" onclick="closePopup()">Save</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                             <nav aria-label="Page navigation" class="custome-pagination mt-2">
+                             <nav aria-label="Page navigation" class="custome-pagination mt-3">
                                <ul class="pagination justify-content-center">
                                     @if (Model.pageNumber > 1)
                                     {
@@ -134,4 +187,45 @@
     </div>
 </div>
 
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="~/backend-assets/js/notify/bootstrap-notify.min.js"></script>
+<script>
+    function openPopup(button) {
+        var OrderId = button.getAttribute('data-order-id');
+
+        document.getElementById('OrderIdHidden').value = OrderId;
+        document.getElementById('OrderId').value = OrderId;
+
+        document.getElementById('editPopup').style.display = 'block';
+    }
+
+    function closePopup() {
+        document.getElementById('editPopup').style.display = 'none';
+    }
+
+    function confirmPayment() {
+        closePopup();
+    }
+    var notificationMessage = '@TempData["notificationMessage"]';
+
+    console.log(notificationMessage);
+
+    if (notificationMessage) {
+        var notify = $.notify('<i class="fas fa-bell"></i><strong>Loading</strong> ' + notificationMessage, {
+            type: 'theme',
+            allow_dismiss: true,
+            delay: 4000,
+            showProgressbar: true,
+            timer: 300,
+            animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp'
+            }
+        });
+
+        '@TempData.Remove("notificationMessage")';
+    }
+</script>
 

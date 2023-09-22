@@ -2,6 +2,7 @@
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
 using LocalDropshipping.Web.Enums;
+using LocalDropshipping.Web.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
@@ -134,6 +135,22 @@ namespace LocalDropshipping.Web.Services
 			while (GetById(orderId)!= null ? true:false);
 
             return orderId;
+        }
+
+        public Order UpdateOrder(OrderViewModel orderViewModel)
+        {
+            Order result = (from p in _context.Orders
+                                  where p.Id == orderViewModel.OrderId
+                                  select p).SingleOrDefault();
+
+            result.OrderStatus = orderViewModel.OrderStatus;
+            result.CourierServiceType = orderViewModel.CourierServiceType;
+            result.OrderTrackingId = orderViewModel.OrderTrackingId;
+            result.SpecialInstructions = orderViewModel.SpecialInstructions;
+            result.UpdatedDate = DateTime.UtcNow;
+            result.UpdatedBy = orderViewModel.UpdatedBy;
+            _context.SaveChanges();
+            return result;
         }
     }
 }
