@@ -2,9 +2,27 @@
 @using LocalDropshipping.Web.Helpers;
 @model PageResponse<List<AddProductVariantViewModel>>
 @{
-    ViewBag.Title = "FOC-FulFillment-WishList";
+    ViewBag.Title = "FOCFulFillment - WishList";
     Layout = "_LayoutSellerDashboard";
 }
+<style>
+    .title-leaf {
+        width: 240px;
+        text-align: end;
+        position: relative;
+        z-index: 0;
+    }
+</style>
+<div class="title">
+    <h2>My Wishlist</h2>
+    <span class="title-leaf title-leaf-gray">
+        <svg class="icon-width bg-gray">
+            <use xlink:href="https://themes.pixelstrap.com/fastkart/assets/svg/leaf.svg#leaf"></use>
+        </svg>
+    </span>
+</div>
+
+
 <div class="row g-sm-3 g-2">
     @if (Model != null && Model.totalCount > 0)
     {

@@ -1,6 +1,7 @@
 ﻿using LocalDropshipping.Web.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace LocalDropshipping.Web.Services
 {
@@ -17,8 +18,7 @@ namespace LocalDropshipping.Web.Services
 		async Task<Microsoft.AspNetCore.Identity.SignInResult> IAdminService.AdminLoginUser(string email, string password)
 		{
 			var result = await _signInManager.PasswordSignInAsync(email, password, false, lockoutOnFailure: false);
-
-			return result;
+            return result;
 		}
 		public async Task<bool> IsUserSuperAdminAsync(string email)
 		{
@@ -37,7 +37,10 @@ namespace LocalDropshipping.Web.Services
 			var user = await userManager.FindByEmailAsync(email);
 			return user != null && user.IsAdmin;
 		}
-	}
 
-	
-	}
+        public async Task<User> GetUserByEmail(string email)
+        {
+			return await userManager.FindByEmailAsync(email);
+        }
+    }
+}
