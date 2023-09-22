@@ -2,17 +2,24 @@
 @using LocalDropshipping.Web.Helpers;
 @model PageResponse<List<Order>>;
 @{
-    ViewBag.Title = "FOC-FulFillment-Seller Orders";
+    ViewBag.Title = "FOCFulFillment - Seller Orders";
 
     Layout = "_LayoutSellerDashboard";
 }
-
+<style>
+    .title-leaf {
+        width: 240px;
+        text-align: end;
+        position: relative;
+        z-index: 0;
+    }
+</style>
 <body>
 
     <div class="tab-pane fade active show" id="pills-order" role="tabpanel" aria-labelledby="pills-order-tab">
         <div class="dashboard-order">
             <div class="title">
-                <h2>All Orders</h2>
+                <h2>My Orders</h2>
                 <span class="title-leaf title-leaf-gray">
                     <svg class="icon-width bg-gray">
                         <use xlink:href="https://themes.pixelstrap.com/fastkart/assets/svg/leaf.svg#leaf"></use>
@@ -26,10 +33,12 @@
                         <thead>
                             <tr>
                                 <th scope="col">Order ID</th>
+                                <th scope="col">Order Tracking Id</th>
                                 <th scope="col">Order Date</th>
                                 <th scope="col">Status</th>
-                                <th scope="col">Price</th>
-
+                                <th scope="col">Courier Service</th>
+                                <th scope="col">Order Price</th>
+                                <th scope="col">Sell Price</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -37,7 +46,8 @@
                             {
                                 <tr>
                                     <td>@order.Id</td>
-                                    <td>@order.CreatedDate</td>
+                                    <td>@order.OrderTrackingId</td>
+                                    <td>@order.CreatedDate.ToString("MMM dd yyyy")</td>
                                     <td>
                                         @if (order.OrderStatus == LocalDropshipping.Web.Enums.OrderStatus.Delivered)
                                         {
@@ -48,6 +58,8 @@
                                             <label class="danger">@order.OrderStatus</label>
                                         }
                                     </td>
+                                    <td>@order.CourierServiceType</td>
+                                    <td>Rs.@order.SellPrice.ToString("N0")/-</td>
                                     <td>Rs.@order.GrandTotal.ToString("N0")/-</td>
                                 </tr>
                             }

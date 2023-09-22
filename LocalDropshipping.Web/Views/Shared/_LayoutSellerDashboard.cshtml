@@ -1,12 +1,8 @@
-﻿@{
-
-    Layout = null;
-}
-@using Newtonsoft.Json;
+﻿@using Newtonsoft.Json;
 @using LocalDropshipping.Web.Data.Entities;
-
 @{
-    var data = Context.Session.GetString("CurrentUser");
+    Layout = null;
+    var data = Context.Items["CurrentUser"].ToString();
     var currentUserData = JsonConvert.DeserializeObject<User>(data);
 }
 <!DOCTYPE html>
@@ -61,9 +57,9 @@
     <link rel="stylesheet" type="text/css" href="~/backend-assets/css/style.css">
 
 
-@*     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
+    @*     <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <link rel="stylesheet" type="text/css" href="~/backend-assets/css/vendors/bootstrap.css">
- *@
+    *@
     @* <link rel="stylesheet" type="text/css" href="~/backend-assets/css/vendors/themify.css" rel="stylesheet"> *@
 
     @* For Logout vModal *@
@@ -77,8 +73,12 @@
     <script src="../assets/js/jquery-ui.min.js"></script>
 
     <style>
-        .nav-pills .nav-item .nav-link:after{
+        .nav-pills .nav-item .nav-link:after {
             height: 0px !important;
+        }
+
+        .nav-pills {
+            border-bottom:none;  /* 1px solid #ddd; */ 
         }
     </style>
 </head>
@@ -154,21 +154,6 @@
                             <a href="Shop" class="web-logo nav-logo">
                                 <img src="../assets/images/logo/1.png" class="img-fluid blur-up lazyload" alt="">
                             </a>
-
-
-
-                           @*  <div class="header-nav col-lg-6">
-                                <div class="header-nav-left">
-                                    <a asp-controller="Seller" asp-action="Shop" class="text-content">
-                                        <button class="dropdown-category" style="float: left;">
-                                            <span>Shop</span>
-                                        </button>
-                                    </a>
-                                </div>
-                            </div> *@
-
-
-
                             <div class="rightside-box">
                                 <div class="search-full">
                                     <div class="input-group">
@@ -193,7 +178,7 @@
                                     </li>
 
                                     <li class="right-side">
-                                        <a asp-action="WishList" asp-controller="Seller" id="wishListTab" class="btn p-0 position-relative header-wishlist">
+                                        <a asp-action="Wishlist" asp-controller="Seller" id="wishListTab" class="btn p-0 position-relative header-wishlist">
                                             <i data-feather="heart"></i>
                                         </a>
                                     </li>
@@ -216,15 +201,13 @@
                                                     <a asp-action="Shop" asp-controller="Seller">Shop</a>
                                                 </li>
                                                 <li class="product-box-contain">
-                                                    <a asp-action="WishList" asp-controller="Seller">WishList</a>
+                                                    <a asp-action="Wishlist" asp-controller="Seller">Wishlist</a>
                                                 </li>
                                                 <li class="product-box-contain">
                                                     <i></i>
-                                                    @* <a href="login.html">Log In</a> *@
-                                                    @* <a asp-action="SellerLogout" asp-controller="Seller">Logout</a> *@
-                                                    @* <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" id="pills-out-tab" role="tab">Logout</a> *@
                                                     <a data-bs-toggle="modal" data-bs-target="#staticBackdrop"
-                                                       href="javascript:void(0)">Logout
+                                                       href="javascript:void(0)">
+                                                        Logout
                                                     </a>
 
 
@@ -235,7 +218,7 @@
                                                 </li>
 
                                                 @* <li class="product-box-contain">
-                                                    <a href="ForgotPassword">Forgot Password</a>
+                                                <a href="ForgotPassword">Forgot Password</a>
                                                 </li> *@
 
 
@@ -251,29 +234,6 @@
         </div>
     </header>
     <!-- Header End -->
-    <!-- Breadcrumb Section Start -->
-    <section class="breadscrumb-section pt-0">
-        <div class="container-fluid-lg">
-            <div class="row">
-                <div class="col-12">
-                    <div class="breadscrumb-contain">
-                        <h2>Seller Dashboard</h2>
-                        <nav>
-                            <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item">
-                                    <a asp-action="SellerDashboard" asp-controller="Seller">
-                                        <i class="fa-solid fa-house"></i>
-                                    </a>
-                                </li>
-                                <li class="breadcrumb-item active" aria-current="page">Seller Dashboard</li>
-                            </ol>
-                        </nav>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Breadcrumb Section End -->
     <!-- User Dashboard Section Start -->
     <section class="user-dashboard-section section-b-space">
         <div class="container-fluid-lg">
@@ -285,7 +245,7 @@
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
                         </div>
-                         
+
                         @* Image Box Div *@
                         <div class="close-button d-flex d-lg-none">
                             <button class="close-sidebar">
@@ -296,14 +256,14 @@
                             <div class="cover-image">
                                 <img src="../assets/images/inner-page/cover-img.jpg" class="img-fluid blur-up lazyload"
                                      alt="">
-                                    
+
                             </div>
 
                             <div class="profile-contain">
                                 <div class="profile-image">
                                     <div class="position-relative">
                                         @* <img src="../assets/images/vendor-page/logo.png"
-                                             class="blur-up lazyload update_img" alt=""> *@
+                                        class="blur-up lazyload update_img" alt=""> *@
                                         <img src="../ProfileImages/default-profile-image.svg   "
                                              class="blur-up lazyload update_img" alt="">
                                     </div>
@@ -311,7 +271,7 @@
 
                                 <div class="profile-name">
 
-                                
+
                                     @* <h3>Joshua D. Bass</h3> *@
                                     <h3>@currentUserData.Fullname</h3>
                                     <h6 class="text-content">@currentUserData.Email</h6>
@@ -351,7 +311,7 @@
                             </li>
 
                             <li class="nav-item" role="presentation">
-                                <a asp-controller="Seller" asp-action="WishList" class="nav-link" id="pills-wishlist-tab"
+                                <a asp-controller="Seller" asp-action="Wishlist" class="nav-link" id="pills-wishlist-tab"
                                    role="tab" aria-controls="pills-wishlist" aria-selected="false">
                                     <i data-feather="shopping-bag"></i> Wishlist
                                 </a>
@@ -1209,11 +1169,11 @@
 
             if (currentUrl.includes("/Seller/SellerOrders")) {
                 $("#pills-orders-tab").addClass("active").attr("aria-selected", "true");
-            } 
+            }
             else if (currentUrl.includes("/Seller/Withdrawal")) {
                 $("#pills-withdrawals-tab").addClass("active").attr("aria-selected", "true");
             }
-            else if (currentUrl.includes("/Seller/WishList")) {
+            else if (currentUrl.includes("/Seller/Wishlist")) {
                 $("#pills-wishlist-tab").addClass("active").attr("aria-selected", "true");
             }
             else if (currentUrl.includes("/Seller/Reports")) {
@@ -1249,13 +1209,6 @@
                 }
             });
         });
-        // $(document).ready(function () {
-        //     $(".nav-link").click(function () {
-        //         $(".nav-link").removeClass("active").attr("aria-selected", "false");
-
-        //         $(this).addClass("active").attr("aria-selected", "true");
-        //     });
-        // });
     </script>
 </body>
 </html>

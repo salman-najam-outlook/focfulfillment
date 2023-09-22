@@ -5,6 +5,7 @@
         Pending,
         InProcess,
         Delivered,
-        Cancelled
+        Cancelled,
+        Return
     }
 }

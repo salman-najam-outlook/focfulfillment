@@ -76,7 +76,7 @@
 	<script src="../assets/js/jquery-ui.min.js"></script>
 </head>
 
-<body class="theme-color-4 bg-gradient-color">
+<body class="theme-color-4 bg-gradient-color container-fluid"> <!--Add Container fluid class in body-->
 
 	<!-- Loader Start -->
 	<div class="fullpage-loader">
@@ -89,7 +89,9 @@
 	</div>
 	<!-- Loader End -->
 	<!-- Header Start -->
-	<header class="pb-0 fixed-header">
+
+	<header> <!--class="pb-0 fixed-header" -->  
+	
 		<div class="top-nav top-header">
 			<div class="container-fluid-xs">
 				<div class="row">
@@ -145,18 +147,14 @@
 											</div>
 										</li>
 										<li class="right-side">
-											<a asp-controller="Public" asp-action="ContactUs" class="delivery-login-box">
+											<a asp-controller="Public" asp-action="ContactUs" class="btn p-0 position-relative header-wishlist">
 												<div class="delivery-icon">
 													<i data-feather="phone-call"></i>
-												</div>
-												<div class="delivery-detail">
-													<h6>24/7 Delivery</h6>
-													<h5>+92 320 1234567</h5>
 												</div>
 											</a>
 										</li>
 										<li class="right-side">
-											<a asp-action="WishList" asp-controller="Seller" class="btn p-0 position-relative header-wishlist">
+											<a asp-action="Wishlist" asp-controller="Seller" class="btn p-0 position-relative header-wishlist">
 												<i data-feather="heart"></i>
 											</a>
 										</li>
@@ -185,7 +183,7 @@
                                                 </li>
 
 												<li class="product-box-contain">
-                                                   <a asp-action="WishList" asp-controller="Seller">WishList</a>
+                                                   <a asp-action="Wishlist" asp-controller="Seller">Wishlist</a>
                                                 </li>
 
 												@* <li class="product-box-contain">
@@ -263,80 +261,7 @@
 	</div>
 	<!-- mobile fix menu end -->
 	<!-- Product Section Start -->
-	<section class="product-section pt-0">
-		<div class="container-fluid p-0">
-			<div class="custom-row">
-				<div class="sidebar-col">
-					<div class="category-menu">
-						<a href="Seller/Shop" class="web-logo nav-logo">
-							<img src="../assets/images/logo/1.png" class="img-fluid blur-up lazyload" alt="">
-						</a>
-						<ul>
-							@foreach (var categorey in ViewBag.categories)
-							{
-								<li>
-								<div class="category-list">
-									<h5>
-										<a href="Seller/FilterPage?searchString=@categorey.Name">@categorey.Name</a>
-									</h5>
-								</div>
-							</li>
-							}
-						</ul>
-					</div>
-				</div>
-
-				<div class="content-col">
-					<div class="section-b-space">
-						<div class="row g-md-4 g-3">
-							<div class="col-xxl-8 col-xl-12 col-md-7">
-								<div class="banner-contain hover-effect"  >
-									<img src="../assets/images/grocery/banner/11.jpg" class="bg-img blur-up lazyload"
-										 alt="">
-									<div class="banner-details p-center-left p-sm-5 p-4">
-										<div>
-											<h2 class="text-kaushan fw-normal orange-color"  >Get Ready To</h2>
-											<h3 class="mt-2 mb-3 text-white">TAKE ON THE DAY!</h3>
-											<p class="text-content banner-text text-white opacity-75 d-md-block d-none">
-												In publishing and graphic design, Lorem ipsum is a placeholder text
-												commonly used to demonstrate.
-											</p>
-											<button onclick="location.href = 'shop-left-sidebar.html';"
-													class="btn btn-animation btn-sm mend-auto">
-												Shop Now <i class="fa-solid fa-arrow-right icon"></i>
-											</button>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<div class="col-xxl-4 col-xl-12 col-md-5">
-								<div class="banner-contain hover-effect h-100">
-									<img src="../assets/images/grocery/banner/12.jpg" class="bg-img blur-up lazyload"
-										 alt="">
-									<div class="banner-details p-center-left p-4 h-100">
-										<div>
-											<h2 class="text-kaushan fw-normal orange-color">Organic</h2>
-											<h3 class="mt-2 mb-3">Fresh</h3>
-											<p class="text-content banner-text w-100">
-												Super Offer to 50%
-												Off
-											</p>
-											<button onclick="location.href = 'shop-left-sidebar.html';"
-													class="btn btn-animation btn-sm mend-auto">
-												Shop Now <i class="fa-solid fa-arrow-right icon"></i>
-											</button>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="title d-block">
-						<h2 class="text-theme font-sm">Food Cupboard</h2>
-						<p>A virtual assistant collects the products from your list</p>
-					</div>
+	
 					@RenderBody()
 
 				</div>

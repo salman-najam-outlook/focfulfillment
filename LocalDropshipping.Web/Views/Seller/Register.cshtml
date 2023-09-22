@@ -1,8 +1,8 @@
 ﻿@model SignupViewModel
 
 @{
-    ViewBag.Title = "FOC-FulFillment-Register";
-    Layout = null;
+    ViewBag.Title = "FOCFulFillment - Register";
+    Layout = "_LayoutGuests";
 }
 
 <!DOCTYPE html>
@@ -58,7 +58,7 @@
     </div>
     <!-- Loader End -->
     <!-- Header Start -->
-    <header class="pb-md-4 pb-0">
+@*     <header class="pb-md-4 pb-0">
         <div class="header-top">
             <div class="container-fluid-lg">
                 <div class="row">
@@ -169,7 +169,7 @@
                 </div>
             </div>
         </div>
-    </header>
+    </header> *@
     <!-- Header End -->
     <!-- About Section Start -->
     <section class="saller-poster-section">
@@ -208,18 +208,18 @@
                         </div>
 
                         <div class="input-box">
-                            <form asp-action="register" id="registerForm" class="row g-4">
+                            <form asp-action="register" id="registerForm" class="row g-4" novalidate>
 
                                 <div class="col-12">
                                     <div class="form-floating theme-form-floating">
-                                        <input asp-for="FullName" class="form-control" placeholder="Full Name" />
+                                        <input asp-for="FullName" class="form-control" placeholder="Full Name" name="FullName" />
                                         <label>Full Name</label>
                                         <span asp-validation-for="FullName" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-floating theme-form-floating">
-                                        <input asp-for="Email" class="form-control" placeholder="Email" />
+                                        <input asp-for="Email" class="form-control" placeholder="Email" name="Email"/>
                                         <label>Email</label>
                                         <span asp-validation-for="Email" class="text-danger"></span>
                                     </div>
@@ -227,7 +227,7 @@
 
                                 <div class="col-12">
                                     <div class="form-floating theme-form-floating">
-                                        <input asp-for="Password" class="form-control" placeholder="Password" />
+                                        <input asp-for="Password" type="password" class="form-control" placeholder="Password" name="Password" />
                                         <label>Password</label>
                                         <span asp-validation-for="Password" class="text-danger"></span>
                                     </div>
@@ -247,6 +247,7 @@
                                 </div>
                                 <div class="validation-summary-errors col-12">
                                     @* @Html.ValidationSummary(false, "", new { @class = "text-danger" }) *@
+                                    <div asp-validation-summary="All" class="text-danger"></div>
                                 </div>
                                 <div class="col-12">
                                     <button class="btn btn-animation w-100" type="submit" id="registerButton" disabled>Register</button>
@@ -295,56 +296,8 @@
     </section>
     <!-- log in section end -->
     <!-- Footer Section Start -->
-    <footer class="section-t-space">
+   @*  <footer class="section-t-space">
         <div class="container-fluid-lg">
-            <div class="service-section">
-                <div class="row g-3">
-                    <div class="col-12">
-                        <div class="service-contain">
-                            <div class="service-box">
-                                <div class="service-image">
-                                    <img src="https://themes.pixelstrap.com/fastkart/assets/svg/product.svg" class="blur-up lazyload" alt="">
-                                </div>
-
-                                <div class="service-detail">
-                                    <h5>Every Fresh Products</h5>
-                                </div>
-                            </div>
-
-                            <div class="service-box">
-                                <div class="service-image">
-                                    <img src="https://themes.pixelstrap.com/fastkart/assets/svg/delivery.svg" class="blur-up lazyload" alt="">
-                                </div>
-
-                                <div class="service-detail">
-                                    <h5>Free Delivery For Order Over $50</h5>
-                                </div>
-                            </div>
-
-                            <div class="service-box">
-                                <div class="service-image">
-                                    <img src="https://themes.pixelstrap.com/fastkart/assets/svg/discount.svg" class="blur-up lazyload" alt="">
-                                </div>
-
-                                <div class="service-detail">
-                                    <h5>Daily Mega Discounts</h5>
-                                </div>
-                            </div>
-
-                            <div class="service-box">
-                                <div class="service-image">
-                                    <img src="https://themes.pixelstrap.com/fastkart/assets/svg/market.svg" class="blur-up lazyload" alt="">
-                                </div>
-
-                                <div class="service-detail">
-                                    <h5>Best Price On The Market</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <div class="main-footer section-b-space section-t-space">
                 <div class="row g-md-4 g-3">
                     <div class="col-xl-3 col-lg-4 col-sm-6">
@@ -354,17 +307,15 @@
                                     <img src="~/assets/images/logo/1.png" class="blur-up lazyload" alt="">
                                 </a>
                             </div>
-
                             <div class="footer-logo-contain">
                                 <p>
                                     We are a friendly bar serving a variety of cocktails, wines and beers. Our bar is a
                                     perfect place for a couple.
                                 </p>
-
                                 <ul class="address">
                                     <li>
                                         <i data-feather="home"></i>
-                                        <a>1418 Riverwood Drive, CA 96052, US</a>
+                                        <a>https://www.focfulfillment.com</a>
                                     </li>
                                     <li>
                                         <i data-feather="mail"></i>
@@ -374,12 +325,10 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
                         <div class="footer-title">
                             <h4>Categories</h4>
                         </div>
-
                         <div class="footer-contain">
                             <ul>
                                 <li>
@@ -403,7 +352,6 @@
                             </ul>
                         </div>
                     </div>
-
                     <div class="col-xl col-lg-2 col-sm-3">
                         <div class="footer-title">
                             <h4>Useful Links</h4>
@@ -527,7 +475,7 @@
                 </div>
             </div>
         </div>
-    </footer>
+    </footer> *@
     <!-- Footer Section End -->
     <!-- Bg overlay Start -->
     <div class="bg-overlay"></div>

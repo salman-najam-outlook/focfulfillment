@@ -4,8 +4,8 @@
 @using static IEnumerable<LocalDropshipping.Web.Data.Entities.OrderItem>
 @model LocalDropshipping.Web.Models.CheckoutViewModel
 @{
-    ViewBag.Title = "FOC-FulFillment-Checkout";
-    Layout = null;
+    ViewBag.Title = "FOCFulFillment - Checkout";
+    Layout = "_Layout";
     var currentuser = TempData["currentUser"];
 }
 @{
@@ -25,177 +25,15 @@
     }
 
 }
-
+@* 
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Fastkart">
-    <meta name="keywords" content="Fastkart">
-    <meta name="author" content="Fastkart">
-    <link rel="icon" href="../assets/images/favicon/1.png" type="image/x-icon">
-    <title>Checkout</title>
+<html lang="en"> *@
 
-    <!-- Google font -->
-    <link rel="preconnect" href="https://fonts.gstatic.com/">
-    <link href="https://fonts.googleapis.com/css2?family=Russo+One&amp;display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&amp;display=swap"
-          rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
-          rel="stylesheet">
 
-    <!-- bootstrap css -->
-    <link id="rtl-link" rel="stylesheet" type="text/css" href="../assets/css/vendors/bootstrap.css">
-
-    <!-- font-awesome css -->
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/font-awesome.css">
-
-    <!-- feather icon css -->
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/feather-icon.css">
-
-    <!-- slick css -->
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/slick/slick.css">
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/slick/slick-theme.css">
-
-    <!-- Iconly css -->
-    <link rel="stylesheet" type="text/css" href="../assets/css/bulk-style.css">
-
-    <!-- Template css -->
-    <link id="color-link" rel="stylesheet" type="text/css" href="../assets/css/style.css">
-</head>
-
-<body>
+@* <body> *@
 
     <!-- Header Start -->
-    <header class="pb-md-4 pb-0">
-        <div class="header-top">
-            <div class="container-fluid-lg">
-                <div class="row">
-                    <div class="col-xxl-3 d-xxl-block d-none">
-                        <div class="top-left-header">
-                            <i class="iconly-Location icli text-white"></i>
-                            <span class="text-white">1418 Riverwood Drive, CA 96052, US</span>
-                        </div>
-                    </div>
-
-                    <div class="col-xxl-6 col-lg-9 d-lg-block d-none">
-                        <div class="header-offer">
-                            <div class="notification-slider">
-                                <div>
-                                    <div class="timer-notification">
-                                        <h6>
-                                            <strong class="me-1">Welcome to Fastkart!</strong>Wrap new offers/gift
-                                            every signle day on Weekends.<strong class="ms-1">
-                                                New Coupon Code: Fast024
-                                            </strong>
-
-                                        </h6>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <div class="timer-notification">
-                                        <h6>
-                                            Something you love is now on sale!
-                                            <a href="shop-left-sidebar.html" class="text-white">
-                                                Buy Now
-                                                !
-                                            </a>
-                                        </h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                </div>
-            </div>
-        </div>
-
-        <div class="top-nav top-header sticky-header">
-            <div class="container-fluid-lg">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="navbar-top">
-                            <button class="navbar-toggler d-xl-none d-inline navbar-menu-button" type="button"
-                                    data-bs-toggle="offcanvas" data-bs-target="#primaryMenu">
-                                <span class="navbar-toggler-icon">
-                                    <i class="fa-solid fa-bars"></i>
-                                </span>
-                            </button>
-                            <a href="Shop" class="web-logo nav-logo">
-                                <img src="../assets/images/logo/1.png" class="img-fluid blur-up lazyload" alt="">
-                            </a>
-
-
-                            <div class="rightside-box">
-                                <div class="search-full">
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <i data-feather="search" class="font-light"></i>
-                                        </span>
-                                        <input type="text" class="form-control search-type" placeholder="Search here..">
-                                        <span class="input-group-text close-search">
-                                            <i data-feather="x" class="font-light"></i>
-                                        </span>
-                                    </div>
-                                </div>
-                                <ul class="right-side-menu">
-                                    <li class="right-side">
-                                        <div class="delivery-login-box">
-                                            <div class="delivery-icon">
-                                                <div class="search-box">
-                                                    <i data-feather="search"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-
-                                    <li class="right-side">
-                                        <a href="wishlist.html" class="btn p-0 position-relative header-wishlist">
-                                            <i data-feather="heart"></i>
-                                        </a>
-                                    </li>
-                                    @Html.Partial("_ShoppingCart")
-
-                                    <li class="right-side onhover-dropdown">
-                                        <div class="delivery-login-box">
-                                            <div class="delivery-icon">
-                                                <i data-feather="user"></i>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="onhover-div onhover-div-login">
-                                            <ul class="user-box-name">
-                                                <li class="product-box-contain">
-                                                    <i></i>
-                                                    <a href="login.html">Log In</a>
-                                                </li>
-
-                                                <li class="product-box-contain">
-                                                    <a href="sign-up.html">Register</a>
-                                                </li>
-
-                                                <li class="product-box-contain">
-                                                    <a href="forgot.html">Forgot Password</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-    </header>
+    
     <!-- Header End -->
     <!-- Breadcrumb Section Start -->
     <section class="breadscrumb-section pt-0">
@@ -327,8 +165,9 @@
                                                                             <div class="form-floating theme-form-floating">
                                                                                 <input type="text" asp-for="@Model.City" placeholder="City" class="form-control" required />
                                                                                 <label>City</label>
-                                                                                <span asp-validation-for="@Model.City" class="text-danger"></span>
-                                                                            </div>
+                                                                               @*  <span asp-validation-for="@Model.City" class="text-danger"></span> *@
+                                                                            <span asp-validation-for="City" class="text-danger"></span>
+                                                                        </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -533,140 +372,7 @@
 
     <!-- Checkout section End -->
     <!-- Footer Section Start -->
-    <footer class="section-t-space">
-        <div class="container-fluid-lg">
-            <div class="service-section">
-                <div class="row g-3">
-                    <div class="col-12">
-                    </div>
-                </div>
-            </div>
-
-            <div class="main-footer section-b-space section-t-space">
-                <div class="row g-md-4 g-3">
-                    <div class="col-xl-4 col-lg-4 col-sm-6">
-                        <div class="footer-logo">
-                            <div class="theme-logo">
-                                <a>
-                                    <img src="~/assets/images/logo/1.png" class="blur-up lazyload" alt="">
-                                </a>
-                            </div>
-
-                            <div class="footer-logo-contain">
-                                <p>
-                                    We are a friendly bar serving a variety of cocktails, wines and beers. Our bar is a
-                                    perfect place for a couple.
-                                </p>
-
-
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                    <div class="col-xl-4 col-lg-2 col-sm-3">
-                        <div class="footer-title">
-                            <h4>Quick Links</h4>
-                        </div>
-
-                        <div class="footer-contain">
-                            <ul>
-                                <li>
-                                    <a asp-controller="Public" asp-action="AboutUs" class="text-content">About us</a>
-                                </li>
-
-                                <li>
-                                    <a asp-controller="Public" asp-action="ContactUs" class="text-content">Contact Us</a>
-                                </li>
-
-                                <li>
-                                    <a asp-controller="Public" asp-action="TermAndCondition" class="text-content">Terms and Conditions</a>
-                                </li>
-
-                                <li>
-                                    <a asp-controller="Public" asp-action="PrivacyPolicy" class="text-content">Privary Policy</a>
-                                </li>
-
-                                <li>
-                                    <a asp-controller="Public" asp-action="Faq" class="text-content">FAQ</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-
-
-                    <div class="col-xl-4 col-lg-4 col-sm-6">
-                        <div class="footer-title">
-                            <h4>Contact Us</h4>
-                        </div>
-
-                        <div class="footer-contact">
-                            <ul>
-                                <li>
-                                    <div class="footer-number">
-                                        <i data-feather="phone"></i>
-                                        <div class="contact-number">
-                                            <h6 class="text-content">Hotline 24/7 :</h6>
-                                            <h5>+92 320 1234567</h5>
-                                        </div>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="footer-number">
-                                        <i data-feather="mail"></i>
-                                        <div class="contact-number">
-                                            <h6 class="text-content">Email Address :</h6>
-                                            <h5>support@focfulfillment.com</h5>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sub-footer section-small-space">
-                <div class="reserve">
-                    <h6 class="text-content">
-                        ©2023 FOC Fulfillment All rights reserved.
-                        <p>
-                            Powered By: <a href="https://tetrasol.net/">TetraSol</a>
-                        </p>
-                    </h6>
-                </div>
-                @*
-                <div class="payment">
-                <img src="~/assets/images/payment/1.png" class="blur-up lazyload" alt="">
-                </div>*@
-
-                <div class="social-link">
-                    <h6 class="text-content">Stay connected :</h6>
-                    <ul>
-                        <li>
-                            <a href="https://www.facebook.com/" target="_blank">
-                                <i class="fa-brands fa-facebook-f"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://twitter.com/" target="_blank">
-                                <i class="fa-brands fa-twitter"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://www.instagram.com/" target="_blank">
-                                <i class="fa-brands fa-instagram"></i>
-                            </a>
-                        </li>
-
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </footer>
+    
     <!-- Footer Section End -->
     <!-- Location Modal Start -->
     <div class="modal location-modal fade theme-modal" id="locationModal" tabindex="-1"
@@ -972,5 +678,6 @@
             });
         });
     </script>
-</body>
-</html>
+
+@* </body>
+</html> *@

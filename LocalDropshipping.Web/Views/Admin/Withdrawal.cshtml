@@ -3,7 +3,7 @@
 @model PageResponse<List<AddWithdrawalUserViewModel>>
 
 @{
-    ViewBag.Title = "FOC-FulFillment-Withdrawal";
+    ViewBag.Title = "FOCFulFillment - Withdrawal";
     Layout = "_LayoutDashboard";
 }
 
@@ -189,6 +189,9 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/backend-assets/js/notify/bootstrap-notify.min.js"></script>
 <script>
     function openPopup(button) {
         var withdrawalId = button.getAttribute('data-withdrawal-id');
@@ -230,14 +233,35 @@
         });
         $('#daterange').val('');
     });
+
+
+    var notificationMessage = '@TempData["notificationMessage"]';
+
+    console.log(notificationMessage);
+
+    if (notificationMessage) {
+        var notify = $.notify('<i class="fas fa-bell"></i><strong>Loading</strong> ' + notificationMessage, {
+            type: 'theme',
+            allow_dismiss: true,
+            delay: 4000,
+            showProgressbar: true,
+            timer: 300,
+            animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp'
+            }
+        });
+
+        '@TempData.Remove("notificationMessage")';
+    }
+
+</script>
+<script>
+
 </script>
 
 <style>
     
-    .form-select {
-    }
-
-
     .daterangepicker .drp-buttons .drp-selected .applyBtn {
         background-color: #0DA487;
         color: #ffffff;

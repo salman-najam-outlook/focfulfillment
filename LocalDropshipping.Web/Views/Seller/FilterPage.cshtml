@@ -2,11 +2,11 @@
 @using static IEnumerable<LocalDropshipping.Web.Data.Entities.OrderItem>
 @model List<Product>;
 @{
-    Layout = null;
-    ViewData["Title"] = "Product Listing";
+    Layout = null;//"~/Views/Shared/ShopPage.cshtml";
+    ViewData["Title"] = "FOCFulFillment - Product Listing";
 }
 
-<!DOCTYPE htm"viewport" content="width=device-width" />
+<!DOCTYPE htm"viewport" content="width=device-width" /> 
 <head>
 	<title>@ViewBag.Title</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -30,7 +30,8 @@
 
 	<!-- bootstrap css -->
 	<link id="rtl-link" rel="stylesheet" type="text/css" href="../assets/css/vendors/bootstrap.css">
-
+    <!--For Logout Modal-->
+     <link rel="stylesheet" type="text/css" href="~/backend-assets/css/style.css">
 	<!-- wow css -->
 	<link rel="stylesheet" href="../assets/css/animate.min.css" />
 	<link href="~/css/site.css" rel="stylesheet" />
@@ -56,9 +57,9 @@
 
 	<!-- jquery ui-->
 	<script src="../assets/js/jquery-ui.min.js"></script>
-</head>
-<body>
-<header class="pb-md-4 pb-0">
+</head> 
+ <body> 
+ <header class="pb-md-4 pb-0">
         <div class="header-top">
             <div class="container-fluid-lg">
                 <div class="row">
@@ -249,7 +250,7 @@
 											</a>
 										</li>
 										<li class="right-side">
-											<a href="wishlist.html" class="btn p-0 position-relative header-wishlist">
+											<a  asp-action="Wishlist" asp-controller="Seller" class="btn p-0 position-relative header-wishlist">
 												<i data-feather="heart"></i>
 											</a>
 										</li>
@@ -270,15 +271,22 @@
 												<ul class="user-box-name">
 													<li class="product-box-contain">
 														<i></i>
-														<a href="login.html">Log In</a>
+														<a asp-action="SellerDashboard" asp-controller="Seller">Dashboard</a>
 													</li>
 
 													<li class="product-box-contain">
-														<a href="sign-up.html">Register</a>
+														<a asp-action="Shop" asp-controller="Seller">Shop</a>
 													</li>
 
 													<li class="product-box-contain">
-														<a href="forgot.html">Forgot Password</a>
+														<a asp-action="Wishlist" asp-controller="Seller">Wishlist</a>
+													</li>
+                                                    	<li class="product-box-contain">
+														<a data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                                                       href="javascript:void(0)">
+                                                        Logout
+                                                    </a>
+
 													</li>
 												</ul>
 											</div>
@@ -290,7 +298,7 @@
                 </div>
             </div>
         </div>
-    </header>
+    </header> 
 <div class="mobile-menu d-md-none d-block mobile-cart">
         <ul>
             <li class="active">
@@ -329,7 +337,7 @@
             </li>
         </ul>
     </div>
-
+   
 <!-- Breadcrumb Section Start -->
 <section class="breadscrumb-section pt-0">
     <div class="container-fluid-lg">
@@ -723,7 +731,7 @@
 
     </script>
 </section>
-<footer class="footer-sm">
+@* <footer class="footer-sm">
 		<div class="container-fluid-xs">
 			<div class="sub-footer">
 				<div class="reserve">
@@ -735,7 +743,7 @@
 				</div>
 			</div>
 		</div>
-	</footer>
+	</footer> *@
 	<!-- Footer Section End -->
 	<!-- Quick View Modal Box Start -->
 	<div class="modal fade theme-modal view-modal" id="view" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -1026,7 +1034,28 @@
 		</div>
 	</div>
 	<!-- Deal Box Modal End -->
-	
+	    <!-- Log Out Modal Start -->
+
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+                    <p>Are you sure you want to log out?</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="button-box">
+                        <form asp-action="SellerLogout" asp-controller="Seller">
+                            <button type="button" class="btn btn--no" data-bs-dismiss="modal" style="float:left">No</button>
+                            <button type="submit" class="btn  btn--yes btn-primary">Yes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Out Modal End-->
 	<!-- Bg overlay Start -->
 	<div class="bg-overlay"></div>
 	<!-- Bg overlay End -->

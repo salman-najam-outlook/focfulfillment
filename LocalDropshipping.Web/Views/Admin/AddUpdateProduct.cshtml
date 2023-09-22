@@ -584,6 +584,9 @@
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script src="~/backend-assets/js/notify/bootstrap-notify.min.js"></script>
 <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 <script>
     function addAnOtherOption(e) {
@@ -775,6 +778,27 @@
             }
         });
     });
+
+
+    var notificationMessage = '@TempData["notificationMessage"]';
+
+    console.log(notificationMessage);
+
+    if (notificationMessage) {
+        var notify = $.notify('<i class="fas fa-bell"></i><strong>Loading</strong> ' + notificationMessage, {
+            type: 'theme',
+            allow_dismiss: true,
+            delay: 4000,
+            showProgressbar: true,
+            timer: 300,
+            animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp'
+            }
+        });
+
+        '@TempData.Remove("notificationMessage")';
+    }
 </script>
 
 

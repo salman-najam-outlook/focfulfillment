@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "FOC-FulFillment-Dashboard";
+    ViewBag.Title = "FOCFulFillment - Dashboard";
 
     Layout = "_LayoutDashboard";
 }
@@ -669,3 +669,26 @@
     </div>
     <!-- Container-fluid Ends-->
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/backend-assets/js/notify/bootstrap-notify.min.js"></script>
+<script>
+    var notificationMessage = '@TempData["notificationMessage"]';
+
+    console.log(notificationMessage);
+
+    if (notificationMessage) {
+        var notify = $.notify('<i class="fas fa-bell"></i><strong>Loading</strong> ' + notificationMessage, {
+            type: 'theme',
+            allow_dismiss: true,
+            delay: 4000,
+            showProgressbar: true,
+            timer: 300,
+            animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp'
+            }
+        });
+
+        '@TempData.Remove("notificationMessage")';
+    }
+</script>

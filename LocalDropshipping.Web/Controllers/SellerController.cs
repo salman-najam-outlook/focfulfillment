@@ -40,9 +40,11 @@ namespace LocalDropshipping.Web.Controllers
         private readonly ICategoryService _categoryService;
         private readonly SignInManager<User> _signInManager;
         private readonly IWithdrawalService _withdrawlsService;
+        private readonly IAdminService _service;
 
-        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, UserManager<User> userManager, IWishListService wishList, IProductsService productsService, IProductVariantService productVariantService, IConsumerService consumerService, IOrderItemService orderItemService, IFocSettingService focSettingService,SignInManager<User>signInManager,ICategoryService categoryService,IWithdrawalService withdrawlsService)
+        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, UserManager<User> userManager, IWishListService wishList, IProductsService productsService, IProductVariantService productVariantService, IConsumerService consumerService, IOrderItemService orderItemService, IFocSettingService focSettingService,SignInManager<User>signInManager,ICategoryService categoryService,IWithdrawalService withdrawlsService, IAdminService service)
         {
+            _service = service;
             _accountService = accountService;
             _profileService = profileService;
             _userService = userService;
@@ -141,12 +143,25 @@ namespace LocalDropshipping.Web.Controllers
                     var user = await _accountService.LoginAsync(model.Email, model.Password);
                     HttpContext.Session.SetString("CurrentUser", JsonConvert.SerializeObject(user));
 
-                    if(!String.IsNullOrEmpty(returnUrl))
-                    {
-                        return LocalRedirect(returnUrl);
-                    }
+                    // Check if the user is an admin
+                    bool isAdmin = await _service.IsUserAdminAsync(model.Email);
 
-                    return RedirectToAction("Shop", "Seller");
+                    // Check if the user is superadmin
+                    bool isSuperAdmin = await _service.IsUserSuperAdminAsync(model.Email);
+
+                    if (!isAdmin && !isSuperAdmin)
+                    {
+                        if (!String.IsNullOrEmpty(returnUrl))
+                        {
+                            return LocalRedirect(returnUrl);
+                        }
+
+                        return RedirectToAction("Shop", "Seller");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Oops, it seems like you're not a seller.");
+                    }
                 }
             }
             catch (IdentityException ex)
@@ -165,8 +180,9 @@ namespace LocalDropshipping.Web.Controllers
                 {
                     Email = model.Email,
                     UserName = model.Email,
-                    Fullname = model.FullName,//string.Join(" ", model.FirstName, model.LastName),
-                    IsSeller = true
+                    Fullname = model.FullName,
+                    IsSeller = true,
+                    NormalizedEmail = model.Email.ToUpper()
                 };
 
                 var result = await _accountService.RegisterAsync(user, model.Password);
@@ -178,15 +194,26 @@ namespace LocalDropshipping.Web.Controllers
                 }
                 else
                 {
+                    //foreach (var error in result.Errors)
+                    //{
+                    //    if (error.Code == "DuplicateUserName")
+                    //    {
+                    //        ModelState.AddModelError("CustomErrorMessage", string.Join(": ", "DuplicateEmail", "Email already exist"));
+                    //    }
+                    //    else
+                    //    {
+                    //        ModelState.AddModelError("CustomErrorMessage", string.Join(": ", error.Code, error.Description));
+                    //    }
+                    //}
                     foreach (var error in result.Errors)
                     {
                         if (error.Code == "DuplicateUserName")
                         {
-                            ModelState.AddModelError("CustomErrorMessage", string.Join(": ", "DuplicateEmail", "Email already exist"));
+                            ModelState.AddModelError("", string.Join(": ", "DuplicateEmail", "Email already exists"));
                         }
                         else
                         {
-                            ModelState.AddModelError("CustomErrorMessage", string.Join(": ", error.Code, error.Description));
+                            ModelState.AddModelError("", string.Join(": ", error.Code, error.Description));
                         }
                     }
                 }
@@ -447,8 +474,7 @@ namespace LocalDropshipping.Web.Controllers
                 string? currentUserID = _userManager.GetUserId(HttpContext.User);
                 var currentUser = _userService.GetById(currentUserID);
                 HttpContext.Session.SetString("CurrentUser", JsonConvert.SerializeObject(currentUser));
-
-
+                ViewBag.model = _orderService.GetOrdersProfit(currentUser.Email);
                 return View();
             }
             catch (Exception ex)
@@ -459,7 +485,7 @@ namespace LocalDropshipping.Web.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> WishList([FromQuery] Pagination pagination)
+        public async Task<IActionResult> Wishlist([FromQuery] Pagination pagination)
         {
             try
             {
@@ -490,7 +516,7 @@ namespace LocalDropshipping.Web.Controllers
 
 		[Authorize]
 		[HttpPost]
-        public IActionResult WishList(int ProductId)
+        public IActionResult Wishlist(int ProductId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -574,7 +600,7 @@ namespace LocalDropshipping.Web.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> ProfileVerificationAsync(ProfileVerificationViewModel profileVerificationViewModel)
+        public async Task<IActionResult> ProfileVerification(ProfileVerificationViewModel profileVerificationViewModel)
         {
             if (ModelState.IsValid == false)
             {
@@ -592,19 +618,23 @@ namespace LocalDropshipping.Web.Controllers
 
             return RedirectToAction("Shop", "Seller");
         }
+
         [Authorize]
         public IActionResult SellerOrders([FromQuery] Pagination pagination)
         {
             try
             {
-                List<Order> orders = _orderService.GetAll();
+                string currentUserEmail = User.Identity.Name;
+
+                var orders = _orderService.GetByEmail(currentUserEmail);
+
                 var count = orders.Count();
                 orders = orders.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
-                return View(new PageResponse<List<Order>>(orders, pagination.PageNumber, pagination.PageSize, count));
+
+                return View("SellerOrders", new PageResponse<List<Order>>(orders, pagination.PageNumber, pagination.PageSize, count));
             }
             catch (Exception ex)
             {
-
                 return View(ex.Message);
             }
         }
@@ -677,25 +707,30 @@ namespace LocalDropshipping.Web.Controllers
         [Authorize]
         public IActionResult Profile()
         {
-            var userId = _userManager.GetUserId(User);
+                var userId = _userManager.GetUserId(User);
 
-            var userProfile = _profileService.GetProfileById(userId);
-            var userProfileDto = new ProfilesDto
-            {
-                StoreName = userProfile.StoreName,
-                StoreURL = userProfile.StoreURL,
-                BankName = userProfile.BankName,
-                BankAccountTitle = userProfile.BankAccountTitle,
-                BankAccountNumberOrIBAN = userProfile.BankAccountNumberOrIBAN,
-                BankBranch = userProfile.BankBranch,
-                Address = userProfile.Address,
-                ImageLink = userProfile.ImageLink
+                var userProfile = _profileService.GetProfileById(userId);
+                var userProfileDto = new ProfilesDto
+                {
+                    StoreName = userProfile.StoreName,
+                    StoreURL = userProfile.StoreURL,
+                    BankName = userProfile.BankName,
+                    BankAccountTitle = userProfile.BankAccountTitle,
+                    BankAccountNumberOrIBAN = userProfile.BankAccountNumberOrIBAN,
+                    BankBranch = userProfile.BankBranch,
+                    Address = userProfile.Address,
+                    ImageLink = userProfile.ImageLink
 
-            };
+                };
 
-            var userProfileList = new List<ProfilesDto> { userProfileDto };
+                var userProfileList = new List<ProfilesDto> { userProfileDto };
 
-            return View(userProfileList);
+                return View(userProfileList);
+            
+
+                return View();
+        
+         
         }
 
         [HttpPost]

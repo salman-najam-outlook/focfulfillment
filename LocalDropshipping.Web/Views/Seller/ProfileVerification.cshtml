@@ -5,13 +5,13 @@
 }
 @model ProfileVerificationViewModel
 @{
-    ViewBag.Title = "FOC-FulFillment-Profile Verification";
-    Layout = null;
+    ViewBag.Title = "FOCFulFillment - Profile Verification";
+    Layout ="_Layout";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
+@* <!DOCTYPE html>
+<html lang="en"> *@
+@* <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -44,7 +44,7 @@
 
     <!-- Template css -->
     <link id="color-link" rel="stylesheet" type="text/css" href="../assets/css/style.css">
-</head>
+</head> *@
 <body>
 
     <!-- mobile fix menu start -->
@@ -145,7 +145,7 @@
                                         <input asp-for="StoreURL" type="text" class="form-control" id="storeUrl" placeholder="StoreURL">
                                         <label>StoreURL</label>
                                         <span asp-validation-for="StoreURL" class="text-danger"></span>
-
+                                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
                                     </div>
                                 </div>
@@ -165,7 +165,8 @@
                                     <div class="form-floating theme-form-floating log-in-form">
                                         <input asp-for="BankAccountTitle" type="text" class="form-control" id="bankAccountTitle" placeholder="BankAccountTitle">
                                         <label>BankAccountTitle</label>
-                                        <span asp-validation-for="StoreURL" class="text-danger"></span>
+                                        <span asp-validation-for="BankAccountTitle" class="text-danger"></span>
+                                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                                     </div>
                                 </div>
 
@@ -185,6 +186,7 @@
                                         <input asp-for="BankBranch" type="text" class="form-control" id="bankBranch" placeholder="BankBranch">
                                         <label>BankBranch</label>
                                         <span asp-validation-for="BankBranch" class="text-danger"></span>
+                                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                                     </div>
                                 </div>
 
@@ -193,6 +195,7 @@
                                         <input asp-for="Address" type="text" class="form-control" id="address" placeholder="Address">
                                         <label>Address</label>
                                         <span asp-validation-for="Address" class="text-danger"></span>
+                                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                                     </div>
                                 </div>
 
@@ -210,5 +213,5 @@
     </section>
     <!-- log in section end -->
 </body>
-</html>
+@* </html> *@
 

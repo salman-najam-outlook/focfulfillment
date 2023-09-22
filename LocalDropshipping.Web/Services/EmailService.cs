@@ -34,7 +34,9 @@ namespace LocalDropshipping.Web.Services
 
 
 			using var smtp = new SmtpClient();
-			smtp.Connect(_smtpconfig.SmtpServer, _smtpconfig.Port, SecureSocketOptions.StartTls);
+            smtp.CheckCertificateRevocation = false;
+
+            smtp.Connect(_smtpconfig.SmtpServer, _smtpconfig.Port, SecureSocketOptions.Auto);
 			
 			smtp.Authenticate(_smtpconfig.From, _smtpconfig.Password);
 			await smtp.SendAsync(mailMessage)

@@ -2,17 +2,31 @@
 @using LocalDropshipping.Web.Helpers;
 @using LocalDropshipping.Web.Models;
 
+
 @model PageResponse<List<WithdrawalModel>>;
 @{
-    ViewBag.Title = "FOC-FulFillment-Withdrawals";
+    ViewBag.Title = "FOCFulFillment - Withdrawals";
     Layout = "_LayoutSellerDashboard";
 }
+<style>
+    .title-leaf {
+        width: 240px;
+        text-align: end;
+        position: relative;
+        z-index: 0;
+    }
+</style>
 <body>
     
     <div class="tab-pane fade active show" id="pills-order" role="tabpanel" aria-labelledby="pills-order-tab">
         <div class="dashboard-order">
-            <div class="title d-flex justify-content-between align-items-center">
-                <h2>All Withdrawals</h2>
+            <div class="title">
+                <h2>My Withdrawals</h2>
+                <span class="title-leaf">
+                    <svg class="icon-width bg-gray">
+                        <use xlink:href="https://themes.pixelstrap.com/fastkart/assets/svg/leaf.svg#leaf"></use>
+                    </svg>
+                </span>
                 <div>
                     <a asp-action="WithdrawalRequest" asp-controller="Seller">
                         <button class="btn request-btn">
