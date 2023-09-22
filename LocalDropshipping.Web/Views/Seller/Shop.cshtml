@@ -11,7 +11,7 @@
     <div>
         <div class="product-box product-white-bg wow fadeIn">
             <div class="product-image">
-                <a href="product-left-thumbnail.html">
+                <a asp-controller="seller" asp-action="product" asp-route-id="@product.ProductId">
                         <img src="@product.Variants.First().FeatureImageLink"
                          class="img-fluid blur-up lazyload" alt="">
                 </a>

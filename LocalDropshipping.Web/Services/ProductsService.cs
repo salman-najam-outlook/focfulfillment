@@ -97,6 +97,7 @@ namespace LocalDropshipping.Web.Services
                     var exVariant = exProduct.Variants.FirstOrDefault(x => x.ProductVariantId == variant.ProductVariantId);
                     exVariant.Quantity = variant.Quantity;
                     exVariant.VariantPrice = variant.VariantPrice;
+                    exVariant.DiscountedPrice = variant.DiscountedPrice;
                     if (variant.Images.Any())
                     {
                         exVariant.Images.DeleteAllFromServer(_webHostEnvironment.ContentRootPath);
@@ -133,6 +134,7 @@ namespace LocalDropshipping.Web.Services
                             exVariant.VariantType = variant.VariantType;
                             exVariant.Variant = variant.Variant;
                             exVariant.VariantPrice = variant.VariantPrice;
+                            exVariant.DiscountedPrice = variant.DiscountedPrice;
                             exVariant.Quantity = variant.Quantity;
 
                             if (variant.Images.Any())
@@ -166,6 +168,7 @@ namespace LocalDropshipping.Web.Services
                                 VariantType = variant.VariantType,
                                 Variant = variant.Variant,
                                 VariantPrice = variant.VariantPrice,
+                                DiscountedPrice = variant.DiscountedPrice,
                                 Quantity = variant.Quantity,
 
                                 CreatedBy = userEmail,

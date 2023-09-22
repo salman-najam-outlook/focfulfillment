@@ -1,4 +1,5 @@
 ﻿@using LocalDropshipping.Web.Data.Entities;
+@using LocalDropshipping.Web.Models.ProductViewModels;
 @model ProductViewModel
 @{
     ViewBag.Title = "FOCFulfillment - Add/Update Product";
@@ -296,6 +297,17 @@
 
                                             <div class="mb-1 row align-items-center">
                                                 <label class="col-sm-3 col-form-label form-label-title">
+                                                    Discounted Price
+                                                </label>
+                                                <div class="col-sm-9">
+                                                    <div class="bs-example">
+                                                        <input type="number" class="form-control variantPrice" name="variant-@variantNo-discounted-price" placeholder="1250" value="@variant.DiscountedPrice" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-1 row align-items-center">
+                                                <label class="col-sm-3 col-form-label form-label-title">
                                                     Quantity
                                                 </label>
                                                 <div class="col-sm-9">
@@ -414,6 +426,17 @@
                                             </div>
                                         </div>
 
+                                         <div class="mb-1 row align-items-center">
+                                            <label class="col-sm-3 col-form-label form-label-title">
+                                                Discounetd Price
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <div class="bs-example">
+                                                    <input type="number" class="form-control variantPrice" name="variant-1-discounted-price" placeholder="1250" />
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div class="mb-1 row align-items-center">
                                             <label class="col-sm-3 col-form-label form-label-title">
                                                 Quantity
@@ -472,9 +495,17 @@
                                     <div class="mb-4 row align-items-center">
                                         <label class="col-sm-3 form-label-title">Price</label>
                                         <div class="col-sm-9">
-
                                             @Html.TextBoxFor(a=>a.Price,new{ @class="form-control", id="txtPrice", placeholder="Product Price",type = "number", min = "0"  })
                                             @Html.ValidationMessageFor(a => a.Price, "" , new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4 row align-items-center">
+                                        <label class="col-sm-3 form-label-title">Discounted Price</label>
+                                        <div class="col-sm-9">
+                                            @Html.TextBoxFor(a=>a.DiscountedPrice, new{ @class="form-control", id="txtPrice", placeholder="Product Discounted Price", type = "number", min = "0"  })
+                                            @Html.ValidationMessageFor(a => a.DiscountedPrice, "" , new { @class = "text-danger" })
 
                                         </div>
                                     </div>
@@ -491,7 +522,6 @@
                                     <div class="mb-4 row align-items-center">
                                         <label class="form-label-title col-sm-3 mb-0">SKU</label>
                                         <div class="col-sm-9">
-
                                             @Html.TextBoxFor(a=>a.SKU,new{ @class="form-control", id="txtPrice",type = "text" })
                                             @Html.ValidationMessageFor(a => a.SKU, "", new { @class = "text-danger" })
                                         </div>
@@ -500,15 +530,12 @@
                                     <div class="mb-4 row align-items-center productSpecificControl">
                                         <label class="form-label-title col-sm-3 mb-0">Quantity</label>
                                         <div class="col-sm-9">
-
                                             @Html.TextBoxFor(a=>a.Quantity,new{ @class="form-control", id="Quantity",type = "number" })
                                             @Html.ValidationMessageFor(a => a.Quantity,"", new { @class = "text-danger" })
                                         </div>
                                     </div>
 
-
                                     <br />
-
 
                                     <div class="mb-4 row">
                                         <div class="col-sm-12">
@@ -583,6 +610,17 @@
                                                                                                                 <div class="col-sm-9">
                                                                                                                     <div class="bs-example">
                                                                                                                             <input type="number" class="form-control" name="variant-${variantNumber}-price" placeholder="1250"/>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
+
+                                                                                                            <div class="mb-1 row align-items-center">
+                                                                                                                <label class="col-sm-3 col-form-label form-label-title">
+                                                                                                                    Discounted Price
+                                                                                                                </label>
+                                                                                                                <div class="col-sm-9">
+                                                                                                                    <div class="bs-example">
+                                                                                                                        <input type="number" class="form-control variantPrice" name="variant-${variantNumber}-discounted-price" placeholder="1250"  />
                                                                                                                     </div>
                                                                                                                 </div>
                                                                                                             </div>

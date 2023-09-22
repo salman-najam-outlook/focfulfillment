@@ -25,41 +25,49 @@ namespace LocalDropshipping.Web.Services
 
         public async Task<ProductVariant> Add(ProductVariant productvariant)
         {
-            var userEmail = await _userService.GetCurrentUserAsync();
+            var userEmail = (await _userService.GetCurrentUserAsync()).Email;
+            
+            productvariant.CreatedBy = userEmail;
+            productvariant.CreatedDate = DateTime.Now ;
+            
             _context.Add(productvariant);
             await _context.SaveChangesAsync();
+            
             return productvariant;
         }
 
-        public async Task<ProductVariant?> GetById(int productId)
+        public async Task<ProductVariant?> GetByIdAsync(int productVariantId)
         {
-            return await _context.ProductVariants.FirstOrDefaultAsync(p => p.ProductId == productId);
+            return await _context.ProductVariants.Include(x => x.Images).Include(x => x.Videos).FirstOrDefaultAsync(p => p.ProductVariantId == productVariantId);
         }
 
-        public async Task<ProductVariant?> Delete(int productId)
+        public async Task<ProductVariant?> Delete(int productVariantId)
         {
-            var product = await _context.ProductVariants.FirstOrDefaultAsync(x => x.ProductId == productId);
-            if (product != null)
+            var productVariant = await _context.ProductVariants.FirstOrDefaultAsync(x => x.ProductVariantId == productVariantId);
+            if (productVariant != null)
             {
-                product = await Update(productId, product);
+                productVariant = await Update(productVariantId, productVariant);
             }
-            return product;
+            return productVariant;
         }
 
         public async Task<ProductVariant?> Update(int productId, ProductVariant product)
         {
-            var exProduct = await _context.ProductVariants.FirstOrDefaultAsync(x => x.ProductVariantId == productId);
-            if (exProduct != null)
+            var 
+                exProductVariant = await _context.ProductVariants.FirstOrDefaultAsync(x => x.ProductVariantId == productId);
+            if (exProductVariant != null)
             {
-                var userEmail = await _userService.GetCurrentUserAsync();
+                var userEmail = (await _userService.GetCurrentUserAsync()).Email;
 
-                exProduct.VariantPrice = product.VariantPrice;
-                exProduct.Quantity = product.Quantity;
-                exProduct.VariantType = product.VariantType;
-
+                exProductVariant.VariantPrice = product.VariantPrice;
+                exProductVariant.DiscountedPrice = product.DiscountedPrice;
+                exProductVariant.Quantity = product.Quantity;
+                exProductVariant.VariantType = product.VariantType;
+                exProductVariant.CreatedBy = userEmail;
+                exProductVariant.CreatedDate = DateTime.Now;
                 await _context.SaveChangesAsync();
             }
-            return exProduct;
+            return exProductVariant;
         }
     }
 }
