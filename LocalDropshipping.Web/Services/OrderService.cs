@@ -2,6 +2,7 @@
 using LocalDropshipping.Web.Data.Entities;
 using LocalDropshipping.Web.Dtos;
 using LocalDropshipping.Web.Enums;
+using LocalDropshipping.Web.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
@@ -119,21 +120,34 @@ namespace LocalDropshipping.Web.Services
         {
             throw new NotImplementedException();
         }
-        public decimal? GetProfit(string email)
+        public SellerOrdersCounterViewModel GetOrdersProfit(string email)
         {
+            SellerOrdersCounterViewModel model = new SellerOrdersCounterViewModel();
             decimal profit = 0;
             decimal cost = 0;
+            decimal totalSales = 0;
             int totalPendingOrders = 0;
-            var orders=_context.Orders.Where(o=>o.OrderStatus==OrderStatus.Pending && o.Seller==email).ToList();
+            int totalOrders=0;
+            var orders = _context.Orders.Where(o => o.OrderStatus == OrderStatus.Delivered && o.Seller == email).ToList();
             if (orders.Any())
             {
                 profit = orders.Sum(o => o.SellPrice - o.GrandTotal - ShippingCost());
             }
+            if (orders.Any())
+            {
+                totalSales = orders.Sum(o => o.GrandTotal);
+            }
             cost = _context.Orders.Where(o => o.OrderStatus == OrderStatus.Return && o.Seller == email).Sum(o => -ShippingCost());
-            totalPendingOrders = _context.Orders.Count(o => o.OrderStatus == 0 && o.Seller == email);
+            totalPendingOrders = _context.Orders.Count(o => o.OrderStatus == OrderStatus.Pending && o.Seller == email);
+            totalOrders = orders.Count();
             profit -= cost;
-            return profit;
+            model.PendingProfit = profit;
+            model.PendingOrders = totalPendingOrders;
+            model.TotalDeliveredOrders = totalOrders;
+            model.TotalSales = totalSales;
+            return model;
         }
+        
         private int GenerateOrderId()
         {
 			int orderId;

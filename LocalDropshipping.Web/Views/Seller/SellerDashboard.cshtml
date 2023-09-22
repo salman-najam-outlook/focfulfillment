@@ -1,5 +1,6 @@
 ﻿@using Newtonsoft.Json
 @using LocalDropshipping.Web.Data.Entities;
+@using LocalDropshipping.Web.Models;
 @{
     ViewBag.Title = "FOCFulFillment - Seller Dashboard";
 
@@ -47,8 +48,8 @@
                             <img src="https://themes.pixelstrap.com/fastkart/assets/images/svg/order.svg" class="blur-up lazyload"
                                  alt="">
                             <div class="totle-detail">
-                                <h5>Total Products</h5>
-                                <h3>25</h3>
+                                <h5>Delivered Orders</h5>
+                                <h3>@ViewBag.model.TotalDeliveredOrders</h3>
                             </div>
                         </div>
                     </div>
@@ -61,7 +62,7 @@
                                  alt="">
                             <div class="totle-detail">
                                 <h5>Total Sales</h5>
-                                <h3>12550</h3>
+                                <h3>Rs.@ViewBag.model.TotalSales.ToString("N0")/-</h3>
                             </div>
                         </div>
                     </div>
@@ -75,7 +76,20 @@
                             <div class="totle-detail">
                               @*   <h5>Order Pending</h5> *@
                                 <h5>Pending Profit</h5>
-                                <h3>@ViewBag.profit</h3>
+                                <h3>Rs.@ViewBag.model.PendingProfit.ToString("N0")/-</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
+                        <div class="totle-contain">
+                            <img src="https://themes.pixelstrap.com/fastkart/assets/images/svg/wishlist.svg"
+                                 class="img-1 blur-up lazyload" alt="">
+                            <img src="https://themes.pixelstrap.com/fastkart/assets/images/svg/wishlist.svg"
+                                 class="blur-up lazyload" alt="">
+                            <div class="totle-detail">
+                                @*   <h5>Order Pending</h5> *@
+                                <h5>Pending Orders</h5>
+                                <h3>@ViewBag.model.PendingOrders</h3>
                             </div>
                         </div>
                     </div>

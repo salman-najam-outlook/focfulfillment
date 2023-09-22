@@ -2,8 +2,10 @@
 @using LocalDropshipping.Web.Data.Entities;
 @using Newtonsoft.Json;
 @{
-    var data = Context.Session.GetString("cart");
+    ViewBag.Title = "FOCFulFillment - Cart";
 
+    Layout = "_Layout";
+    var data = Context.Session.GetString("cart");
     int countCart = 0;
     if (data == null)
     {
@@ -17,206 +19,230 @@
     }
 
 }
-@{
-    ViewBag.Title = "FOCFulFillment - Cart";
-
-    Layout = "_Layout";
-}
-
-<body>    
-    <section class="breadscrumb-section pt-0">
+<section class="breadscrumb-section pt-0">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadscrumb-contain">
+                    <h2>Cart</h2>
+                    <nav>
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item">
+                                <a asp-controller="Seller" asp-action="Cart">
+                                    <i class="fa-solid fa-house"></i>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">Cart</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+<!-- Cart Section Start -->
+@if (Model != null && countCart != 0)
+{
+    <section class="cart-section section-b-space">
         <div class="container-fluid-lg">
-            <div class="row">
-                <div class="col-12">
-                    <div class="breadscrumb-contain">
-                        <h2>Cart</h2>
-                        <nav>
-                            <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item">
-                                    <a asp-controller="Seller" asp-action="Cart">
-                                        <i class="fa-solid fa-house"></i>
-                                    </a>
+            <div class="row g-sm-5 g-3 ">
+                <div class="col-xxl-9">
+                    <div class="cart-table ">
+                        <div class="table-responsive-xl cart-blank-data text-center">
+                            <table class="table cart-table-data border-0">
+                                <tbody>
+                                    @foreach (var cart in Model)
+                                    {
+
+                                        <tr class="product-box-contain">
+                                            <td class="product-detail border-0">
+                                                <div class="product border-0">
+                                                    <a href="product-left-thumbnail.html" class="product-image">
+                                                        <img src="@cart.Image"
+                                                             class="img-fluid blur-up lazyload" alt="">
+                                                    </a>
+
+                                                </div>
+                                            </td>
+                                            <td class="product-detail border-0">
+                                                <h4 class="table-title text-content">Name</h4>
+                                                <div class="product border-0">
+                                                    <div class="product-detail" style="margin-left:0px;">
+                                                        <ul>
+                                                            <li class="name" style="width:310px; text-overflow:ellipsis; overflow:hidden">
+                                                                <a href="product-left-thumbnail.html">@cart.Name</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+
+                                            <td class="price border-0">
+                                                <h4 class="table-title text-content">Price</h4>
+                                                <h5 class="text-center">Rs @cart.Price/- </h5>
+                                            </td>
+
+                                            <td class="quantity border-0">
+                                                <h4 class="table-title text-content">Qty</h4>
+                                                <div class="quantity-price">
+                                                    <div class="cart_qty">
+                                                        <div class="input-group">
+                                                            <button type="button" data-id="@cart.ProductId" class="btn qty-left-minus"
+                                                                    data-type="minus" data-field="">
+                                                                <i class="fa fa-minus ms-0" aria-hidden="true"></i>
+                                                            </button>
+                                                            <input class="form-control input-number qty-input" type="text"
+                                                                   name="quantity" value="@cart.Quantity" disabled>
+                                                            <button type="button" data-id="@cart.ProductId" class="btn qty-right-plus"
+                                                                    data-type="plus" data-field="">
+                                                                <i class="fa fa-plus ms-0" aria-hidden="true"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td class="subtotal border-0">
+                                                <h4 class="table-title text-content">Total</h4>
+                                                <h5>Rs @cart.SubTotal/-</h5>
+                                            </td>
+
+                                            <td class="save-remove border-0">
+                                                <h4 class="table-title text-content">Action</h4>
+                                                @Html.ActionLink("Remove", "RemoveFromCart", "Seller", new { id = @cart.ProductId }, new { @class = "remove close_button" })
+
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xxl-3">
+                    <div class="summery-box p-sticky">
+                        <div class="summery-header cart-table-data">
+                            <h3>Cart Total</h3>
+                        </div>
+
+                        <div class="summery-contain cart-table-data">
+                            <ul>
+                                <li>
+                                    <h4>Subtotal</h4>
+                                    <h4 class="price costOfAllitems">Rs @ViewBag.total/-</h4>
                                 </li>
-                                <li class="breadcrumb-item active" aria-current="page">Cart</li>
-                            </ol>
-                        </nav>
+                                <li class="align-items-start">
+                                    <h4>Shipping</h4>
+                                    <h4 class="price text-end">Rs @ViewBag.shipping/-</h4>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <ul class="summery-total cart-table-data">
+                            <li class="list-total border-top-0">
+                                <h4>Total</h4>
+                                <h4 class="price theme-color totalCostwithShipping">Rs @ViewBag.totalCost/-</h4>
+                            </li>
+                        </ul>
+
+                        <div class="button-group cart-button">
+                            <ul>
+                                <li class="cart-table-data">
+                                    <button onclick="location.href = 'checkout.html';"
+                                            class="btn btn-primary proceed-btn fw-bold">
+                                        <a asp-controller="Seller" asp-action="Checkout" style="color:white">Process To Checkout</a>
+                                    </button>
+                                </li>
+                                <li>
+
+                                </li>
+
+                                <li>
+                                    <button class="btn btn-light shopping-button text-dark">
+                                        <i class="fa-solid fa-arrow-left-long"></i><a asp-controller="Seller" asp-action="Shop">Return To Shopping</a>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <!-- Breadcrumb Section End -->
-    <!-- Cart Section Start -->
-    @if (Model != null && countCart != 0)
-    {
-        <section class="cart-section section-b-space">
-            <div class="container-fluid-lg">
-                <div class="row g-sm-5 g-3 ">
-                    <div class="col-xxl-9">
-                        <div class="cart-table ">
-                            <div class="table-responsive-xl cart-blank-data text-center">
-                                <table class="table cart-table-data">
-                                    <tbody>
-                                        @foreach (var cart in Model)
-                                        {
+}
+else
+{
+    <section class="cart-section section-b-space">
+        <div class="container-fluid-lg">
+            <div class="row g-sm-5 g-3">
+                <div class="col-xxl-9">
+                    <div class="cart-table">
+                        <div class="table-responsive-xl">
+                            <h4 class="text-center">No Items in the Cart. Please select item first</h4>
 
-                                            <tr class="product-box-contain">
-                                                <td class="product-detail">
-                                                    <div class="product border-0">
-                                                        <a href="product-left-thumbnail.html" class="product-image">
-                                                            <img src="@cart.Image"
-                                                                 class="img-fluid blur-up lazyload" alt="">
-                                                        </a>
-
-                                                    </div>
-                                                </td>
-                                                <td class="product-detail">
-                                                    <h4 class="table-title text-content">Name</h4>
-                                                    <div class="product border-0">
-                                                        <div class="product-detail" style="margin-left:0px;">
-                                                            <ul>
-                                                                <li class="name" style="width:310px; text-overflow:ellipsis; overflow:hidden">
-                                                                    <a href="product-left-thumbnail.html">@cart.Name</a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </td>
-
-
-                                                <td class="price">
-                                                    <h4 class="table-title text-content">Price</h4>
-                                                    <h5 class="text-center">Rs @cart.Price/- </h5>
-                                                </td>
-
-                                                <td class="quantity">
-                                                    <h4 class="table-title text-content">Qty</h4>
-                                                    <div class="quantity-price">
-                                                        <div class="cart_qty">
-                                                            <div class="input-group">
-                                                                <button type="button" data-id="@cart.ProductId" class="btn qty-left-minus"
-                                                                        data-type="minus" data-field="">
-                                                                    <i class="fa fa-minus ms-0" aria-hidden="true"></i>
-                                                                </button>
-                                                                <input class="form-control input-number qty-input" type="text"
-                                                                       name="quantity" value="@cart.Quantity" disabled>
-                                                                <button type="button" data-id="@cart.ProductId" class="btn qty-right-plus"
-                                                                        data-type="plus" data-field="">
-                                                                    <i class="fa fa-plus ms-0" aria-hidden="true"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-
-                                                <td class="subtotal">
-                                                    <h4 class="table-title text-content">Total</h4>
-                                                    <h5>Rs @cart.SubTotal/-</h5>
-                                                </td>
-
-                                                <td class="save-remove">
-                                                    <h4 class="table-title text-content">Action</h4>
-                                                    @Html.ActionLink("Remove", "RemoveFromCart", "Seller", new { id = @cart.ProductId }, new { @class = "remove close_button" })
-
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-xxl-3">
-                        <div class="summery-box p-sticky">
-                            <div class="summery-header cart-table-data">
-                                <h3>Cart Total</h3>
-                            </div>
-
-                            <div class="summery-contain cart-table-data">
-                                <ul>
-                                    <li>
-                                        <h4>Subtotal</h4>
-                                        <h4 class="price costOfAllitems">Rs @ViewBag.total/-</h4>
-                                    </li>
-                                    <li class="align-items-start">
-                                        <h4>Shipping</h4>
-                                        <h4 class="price text-end">Rs @ViewBag.shipping/-</h4>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <ul class="summery-total cart-table-data">
-                                <li class="list-total border-top-0">
-                                    <h4>Total</h4>
-                                    <h4 class="price theme-color totalCostwithShipping">Rs @ViewBag.totalCost/-</h4>
+                <div class="col-xxl-3">
+                    <div class="summery-box p-sticky">
+                        <div class="button-group cart-button">
+                            <ul>
+                                <li>
+                                    <button class="btn btn-light shopping-button text-dark">
+                                        <a asp-controller="Seller" asp-action="Shop"> <i class="fa-solid fa-arrow-left-long"></i>Return To Shopping</a>
+                                    </button>
                                 </li>
                             </ul>
-
-                            <div class="button-group cart-button">
-                                <ul>
-                                    <li class="cart-table-data">
-                                        <button onclick="location.href = 'checkout.html';"
-                                                class="btn btn-primary proceed-btn fw-bold">
-                                            <a asp-controller="Seller" asp-action="Checkout" style="color:white">Process To Checkout</a>
-                                        </button>
-                                    </li>
-                                    <li>
-
-                                    </li>
-
-                                    <li>
-                                        <button class="btn btn-light shopping-button text-dark">
-                                            <i class="fa-solid fa-arrow-left-long"></i><a asp-controller="Seller" asp-action="Shop">Return To Shopping</a>
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
-    }
-    else
-    {
-        <section class="cart-section section-b-space">
-            <div class="container-fluid-lg">
-                <div class="row g-sm-5 g-3">
-                    <div class="col-xxl-9">
-                        <div class="cart-table">
-                            <div class="table-responsive-xl">
-                                <h4 class="text-center">No Items in the Cart. Please select item first</h4>
+        </div>
+    </section>
+}
+<!-- Cart Section End -->
+<script type="text/javascript">
+    $(".qty-right-plus").click(function () {
+        var itemId = $(this).data("id");
+        var buttonClicked = $(this);
+        var formData = new FormData();
+        formData.append("id", itemId)
+        // alert(formData);
+        $.ajax(
+            {
+                async: true,
+                type: "post",
+                contentType: false,
+                processData: false,
+                data: formData,
+                url: "/Seller/AddToCart",
+                success: function (data) {
+                    if (data.success) {
+                        $('.cartItem').text(data.counter);
+                        var subtotalCell = buttonClicked.closest("tr").find(".subtotal h5");
+                        subtotalCell.text("Rs " + data.newSubtotal + "/-");
+                        $(".costOfAllitems").text("Rs " + data.totalCost + "/-");
 
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-xxl-3">
-                        <div class="summery-box p-sticky">
-                            <div class="button-group cart-button">
-                                <ul>
-                                    <li>
-                                        <button class="btn btn-light shopping-button text-dark">
-                                            <a asp-controller="Seller" asp-action="Shop"> <i class="fa-solid fa-arrow-left-long"></i>Return To Shopping</a>
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    }
-    <!-- Cart Section End -->
-    <script type="text/javascript">
-        $(".qty-right-plus").click(function () {
-            var itemId = $(this).data("id");
-            var buttonClicked = $(this);
+                        $(".totalCostwithShipping").text("Rs " + data.grandTotal + "/-");
+                    }
+                },
+                error: function () {
+                    alert("Please Select Positive Quantity");
+                }
+            }
+        );
+        return false;
+    });
+    $(".qty-left-minus").click(function () {
+        var itemId = $(this).data("id");
+        var buttonClicked = $(this);
+        if (itemId > 0) {
             var formData = new FormData();
             formData.append("id", itemId)
-            // alert(formData);
             $.ajax(
                 {
                     async: true,
@@ -224,404 +250,72 @@
                     contentType: false,
                     processData: false,
                     data: formData,
-                    url: "/Seller/AddToCart",
+                    url: "/Seller/Minus",
                     success: function (data) {
                         if (data.success) {
                             $('.cartItem').text(data.counter);
+                            if (data.newQuantity === 0) {
+                                buttonClicked.closest('tr').remove();
+                            }
+                            if (data.counter === 0) {
+                                $(".cart-table-data").remove();
+                                $(".cart-blank-data").html("<h4>No Items in the Cart. Please select item first!</h4>");
+                            }
                             var subtotalCell = buttonClicked.closest("tr").find(".subtotal h5");
                             subtotalCell.text("Rs " + data.newSubtotal + "/-");
                             $(".costOfAllitems").text("Rs " + data.totalCost + "/-");
-
                             $(".totalCostwithShipping").text("Rs " + data.grandTotal + "/-");
                         }
                     },
                     error: function () {
-                        alert("Please Select Positive Quantity");
+                        alert("Error while inserting data");
                     }
+
                 }
             );
-            return false;
-        });
-        $(".qty-left-minus").click(function () {
-            var itemId = $(this).data("id");
-            var buttonClicked = $(this);
-            if (itemId > 0) {
-                var formData = new FormData();
-                formData.append("id", itemId)
-                $.ajax(
-                    {
-                        async: true,
-                        type: "post",
-                        contentType: false,
-                        processData: false,
-                        data: formData,
-                        url: "/Seller/Minus",
-                        success: function (data) {
-                            if (data.success) {
-                                $('.cartItem').text(data.counter);
-                                if (data.newQuantity === 0) {
-                                    buttonClicked.closest('tr').remove();
-                                }
-                                if (data.counter === 0) {
-                                    $(".cart-table-data").remove();
-                                    $(".cart-blank-data").html("<h4>No Items in the Cart. Please select item first!</h4>");
-                                }
-                                var subtotalCell = buttonClicked.closest("tr").find(".subtotal h5");
-                                subtotalCell.text("Rs " + data.newSubtotal + "/-");
-                                $(".costOfAllitems").text("Rs " + data.totalCost + "/-");
-                                $(".totalCostwithShipping").text("Rs " + data.grandTotal + "/-");
-                            }
-                        },
-                        error: function () {
-                            alert("Error while inserting data");
-                        }
+        }
 
-                    }
-                );
+        return false;
+    });
+    $(".cartBtn").mouseover(function () {
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            url: '/Seller/GetCartItems',
+            success: function (data) {
+                $('#exampleModal').html(data);
+                $('#exampleModal').modal({
+                    backdrop: false
+                });
+            },
+            error: function (data) {
+                alert("Cart is Empty");
             }
-
-            return false;
         });
-        $(".cartBtn").mouseover(function () {
-            $.ajax({
-                type: 'POST',
-                contentType: 'application/json; charset=utf-8',
-                url: '/Seller/GetCartItems',
-                success: function (data) {
-                    $('#exampleModal').html(data);
-                    $('#exampleModal').modal({
-                        backdrop: false
-                    });
-                },
-                error: function (data) {
-                    alert("Cart is Empty");
-                }
-            });
-        });
-    </script>
-    <!-- Footer Section Start -->
-   
-    <!-- Footer Section End -->
-    <!-- Location Modal Start -->
-    <div class="modal location-modal fade theme-modal" id="locationModal" tabindex="-1"
-         aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Choose your Delivery Location</h5>
-                    <p class="mt-1 text-content">Enter your address and we will specify the offer for your area.</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="location-list">
-                        <div class="search-input">
-                            <input type="search" class="form-control" placeholder="Search Your Area">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </div>
+    });
+</script>
+<!-- Log Out Modal Start -->
 
-                        <div class="disabled-box">
-                            <h6>Select a Location</h6>
-                        </div>
-
-                        <ul class="location-select custom-height">
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Alabama</h6>
-                                    <span>Min: $130</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Arizona</h6>
-                                    <span>Min: $150</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>California</h6>
-                                    <span>Min: $110</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Colorado</h6>
-                                    <span>Min: $140</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Florida</h6>
-                                    <span>Min: $160</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Georgia</h6>
-                                    <span>Min: $120</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Kansas</h6>
-                                    <span>Min: $170</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Minnesota</h6>
-                                    <span>Min: $120</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>New York</h6>
-                                    <span>Min: $110</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Washington</h6>
-                                    <span>Min: $130</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+                <p>Are you sure you want to log out?</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="button-box">
+                    <form asp-action="SellerLogout" asp-controller="Seller">
+                        <button type="button" class="btn btn--no" data-bs-dismiss="modal" style="float:left">No</button>
+                        <button type="submit" class="btn  btn--yes btn-primary">Yes</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Location Modal End -->
-    <!-- Deal Box Modal Start -->
-    <div class="modal fade theme-modal deal-modal" id="deal-box" tabindex="-1" aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div>
-                        <h5 class="modal-title w-100" id="deal_today">Deal Today</h5>
-                        <p class="mt-1 text-content">Recommended deals for you.</p>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="deal-offer-box">
-                        <ul class="deal-offer-list">
-                            <li class="list-1">
-                                <div class="deal-offer-contain">
-                                    <a href="shop-left-sidebar.html" class="deal-image">
-                                        <img src="../assets/images/vegetable/product/10.png" class="blur-up lazyload"
-                                             alt="">
-                                    </a>
-
-                                    <a href="shop-left-sidebar.html" class="deal-contain">
-                                        <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                        <h6>$52.57 <del>57.62</del> <span>500 G</span></h6>
-                                    </a>
-                                </div>
-                            </li>
-
-                            <li class="list-2">
-                                <div class="deal-offer-contain">
-                                    <a href="shop-left-sidebar.html" class="deal-image">
-                                        <img src="../assets/images/vegetable/product/11.png" class="blur-up lazyload"
-                                             alt="">
-                                    </a>
-
-                                    <a href="shop-left-sidebar.html" class="deal-contain">
-                                        <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                        <h6>$52.57 <del>57.62</del> <span>500 G</span></h6>
-                                    </a>
-                                </div>
-                            </li>
-
-                            <li class="list-3">
-                                <div class="deal-offer-contain">
-                                    <a href="shop-left-sidebar.html" class="deal-image">
-                                        <img src="../assets/images/vegetable/product/12.png" class="blur-up lazyload"
-                                             alt="">
-                                    </a>
-
-                                    <a href="shop-left-sidebar.html" class="deal-contain">
-                                        <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                        <h6>$52.57 <del>57.62</del> <span>500 G</span></h6>
-                                    </a>
-                                </div>
-                            </li>
-
-                            <li class="list-1">
-                                <div class="deal-offer-contain">
-                                    <a href="shop-left-sidebar.html" class="deal-image">
-                                        <img src="../assets/images/vegetable/product/13.png" class="blur-up lazyload"
-                                             alt="">
-                                    </a>
-
-                                    <a href="shop-left-sidebar.html" class="deal-contain">
-                                        <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                        <h6>$52.57 <del>57.62</del> <span>500 G</span></h6>
-        <div class="setting-box">
-            <button class="btn setting-button">
-                <i class="fa-solid fa-gear"></i>
-            </button>
-
-            <div class="theme-setting-2">
-                <div class="theme-box">
-                    <ul>
-                        <li>
-                            <div class="setting-name">
-                                <h4>Color</h4>
-                            </div>
-                            <div class="theme-setting-button color-picker">
-                                <form class="form-control">
-                                    <label for="colorPick" class="form-label mb-0">Theme Color</label>
-                                    <input type="color" class="form-control form-control-color" id="colorPick"
-                                           value="#0da487" title="Choose your color">
-                                </form>
-                            </div>
-                        </li>
-
-                        <li>
-                            <div class="setting-name">
-                                <h4>Dark</h4>
-                            </div>
-                            <div class="theme-setting-button">
-                                <button class="btn btn-2 outline" id="darkButton">Dark</button>
-                                <button class="btn btn-2 unline" id="lightButton">Light</button>
-                            </div>
-                        </li>
-
-                        @* <li>
-                            <div class="setting-name">
-                                <h4>RTL</h4>
-                            </div>
-                            <div class="theme-setting-button rtl">
-                                <button class="btn btn-2 rtl-unline">LTR</button>
-                                <button class="btn btn-2 rtl-outline">RTL</button>
-                            </div>
-                        </li> *@
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        
-
-                            <div class="theme-setting-button rtl">
-                                <button class="btn btn-2 rtl-unline">LTR</button>
-                                <button class="btn btn-2 rtl-outline">RTL</button>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        
-
-        <div class="back-to-top">
-            <a id="back-to-top" href="#">
-                <i class="fas fa-chevron-up"></i>
-            </a>
-        </div>
-    </div>
-
-    <!-- Log Out Modal Start -->
-
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog  modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
-                    <p>Are you sure you want to log out?</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    <div class="button-box">
-                        <form asp-action="SellerLogout" asp-controller="Seller">
-                            <button type="button" class="btn btn--no" data-bs-dismiss="modal" style="float:left">No</button>
-                            <button type="submit" class="btn  btn--yes btn-primary">Yes</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Tap to top end -->
-    <!-- Bg overlay Start -->
-    <div class="bg-overlay"></div>
-    <!-- Bg overlay End -->
-    <!-- latest jquery-->
-    <script src="../assets/js/jquery-3.6.0.min.js"></script>
-
-    <!-- jquery ui-->
-    <script src="../assets/js/jquery-ui.min.js"></script>
-
-    <!-- Bootstrap js-->
-    <script src="../assets/js/bootstrap/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/bootstrap/popper.min.js"></script>
-    <script src="../assets/js/bootstrap/bootstrap-notify.min.js"></script>
-
-    <!-- feather icon js-->
-    <script src="../assets/js/feather/feather.min.js"></script>
-    <script src="../assets/js/feather/feather-icon.js"></script>
-
-    <!-- Lazyload Js -->
-    <script src="../assets/js/lazysizes.min.js"></script>
-
-
-    @* For Logout Modal *@
-    <!-- Apexchar js -->
-    <script src="~/backend-assets/js/chart/apex-chart/apex-chart1.js"></script>
-    <script src="~/backend-assets/js/chart/apex-chart/moment.min.js"></script>
-    <script src="~/backend-assets/js/chart/apex-chart/apex-chart.js"></script>
-    <script src="~/backend-assets/js/chart/apex-chart/stock-prices.js"></script>
-    <script src="~/backend-assets/js/chart/apex-chart/chart-custom1.js"></script>
-
-    <!-- Nav & tab upside js -->
-    <script src="../assets/js/nav-tab.js"></script>
-
-    <!-- slick slider js -->
-    <script src="~/backend-assets/js/slick.min.js"></script>
-    <script src="~/backend-assets/js/custom-slick.js"></script>
-
-    <!-- customizer js -->
-    @* <script src="~/backend-assets/js/customizer.js"></script> *@
-
-    <!-- ratio js -->
-    <script src="~/backend-assets/js/ratio.js"></script>
-
-    <!-- sidebar effect -->
-    <script src="~/backend-assets/js/sidebareffect.js"></script>
-    @* For Lofout End *@
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-
-    <!-- Popper.js (required for Bootstrap tooltips and popovers) -->
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-
-    <!-- Bootstrap JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-
-    <!-- Popper.js (required for Bootstrap tooltips and popovers) -->
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-
-    <!-- Bootstrap JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-</body>
-</html>
+</div>
+<!-- Tap to top end -->
+<!-- Bg overlay Start -->
+<div class="bg-overlay"></div>
+<!-- Bg overlay End -->
+<!-- latest jquery-->

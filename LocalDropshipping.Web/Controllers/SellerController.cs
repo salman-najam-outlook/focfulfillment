@@ -497,7 +497,7 @@ namespace LocalDropshipping.Web.Controllers
                 string? currentUserID = _userManager.GetUserId(HttpContext.User);
                 var currentUser = _userService.GetById(currentUserID);
                 HttpContext.Session.SetString("CurrentUser", JsonConvert.SerializeObject(currentUser));
-                ViewBag.profit = _orderService.GetProfit(currentUser.Email);
+                ViewBag.model = _orderService.GetOrdersProfit(currentUser.Email);
                 return View();
             }
             catch (Exception ex)

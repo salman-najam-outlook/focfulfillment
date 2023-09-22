@@ -1,12 +1,8 @@
-﻿@{
-
-    Layout = null;
-}
-@using Newtonsoft.Json;
+﻿@using Newtonsoft.Json;
 @using LocalDropshipping.Web.Data.Entities;
-
 @{
-    var data = Context.Session.GetString("CurrentUser");
+    Layout = null;
+    var data = Context.Items["CurrentUser"].ToString();
     var currentUserData = JsonConvert.DeserializeObject<User>(data);
 }
 <!DOCTYPE html>
@@ -158,21 +154,6 @@
                             <a href="Shop" class="web-logo nav-logo">
                                 <img src="../assets/images/logo/1.png" class="img-fluid blur-up lazyload" alt="">
                             </a>
-
-
-
-                           @*  <div class="header-nav col-lg-6">
-                                <div class="header-nav-left">
-                                    <a asp-controller="Seller" asp-action="Shop" class="text-content">
-                                        <button class="dropdown-category" style="float: left;">
-                                            <span>Shop</span>
-                                        </button>
-                                    </a>
-                                </div>
-                            </div> *@
-
-
-
                             <div class="rightside-box">
                                 <div class="search-full">
                                     <div class="input-group">
@@ -224,9 +205,6 @@
                                                 </li>
                                                 <li class="product-box-contain">
                                                     <i></i>
-                                                    @* <a href="login.html">Log In</a> *@
-                                                    @* <a asp-action="SellerLogout" asp-controller="Seller">Logout</a> *@
-                                                    @* <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" id="pills-out-tab" role="tab">Logout</a> *@
                                                     <a data-bs-toggle="modal" data-bs-target="#staticBackdrop"
                                                        href="javascript:void(0)">
                                                         Logout

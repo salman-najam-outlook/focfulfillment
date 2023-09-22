@@ -44,7 +44,7 @@
                             {
                                 <tr>
                                     <td>@order.Id</td>
-                                    <td>@order.CreatedDate</td>
+                                    <td>@order.CreatedDate.ToString("MMM dd yyyy")</td>
                                     <td>
                                         @if (order.OrderStatus == LocalDropshipping.Web.Enums.OrderStatus.Delivered)
                                         {

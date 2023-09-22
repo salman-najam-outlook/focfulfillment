@@ -23,7 +23,6 @@ namespace LocalDropshipping.Web.Middlewares
                 var user = await _userService.GetCurrentUserAsync();
                 if (user != null)
                 {
-                    //context.Session.SetString("CurrentUser", JsonConvert.SerializeObject(user));
                     context.Items.Add("CurrentUser", JsonConvert.SerializeObject(user));
                     List<Roles> currentUserRoles = new List<Roles>();
                     if (user.IsSuperAdmin)
