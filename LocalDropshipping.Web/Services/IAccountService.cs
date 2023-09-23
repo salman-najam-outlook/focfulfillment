@@ -3,6 +3,8 @@ using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
+using System.Security.Policy;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LocalDropshipping.Web.Services
 {
@@ -16,5 +18,8 @@ namespace LocalDropshipping.Web.Services
         Task<bool> SendContactEmailAsync(ContactUsViewModel contactUsViewModel);
         Task<string> GeneratePasswordUpdateToken(string email);
         Task<bool> UpdatePassword(string userId, string token, string newPassword);
+        ChallengeResult GoogleSignin(string redirectUrl);
+        Task<bool> ExternalLoginAsync();
+        Task LogoutAsync();
     }
 }

@@ -4,16 +4,9 @@ using LocalDropshipping.Web.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
-using System.Linq.Expressions;
-using LocalDropshipping.Web.Models;
-using Microsoft.EntityFrameworkCore.Metadata;
-using LocalDropshipping.Web.Enums;
-using System.Data;
-using System;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.Extensions.Hosting;
-using static System.Net.WebRequestMethods;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System.Security.Cryptography.Xml;
 
 namespace LocalDropshipping.Web.Services
 {
@@ -116,7 +109,6 @@ namespace LocalDropshipping.Web.Services
             await _emailService.SendEmail(emailMessage);
             return true;
         }
-        // TODO: Forget Password(usama)
 
         public async Task<bool> ForgotPasswordAsync(string email)
         {
@@ -126,8 +118,6 @@ namespace LocalDropshipping.Web.Services
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
                 var base64Token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-
-                // TODO: Send the password reset link with the token to the user's email
                 var verificationLink = $"https://localhost:7153/Seller/UpdatePassword?userId={user.Id}&token={base64Token}";
 
                 var emailMessage = new EmailMessage
@@ -158,15 +148,12 @@ namespace LocalDropshipping.Web.Services
         //}
 
 
-        // TODO: Reset Password(usama)
-
         public async Task<bool> UpdatePasswordAsync(NewPasswordViewModel model)
         {
             var isUpdated = false;
 
             if (string.IsNullOrEmpty(model.UserId) || string.IsNullOrEmpty(model.Token) || string.IsNullOrEmpty(model.Password))
             {
-                // Handle invalid or missing parameters
                 return isUpdated;
             }
 
@@ -174,16 +161,13 @@ namespace LocalDropshipping.Web.Services
             var user = await _userManager.FindByIdAsync(model.UserId);
             if (user == null)
             {
-                // Handle user not found
                 return isUpdated;
             }
-            // Decode the token
             var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(model.Token));
 
             var result = await _userManager.ResetPasswordAsync(user, decodedToken, model.Password);
             if (result.Succeeded)
             {
-                // Password is updated successfully
                 isUpdated = true;
             }
             return isUpdated;
@@ -219,9 +203,57 @@ namespace LocalDropshipping.Web.Services
             return false;
         }
 
+        public ChallengeResult GoogleSignin(string redirectUrl)
+        {
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
+            return new ChallengeResult("Google", properties);
+        }
 
-        // TODO: External Login Google(zubair)
+        public async Task<bool> ExternalLoginAsync()
+        {
+            var info = await _signInManager.GetExternalLoginInfoAsync();
 
+            if (info != null)
+            {
+                var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false);
+                if (result.Succeeded)
+                {
+                    await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
+                    return true;
+                }
+                else
+                {
+                    User user = new User
+                    {
+                        Email = info.Principal.FindFirstValue(ClaimTypes.Email),
+                        UserName = info.Principal.FindFirstValue(ClaimTypes.Email),
+                        Fullname = info.Principal.FindFirstValue(ClaimTypes.Name),
+                        IsSeller = true,
+                    };
+
+                    var res = await _userManager.CreateAsync(user);
+                    if (res.Succeeded)
+                    {
+                        res = await _userManager.AddLoginAsync(user, info);
+                        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        await _userManager.ConfirmEmailAsync(user, token);
+                        if (res.Succeeded)
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        public async Task LogoutAsync()
+        {
+            await _signInManager.SignOutAsync();
+            return;
+        }
         // TODO: External Login Facebook(zubair)
     }
 }

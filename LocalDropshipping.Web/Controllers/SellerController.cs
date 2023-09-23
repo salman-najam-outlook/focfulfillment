@@ -9,11 +9,13 @@ using LocalDropshipping.Web.Models;
 using LocalDropshipping.Web.Models.ProductViewModels;
 using LocalDropshipping.Web.Services;
 using MailKit.Search;
+using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -42,7 +44,7 @@ namespace LocalDropshipping.Web.Controllers
         private readonly IWithdrawalService _withdrawlsService;
         private readonly IAdminService _service;
 
-        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, UserManager<User> userManager, IWishListService wishList, IProductsService productsService, IProductVariantService productVariantService, IConsumerService consumerService, IOrderItemService orderItemService, IFocSettingService focSettingService,SignInManager<User>signInManager,ICategoryService categoryService,IWithdrawalService withdrawlsService, IAdminService service)
+        public SellerController(IAccountService accountService, IProfilesService profileService, IUserService userService, IOrderService orderService, UserManager<User> userManager, IWishListService wishList, IProductsService productsService, IProductVariantService productVariantService, IConsumerService consumerService, IOrderItemService orderItemService, IFocSettingService focSettingService, SignInManager<User> signInManager, ICategoryService categoryService, IWithdrawalService withdrawlsService, IAdminService service)
         {
             _service = service;
             _accountService = accountService;
@@ -72,6 +74,33 @@ namespace LocalDropshipping.Web.Controllers
         {
             return View();
         }
+
+        public IActionResult LoginWithGoogleAsync(string returnUrl)
+        {
+            return _accountService.GoogleSignin(Url.Action("ExternalLoginCallback", "Seller", new { ReturnUrl = returnUrl }));
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
+        {
+            if (remoteError != null)
+            {
+                return BadRequest("Some went wrong. Invalid response from the third party.");
+            }
+
+            var succeeded = await _accountService.ExternalLoginAsync();
+            if(succeeded)
+            {
+                if (!String.IsNullOrEmpty(returnUrl))
+                {
+                    return LocalRedirect(returnUrl);
+                }
+                return RedirectToAction("Shop");
+            }
+            return BadRequest("Some went wrong. May be, Invalid response from the third party or any internal issue.");
+        }
+
 
         [Authorize]
         public IActionResult ForgotPassword()
@@ -103,7 +132,7 @@ namespace LocalDropshipping.Web.Controllers
         {
             return View();
         }
-        
+
         [Authorize]
         public IActionResult contactUs()
         {
@@ -263,8 +292,8 @@ namespace LocalDropshipping.Web.Controllers
         }
 
         [HttpPost]
-		[Authorize]
-		public async Task<IActionResult> ForgotPassword(string email)
+        [Authorize]
+        public async Task<IActionResult> ForgotPassword(string email)
         {
             var isPasswordResetLinkSent = await _accountService.ForgotPasswordAsync(email);
             if (isPasswordResetLinkSent)
@@ -278,8 +307,8 @@ namespace LocalDropshipping.Web.Controllers
                 return View("ForgotPassword");
             }
         }
-		[Authorize]
-		public IActionResult Subscribe()
+        [Authorize]
+        public IActionResult Subscribe()
         {
             var user = _userService.GetCurrentUserAsync().GetAwaiter().GetResult();
             if (user != null && user.IsSubscribed && user.IsActive)
@@ -298,8 +327,8 @@ namespace LocalDropshipping.Web.Controllers
             return View(cart);
         }
 
-		[Authorize]
-		[HttpPost]
+        [Authorize]
+        [HttpPost]
         public JsonResult AddToCart(string id)
         {
             try
@@ -441,14 +470,14 @@ namespace LocalDropshipping.Web.Controllers
             ViewBag.total = TotalCost();
             return PartialView("_cartItem", cart);
         }
-		[Authorize]
+        [Authorize]
         public IActionResult Withdrawal([FromQuery] Pagination pagination)
         {
             var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
             var email = _userService.GetUserEmailById(userId);
             var withdrawals = _withdrawlsService.GetWithdrawalByUserEmail(email);
 
-            if(withdrawals != null)
+            if (withdrawals != null)
             {
                 var withdrawalModel = withdrawals.Select(withdrawal => new WithdrawalModel
                 {
@@ -462,7 +491,7 @@ namespace LocalDropshipping.Web.Controllers
                 withdrawalModel = withdrawalModel.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
                 return View(new PageResponse<List<WithdrawalModel>>(withdrawalModel, pagination.PageNumber, pagination.PageSize, count));
             }
-            return View();   
+            return View();
         }
 
         [HttpGet]
@@ -514,8 +543,8 @@ namespace LocalDropshipping.Web.Controllers
 
         }
 
-		[Authorize]
-		[HttpPost]
+        [Authorize]
+        [HttpPost]
         public IActionResult Wishlist(int ProductId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -532,9 +561,9 @@ namespace LocalDropshipping.Web.Controllers
 
             return View();
         }
-	
+
         [Authorize]
-		public IActionResult Product(int id)
+        public IActionResult Product(int id)
         {
             Product? product = _productsService.GetById(id);
             List<Product>? products = _productsService.GetAll();
@@ -707,30 +736,30 @@ namespace LocalDropshipping.Web.Controllers
         [Authorize]
         public IActionResult Profile()
         {
-                var userId = _userManager.GetUserId(User);
+            var userId = _userManager.GetUserId(User);
 
-                var userProfile = _profileService.GetProfileById(userId);
-                var userProfileDto = new ProfilesDto
-                {
-                    StoreName = userProfile.StoreName,
-                    StoreURL = userProfile.StoreURL,
-                    BankName = userProfile.BankName,
-                    BankAccountTitle = userProfile.BankAccountTitle,
-                    BankAccountNumberOrIBAN = userProfile.BankAccountNumberOrIBAN,
-                    BankBranch = userProfile.BankBranch,
-                    Address = userProfile.Address,
-                    ImageLink = userProfile.ImageLink
+            var userProfile = _profileService.GetProfileById(userId);
+            var userProfileDto = new ProfilesDto
+            {
+                StoreName = userProfile.StoreName,
+                StoreURL = userProfile.StoreURL,
+                BankName = userProfile.BankName,
+                BankAccountTitle = userProfile.BankAccountTitle,
+                BankAccountNumberOrIBAN = userProfile.BankAccountNumberOrIBAN,
+                BankBranch = userProfile.BankBranch,
+                Address = userProfile.Address,
+                ImageLink = userProfile.ImageLink
 
-                };
+            };
 
-                var userProfileList = new List<ProfilesDto> { userProfileDto };
+            var userProfileList = new List<ProfilesDto> { userProfileDto };
 
-                return View(userProfileList);
-            
+            return View(userProfileList);
 
-                return View();
-        
-         
+
+            return View();
+
+
         }
 
         [HttpPost]
@@ -806,21 +835,21 @@ namespace LocalDropshipping.Web.Controllers
             return View("Profile");
         }
 
-        public IActionResult FilterPage([FromQuery] string searchString,string sortProduct)
+        public IActionResult FilterPage([FromQuery] string searchString, string sortProduct)
         {
-           ViewBag.categories = _categoryService.GetAll();
+            ViewBag.categories = _categoryService.GetAll();
             ViewBag.Currentfilter = searchString;
             ViewBag.NameSortParmAz = "name_asc";
             ViewBag.NameSortParmZa = "name_desc";
             ViewBag.PriceSortParmAsc = "price_asc";
             ViewBag.PriceSortParmDesc = "price_desc";
             List<Product> products = _productsService.GetAll();
-			if (!string.IsNullOrEmpty(searchString))
-			{
-				products = products.Where(x => x.Name.ToLower().Contains(searchString.ToLower()) ||
-				x.Description.ToLower().Contains(searchString.ToLower()) ||
-				 x.Category.Name.ToLower().Contains(searchString.ToLower())).ToList();
-			}
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                products = products.Where(x => x.Name.ToLower().Contains(searchString.ToLower()) ||
+                x.Description.ToLower().Contains(searchString.ToLower()) ||
+                 x.Category.Name.ToLower().Contains(searchString.ToLower())).ToList();
+            }
             switch (sortProduct)
             {
                 case "name_asc":
@@ -848,11 +877,11 @@ namespace LocalDropshipping.Web.Controllers
             var email = _userService.GetUserEmailById(userId);
             if (email != null)
             {
-               var result =  _withdrawlsService.WithdrawalRequest(email);
-                if (result) return RedirectToAction("Withdrawal"); 
+                var result = _withdrawlsService.WithdrawalRequest(email);
+                if (result) return RedirectToAction("Withdrawal");
             }
             return RedirectToAction("Withdrawal");
-        } 
+        }
 
         [HttpPost]
         public async Task<IActionResult> SellerLogout()
@@ -861,8 +890,8 @@ namespace LocalDropshipping.Web.Controllers
 
             return RedirectToAction("Login", "Seller");
         }
-		[Authorize]
-		public IActionResult Reports()
+        [Authorize]
+        public IActionResult Reports()
         {
             return View();
         }
