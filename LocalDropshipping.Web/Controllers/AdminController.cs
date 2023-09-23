@@ -405,7 +405,7 @@ namespace LocalDropshipping.Web.Controllers
                     var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
                     var email = _userService.GetUserEmailById(userId);
                     orderViewModel.UpdatedBy = email;
-                    var result = _orderService.UpdateOrder(orderViewModel);
+                    //var result = _orderService.UpdateOrder(orderViewModel);
                     return RedirectToAction("OrdersList");
                 }
                 else
